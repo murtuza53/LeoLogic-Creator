@@ -18,7 +18,7 @@ import {
 } from "@/components/ui/dropdown-menu"
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
-import { Document, Packer, Paragraph, TextRun, Table as DocxTable, TableRow as DocxTableRow, TableCell as DocxTableCell, WidthType } from 'docx';
+import { Document, Packer, Paragraph, TextRun, Table as DocxTable, TableRow as DocxTableRow, TableCell as DocxTableCell, WidthType, ImageRun } from 'docx';
 
 
 type ProductDisplayProps = {
@@ -31,6 +31,7 @@ type ProductDisplayProps = {
 
 export default function ProductDisplay({ isLoading, productData, productName, imagePreview, onProductDataChange }: ProductDisplayProps) {
   const displayContentRef = useRef<HTMLDivElement>(null);
+  const imageRef = useRef<HTMLImageElement>(null);
 
   const handleSpecChange = (index: number, field: 'name' | 'value', value: string) => {
     if (!productData) return;
@@ -52,7 +53,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
   };
 
   const handleDownload = async (format: 'json' | 'csv' | 'txt' | 'pdf' | 'docx' | 'html') => {
-    if (!productData) return;
+    if (!productData || !imagePreview) return;
 
     const dataToDownload = {
       productName,
@@ -91,21 +92,69 @@ export default function ProductDisplay({ isLoading, productData, productName, im
         fileExtension = 'txt';
         downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
     } else if (format === 'pdf') {
-        if (displayContentRef.current) {
-            const canvas = await html2canvas(displayContentRef.current);
-            const imgData = canvas.toDataURL('image/png');
-            const pdf = new jsPDF('p', 'mm', 'a4');
-            const pdfWidth = pdf.internal.pageSize.getWidth();
-            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
-            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
-            pdf.save(`${fileName}.pdf`);
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const margin = 10;
+        
+        const img = new window.Image();
+        img.src = imagePreview;
+        img.onload = () => {
+          const imgWidth = img.width;
+          const imgHeight = img.height;
+          const aspectRatio = imgWidth / imgHeight;
+          
+          let newImgWidth = pdfWidth - (margin * 2);
+          let newImgHeight = newImgWidth / aspectRatio;
+
+          pdf.addImage(imagePreview, 'PNG', margin, margin, newImgWidth, newImgHeight);
+          
+          if (displayContentRef.current) {
+              html2canvas(displayContentRef.current, {
+                onclone: (doc) => {
+                    // Hide image from html2canvas render to avoid duplication
+                    const imgElement = doc.querySelector<HTMLImageElement>('[data-html2canvas-ignore]');
+                    if (imgElement) {
+                        imgElement.style.display = 'none';
+                    }
+                }
+              }).then(canvas => {
+                const contentImgData = canvas.toDataURL('image/png');
+                const contentImgWidth = pdfWidth;
+                const contentImgHeight = (canvas.height * contentImgWidth) / canvas.width;
+                let contentY = margin + newImgHeight + 10;
+
+                if (contentY + contentImgHeight > pdfHeight) {
+                    pdf.addPage();
+                    contentY = margin;
+                }
+
+                pdf.addImage(contentImgData, 'PNG', 0, contentY, contentImgWidth, contentImgHeight);
+                pdf.save(`${fileName}.pdf`);
+              });
+          }
         }
     } else if (format === 'docx') {
+        const response = await fetch(imagePreview);
+        const imageBuffer = await response.arrayBuffer();
+
         const doc = new Document({
             sections: [{
                 children: [
                     new Paragraph({
                         children: [new TextRun({ text: productName, bold: true, size: 32 })],
+                    }),
+                    new Paragraph({ text: "" }),
+                    new Paragraph({
+                        children: [
+                            new ImageRun({
+                                data: imageBuffer,
+                                transformation: {
+                                    width: 500,
+                                    height: 500 / (imageRef.current ? imageRef.current.naturalWidth / imageRef.current.naturalHeight : 1)
+                                }
+                            })
+                        ]
                     }),
                     new Paragraph({ text: "" }),
                     new Paragraph({
@@ -154,6 +203,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
                 </head>
                 <body>
                     <h1>${productName}</h1>
+                    <img src="${imagePreview}" alt="${productName}" style="max-width: 100%; height: auto;" />
                     <h2>Product Description</h2>
                     <p>${productData.description.replace(/\n/g, '<br>')}</p>
                     <h2>Product Specifications</h2>
@@ -251,61 +301,71 @@ export default function ProductDisplay({ isLoading, productData, productName, im
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <CardContent className="space-y-6" ref={displayContentRef}>
-        <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card">
-          <Image src={imagePreview} alt={productName} fill className="object-contain" sizes="(max-width: 768px) 100vw, 50vw" />
-        </div>
-        <Separator />
-        <div>
-          <h3 className="font-headline text-xl font-semibold text-foreground">Product Description</h3>
-          <p className="mt-2 text-muted-foreground whitespace-pre-wrap">{productData.description}</p>
-        </div>
-        <Separator />
-        <div>
-          <h3 className="font-headline text-xl font-semibold text-foreground">Product Specifications</h3>
-          <div className="mt-2 rounded-md border">
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead className="w-[150px]">Specification</TableHead>
-                        <TableHead>Value</TableHead>
-                        <TableHead className="w-[50px]"></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {productData.specifications.map((spec, index) => (
-                        <TableRow key={index}>
-                            <TableCell className="font-medium">
-                                <Input
-                                    value={spec.name}
-                                    onChange={(e) => handleSpecChange(index, 'name', e.target.value)}
-                                    className="border-none px-0 focus-visible:ring-0"
-                                    placeholder="Name"
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <Input
-                                    value={spec.value}
-                                    onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
-                                    className="border-none px-0 focus-visible:ring-0"
-                                    placeholder="Value"
-                                />
-                            </TableCell>
-                            <TableCell>
-                                <Button variant="ghost" size="icon" onClick={() => removeSpecRow(index)}>
-                                    <Trash2 className="h-4 w-4 text-destructive" />
-                                    <span className="sr-only">Remove</span>
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    ))}
-                </TableBody>
-            </Table>
+      <CardContent className="space-y-6">
+        <div ref={displayContentRef}>
+          <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card" data-html2canvas-ignore="true">
+            <Image
+              ref={imageRef}
+              src={imagePreview}
+              alt={productName}
+              fill
+              className="object-contain"
+              sizes="(max-width: 768px) 100vw, 50vw"
+              crossOrigin="anonymous"
+             />
           </div>
-          <Button variant="outline" size="sm" className="mt-2" onClick={addSpecRow}>
-            <PlusCircle className="mr-2 h-4 w-4" />
-            Add Specification
-          </Button>
+          <Separator className="my-6" />
+          <div>
+            <h3 className="font-headline text-xl font-semibold text-foreground">Product Description</h3>
+            <p className="mt-2 text-muted-foreground whitespace-pre-wrap">{productData.description}</p>
+          </div>
+          <Separator className="my-6" />
+          <div>
+            <h3 className="font-headline text-xl font-semibold text-foreground">Product Specifications</h3>
+            <div className="mt-2 rounded-md border">
+              <Table>
+                  <TableHeader>
+                      <TableRow>
+                          <TableHead className="w-[150px]">Specification</TableHead>
+                          <TableHead>Value</TableHead>
+                          <TableHead className="w-[50px]"></TableHead>
+                      </TableRow>
+                  </TableHeader>
+                  <TableBody>
+                      {productData.specifications.map((spec, index) => (
+                          <TableRow key={index}>
+                              <TableCell className="font-medium">
+                                  <Input
+                                      value={spec.name}
+                                      onChange={(e) => handleSpecChange(index, 'name', e.target.value)}
+                                      className="border-none px-0 focus-visible:ring-0"
+                                      placeholder="Name"
+                                  />
+                              </TableCell>
+                              <TableCell>
+                                  <Input
+                                      value={spec.value}
+                                      onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
+                                      className="border-none px-0 focus-visible:ring-0"
+                                      placeholder="Value"
+                                  />
+                              </TableCell>
+                              <TableCell>
+                                  <Button variant="ghost" size="icon" onClick={() => removeSpecRow(index)}>
+                                      <Trash2 className="h-4 w-4 text-destructive" />
+                                      <span className="sr-only">Remove</span>
+                                  </Button>
+                              </TableCell>
+                          </TableRow>
+                      ))}
+                  </TableBody>
+              </Table>
+            </div>
+            <Button variant="outline" size="sm" className="mt-2" onClick={addSpecRow}>
+              <PlusCircle className="mr-2 h-4 w-4" />
+              Add Specification
+            </Button>
+          </div>
         </div>
       </CardContent>
     </Card>
