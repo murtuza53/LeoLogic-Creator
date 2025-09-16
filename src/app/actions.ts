@@ -9,15 +9,27 @@ import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-
 export async function generateProductDetails(
   productName: string,
   productImage: string,
+  generateAdditionalImages: boolean,
   additionalInfo?: string
 ) {
   try {
-    const [descriptionResult, specificationsResult, imageResult, additionalImagesResult] = await Promise.all([
+    const promises = [
       generateProductDescription({ productName, productImage, additionalInfo }),
       generateProductSpecifications({ productName, productImage, additionalInfo }),
       generateProductImage({ productImage }),
-      generateAdditionalProductImages({productName, productImage, additionalInfo}),
-    ]);
+    ];
+
+    if (generateAdditionalImages) {
+      promises.push(generateAdditionalProductImages({productName, productImage, additionalInfo}));
+    }
+
+    const results = await Promise.all(promises);
+
+    const descriptionResult = results[0];
+    const specificationsResult = results[1];
+    const imageResult = results[2];
+    const additionalImagesResult = generateAdditionalImages ? results[3] : { imageUrls: [] };
+
 
     if (!descriptionResult?.description || !specificationsResult?.specifications || !imageResult?.imageUrl) {
       throw new Error('AI failed to generate complete details.');
@@ -27,7 +39,7 @@ export async function generateProductDetails(
       description: descriptionResult.description,
       specifications: specificationsResult.specifications,
       generatedImageUrl: imageResult.imageUrl,
-      additionalImages: additionalImagesResult.imageUrls,
+      additionalImages: (additionalImagesResult as any).imageUrls || [],
     };
   } catch (error) {
     console.error('Error generating product details:', error);

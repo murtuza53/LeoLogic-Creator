@@ -20,6 +20,7 @@ import Image from "next/image";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
+import { Switch } from "./ui/switch";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -41,10 +42,11 @@ const formSchema = z.object({
   additionalInfo: z.string().max(500, {
     message: "Additional information must not exceed 500 characters."
   }).optional(),
+  generateAdditionalImages: z.boolean().default(true),
 });
 
 type ProductFormProps = {
-  onGenerate: (name: string, imageFile: File, additionalInfo?: string) => void;
+  onGenerate: (name: string, imageFile: File, generateAdditionalImages: boolean, additionalInfo?: string) => void;
   isLoading: boolean;
 };
 
@@ -57,12 +59,13 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
     defaultValues: {
       productName: "",
       additionalInfo: "",
+      generateAdditionalImages: true,
     },
   });
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     const imageFile = values.productImage[0];
-    onGenerate(values.productName, imageFile, values.additionalInfo);
+    onGenerate(values.productName, imageFile, values.generateAdditionalImages, values.additionalInfo);
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -162,6 +165,29 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
                     Provide any extra details that could help generate better content.
                   </FormDescription>
                   <FormMessage />
+                </FormItem>
+              )}
+            />
+            
+            <FormField
+              control={form.control}
+              name="generateAdditionalImages"
+              render={({ field }) => (
+                <FormItem className="flex flex-row items-center justify-between rounded-lg border p-4">
+                  <div className="space-y-0.5">
+                    <FormLabel className="text-base">
+                      Generate Additional Images
+                    </FormLabel>
+                    <FormDescription>
+                      Create multiple variations of your product image.
+                    </FormDescription>
+                  </div>
+                  <FormControl>
+                    <Switch
+                      checked={field.value}
+                      onCheckedChange={field.onChange}
+                    />
+                  </FormControl>
                 </FormItem>
               )}
             />
