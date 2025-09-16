@@ -65,6 +65,7 @@ Maintain a consistent style and lighting across all images. The output format sh
       ],
       config: {
         responseModalities: ['IMAGE'],
+        numOutputs: 3,
       },
       output: {
         format: 'media',
