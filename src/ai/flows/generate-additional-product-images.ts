@@ -47,41 +47,40 @@ const generateAdditionalProductImagesFlow = ai.defineFlow(
     outputSchema: GenerateAdditionalProductImagesOutputSchema,
   },
   async ({productName, productImage, additionalInfo}) => {
-    
-    const {output} = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
-      prompt: [
-        {media: {url: productImage}},
-        {
-          text: `You are a professional product photographer.
+    const generations = await Promise.all(
+      Array.from({length: 3}, () =>
+        ai.generate({
+          model: 'googleai/gemini-2.5-flash-image-preview',
+          prompt: [
+            {media: {url: productImage}},
+            {
+              text: `You are a professional product photographer.
           
 Product Name: ${productName}
 ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
 
-Generate 3 high-quality 1080x1080 images of this product suitable for a website.
-Showcase the product from different angles or in different lifestyle settings that highlight its features and use cases.
-Maintain a consistent style and lighting across all images. The output format should be webp.`,
-        },
-      ],
-      config: {
-        responseModalities: ['IMAGE'],
-        numOutputs: 3,
-      },
-      output: {
-        format: 'media',
-        media: {
-          image: {
-            imageFormat: 'WEBP'
-          }
+Generate a high-quality 1080x1080 image of this product suitable for a website.
+Showcase the product from a different angle or in a different lifestyle setting that highlights its features and use cases.
+Maintain a consistent style and lighting. The output format should be webp.`,
+            },
+          ],
+          config: {
+            responseModalities: ['IMAGE'],
+          },
+        })
+      )
+    );
+
+    const imageUrls = generations.map(({media}) => {
+        if (!media || !media.url) {
+            throw new Error('An image generation failed to produce an image.');
         }
-      }
+        return media.url;
     });
 
-    if (!output || output.length === 0) {
+    if (imageUrls.length === 0) {
       throw new Error('Image generation failed to produce any images.');
     }
-    
-    const imageUrls = output.map(o => o.media.url);
 
     return {
       imageUrls,
