@@ -1,20 +1,44 @@
 "use client";
 
 import Image from 'next/image';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { type ProductData } from './product-generator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
+import { Input } from '@/components/ui/input';
+import { Button } from './ui/button';
+import { PlusCircle, Trash2 } from 'lucide-react';
 
 type ProductDisplayProps = {
   isLoading: boolean;
   productData: ProductData | null;
   productName: string;
   imagePreview: string | null;
+  onProductDataChange: (data: ProductData | null) => void;
 };
 
-export default function ProductDisplay({ isLoading, productData, productName, imagePreview }: ProductDisplayProps) {
+export default function ProductDisplay({ isLoading, productData, productName, imagePreview, onProductDataChange }: ProductDisplayProps) {
+  const handleSpecChange = (index: number, field: 'name' | 'value', value: string) => {
+    if (!productData) return;
+    const newSpecifications = [...productData.specifications];
+    newSpecifications[index] = { ...newSpecifications[index], [field]: value };
+    onProductDataChange({ ...productData, specifications: newSpecifications });
+  };
+
+  const addSpecRow = () => {
+    if (!productData) return;
+    const newSpecifications = [...productData.specifications, { name: '', value: '' }];
+    onProductDataChange({ ...productData, specifications: newSpecifications });
+  };
+
+  const removeSpecRow = (index: number) => {
+    if (!productData) return;
+    const newSpecifications = productData.specifications.filter((_, i) => i !== index);
+    onProductDataChange({ ...productData, specifications: newSpecifications });
+  };
+
+
   const Placeholder = () => (
     <Card className="flex h-full min-h-[500px] items-center justify-center border-dashed shadow-inner bg-muted/20">
       <div className="text-center text-muted-foreground">
@@ -85,18 +109,43 @@ export default function ProductDisplay({ isLoading, productData, productName, im
                     <TableRow>
                         <TableHead className="w-[150px]">Specification</TableHead>
                         <TableHead>Value</TableHead>
+                        <TableHead className="w-[50px]"></TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
-                    {productData.specifications.map((spec) => (
-                        <TableRow key={spec.name}>
-                            <TableCell className="font-medium">{spec.name}</TableCell>
-                            <TableCell>{spec.value}</TableCell>
+                    {productData.specifications.map((spec, index) => (
+                        <TableRow key={index}>
+                            <TableCell className="font-medium">
+                                <Input
+                                    value={spec.name}
+                                    onChange={(e) => handleSpecChange(index, 'name', e.target.value)}
+                                    className="border-none px-0 focus-visible:ring-0"
+                                    placeholder="Name"
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <Input
+                                    value={spec.value}
+                                    onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
+                                    className="border-none px-0 focus-visible:ring-0"
+                                    placeholder="Value"
+                                />
+                            </TableCell>
+                            <TableCell>
+                                <Button variant="ghost" size="icon" onClick={() => removeSpecRow(index)}>
+                                    <Trash2 className="h-4 w-4 text-destructive" />
+                                    <span className="sr-only">Remove</span>
+                                </Button>
+                            </TableCell>
                         </TableRow>
                     ))}
                 </TableBody>
             </Table>
           </div>
+          <Button variant="outline" size="sm" className="mt-2" onClick={addSpecRow}>
+            <PlusCircle className="mr-2 h-4 w-4" />
+            Add Specification
+          </Button>
         </div>
       </CardContent>
     </Card>

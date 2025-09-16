@@ -72,6 +72,7 @@ export default function ProductGenerator() {
         productData={productData}
         productName={productName}
         imagePreview={imagePreview}
+        onProductDataChange={setProductData}
       />
     </div>
   );
