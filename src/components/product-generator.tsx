@@ -8,7 +8,7 @@ import { useToast } from '@/hooks/use-toast';
 
 export type ProductData = {
   description: string;
-  specifications: string;
+  specifications: { name: string; value: string; }[];
 };
 
 export default function ProductGenerator() {
@@ -39,7 +39,7 @@ export default function ProductGenerator() {
         if ('error' in result) {
           throw new Error(result.error);
         }
-        setProductData(result);
+        setProductData(result as ProductData);
       } catch (error) {
         console.error(error);
         toast({

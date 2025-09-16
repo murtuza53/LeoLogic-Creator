@@ -25,9 +25,12 @@ export type GenerateProductSpecificationsInput = z.infer<
 >;
 
 const GenerateProductSpecificationsOutputSchema = z.object({
-  specifications: z
-    .string()
-    .describe('The generated specifications for the product.'),
+  specifications: z.array(
+    z.object({
+      name: z.string().describe('The name of the specification (e.g., "Material", "Dimensions").'),
+      value: z.string().describe('The value of the specification (e.g., "Leather", "10x20x30 cm").'),
+    })
+  ).describe('The generated specifications for the product as an array of name-value pairs.'),
 });
 export type GenerateProductSpecificationsOutput = z.infer<
   typeof GenerateProductSpecificationsOutputSchema
@@ -45,12 +48,12 @@ const prompt = ai.definePrompt({
   output: { schema: GenerateProductSpecificationsOutputSchema },
   prompt: `You are an expert in product specifications.
 
-  Based on the product name and the image, generate detailed specifications for the product.
+  Based on the product name and the image, generate detailed specifications for the product in a structured format.
   Consider the type of product when determining the appropriate specifications to include.
+  Each specification should be a key-value pair.
 
   Product Name: {{{productName}}}
-  Product Image: {{media url=productImage}}
-  Specifications:`,
+  Product Image: {{media url=productImage}}`,
 });
 
 const generateProductSpecificationsFlow = ai.defineFlow(

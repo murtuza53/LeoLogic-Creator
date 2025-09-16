@@ -5,6 +5,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
 import { type ProductData } from './product-generator';
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 
 type ProductDisplayProps = {
   isLoading: boolean;
@@ -78,8 +79,23 @@ export default function ProductDisplay({ isLoading, productData, productName, im
         <Separator />
         <div>
           <h3 className="font-headline text-xl font-semibold text-foreground">Product Specifications</h3>
-          <div className="mt-2 text-muted-foreground whitespace-pre-wrap rounded-md bg-muted/50 p-4 font-mono text-sm">
-            {productData.specifications}
+          <div className="mt-2 rounded-md border">
+            <Table>
+                <TableHeader>
+                    <TableRow>
+                        <TableHead className="w-[150px]">Specification</TableHead>
+                        <TableHead>Value</TableHead>
+                    </TableRow>
+                </TableHeader>
+                <TableBody>
+                    {productData.specifications.map((spec) => (
+                        <TableRow key={spec.name}>
+                            <TableCell className="font-medium">{spec.name}</TableCell>
+                            <TableCell>{spec.value}</TableCell>
+                        </TableRow>
+                    ))}
+                </TableBody>
+            </Table>
           </div>
         </div>
       </CardContent>
