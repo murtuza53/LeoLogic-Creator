@@ -234,7 +234,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
   
   const handleDownloadGeneratedImage = async (imageUrl: string, index?: number) => {
     const suffix = typeof index === 'number' ? `_v${index + 1}` : '_1080x1080';
-    const fileName = `${productName.replace(/ /g, '_')}${suffix}.png`;
+    const fileName = `${productName.replace(/ /g, '_')}${suffix}.webp`;
     
     // Convert data URI to Blob
     const response = await fetch(imageUrl);
@@ -398,7 +398,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
                 <CardTitle className="font-headline text-2xl">Generated Image</CardTitle>
                 <Button variant="outline" onClick={() => handleDownloadGeneratedImage(productData.generatedImageUrl!)}>
                     <Download className="mr-2 h-4 w-4" />
-                    Download (PNG)
+                    Download (WEBP)
                 </Button>
             </CardHeader>
             <CardContent>

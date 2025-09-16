@@ -28,7 +28,7 @@ export type GenerateAdditionalProductImagesInput = z.infer<
 const GenerateAdditionalProductImagesOutputSchema = z.object({
   imageUrls: z
     .array(z.string())
-    .describe('The data URIs of the generated product images in png format.'),
+    .describe('The data URIs of the generated product images in webp format.'),
 });
 export type GenerateAdditionalProductImagesOutput = z.infer<
   typeof GenerateAdditionalProductImagesOutputSchema
@@ -61,7 +61,7 @@ ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
 
 Generate a high-quality 1080x1080 image of this product suitable for a website.
 Showcase the product from a different angle or in a different lifestyle setting that highlights its features and use cases.
-Maintain a consistent style and lighting. The output format should be png.`,
+Maintain a consistent style and lighting. The output format should be webp.`,
             },
           ],
           config: {
