@@ -1,3 +1,35 @@
+import { Logo } from '@/components/icons';
+import ProductGenerator from '@/components/product-generator';
+
 export default function Home() {
-  return <></>;
+  return (
+    <div className="flex min-h-screen w-full flex-col">
+      <header className="sticky top-0 z-10 flex h-16 items-center gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
+        <nav className="flex items-center gap-2 text-lg font-medium md:text-sm">
+          <a
+            href="#"
+            className="flex items-center gap-2 font-semibold text-foreground"
+          >
+            <Logo className="h-6 w-6 text-primary" />
+            <span className="sr-only">LeoLogic Analytic</span>
+          </a>
+          <span className="font-semibold">LeoLogic Analytic</span>
+        </nav>
+      </header>
+      <main className="flex-1 p-4 md:p-8 lg:p-10">
+        <div className="mx-auto max-w-6xl">
+          <div className="text-center">
+            <h1 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
+              Smart Product Content Generation
+            </h1>
+            <p className="mt-3 text-lg text-muted-foreground md:text-xl">
+              Upload a product image and name to instantly generate compelling
+              descriptions and detailed specifications using AI.
+            </p>
+          </div>
+          <ProductGenerator />
+        </div>
+      </main>
+    </div>
+  );
 }
