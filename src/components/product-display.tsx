@@ -71,7 +71,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
       content = JSON.stringify(dataToDownload, null, 2);
       mimeType = 'application/json';
       fileExtension = 'json';
-      downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
+      downloadFile(new Blob([content], { type: mimeType }), `${fileName}.${fileExtension}`);
     } else if (format === 'csv') {
       let csv = 'Specification,Value\n';
       dataToDownload.specifications.forEach(spec => {
@@ -80,7 +80,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
       content = csv;
       mimeType = 'text/csv';
       fileExtension = 'csv';
-      downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
+      downloadFile(new Blob([content], { type: mimeType }), `${fileName}.${fileExtension}`);
     } else if (format === 'txt') {
         let txt = `Product: ${productName}\n\n`;
         txt += `Description:\n${dataToDownload.description}\n\n`;
@@ -91,7 +91,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
         content = txt;
         mimeType = 'text/plain';
         fileExtension = 'txt';
-        downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
+        downloadFile(new Blob([content], { type: mimeType }), `${fileName}.${fileExtension}`);
     } else if (format === 'pdf') {
         const pdf = new jsPDF('p', 'mm', 'a4');
         const pdfWidth = pdf.internal.pageSize.getWidth();
@@ -187,7 +187,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
         });
 
         const blob = await Packer.toBlob(doc);
-        downloadFile(blob, `${fileName}.docx`, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+        downloadFile(blob, `${fileName}.docx`);
     } else if (format === 'html') {
         content = `
             <html>
@@ -217,12 +217,11 @@ export default function ProductDisplay({ isLoading, productData, productName, im
         `;
         mimeType = 'text/html';
         fileExtension = 'html';
-        downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
+        downloadFile(new Blob([content], { type: mimeType }), `${fileName}.${fileExtension}`);
     }
   };
 
-  const downloadFile = (data: string | Blob, fileName: string, mimeType: string) => {
-    const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
+  const downloadFile = (blob: Blob, fileName: string) => {
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
@@ -233,9 +232,15 @@ export default function ProductDisplay({ isLoading, productData, productName, im
     URL.revokeObjectURL(url);
   };
   
-  const handleDownloadGeneratedImage = (imageUrl: string, index?: number) => {
-    const suffix = typeof index === 'number' ? `_v${index + 1}` : '_1080x1080'
-    downloadFile(imageUrl, `${productName.replace(/ /g, '_')}${suffix}.png`, 'image/png');
+  const handleDownloadGeneratedImage = async (imageUrl: string, index?: number) => {
+    const suffix = typeof index === 'number' ? `_v${index + 1}` : '_1080x1080';
+    const fileName = `${productName.replace(/ /g, '_')}${suffix}.png`;
+    
+    // Convert data URI to Blob
+    const response = await fetch(imageUrl);
+    const blob = await response.blob();
+    
+    downloadFile(blob, fileName);
   }
 
 
