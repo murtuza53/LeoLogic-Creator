@@ -11,9 +11,9 @@ export default function Home() {
             className="flex items-center gap-2 font-semibold text-foreground"
           >
             <Logo className="h-6 w-6 text-primary" />
-            <span className="sr-only">LeoLogic Analytic</span>
+            <span className="sr-only">LeoLogic Creator</span>
           </a>
-          <span className="font-semibold">LeoLogic Analytic</span>
+          <span className="font-semibold">LeoLogic Creator</span>
         </nav>
       </header>
       <main className="flex-1 p-4 md:p-8 lg:p-10">

@@ -3,7 +3,7 @@ import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 
 export const metadata: Metadata = {
-  title: 'LeoLogic Analytic',
+  title: 'LeoLogic Creator',
   description: 'Generate product descriptions and specifications with AI.',
 };
 
