@@ -42,7 +42,7 @@ const formSchema = z.object({
   additionalInfo: z.string().max(500, {
     message: "Additional information must not exceed 500 characters."
   }).optional(),
-  generateAdditionalImages: z.boolean().default(true),
+  generateAdditionalImages: z.boolean().default(false),
 });
 
 type ProductFormProps = {
@@ -59,7 +59,7 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
     defaultValues: {
       productName: "",
       additionalInfo: "",
-      generateAdditionalImages: true,
+      generateAdditionalImages: false,
     },
   });
   
