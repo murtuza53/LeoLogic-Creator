@@ -54,14 +54,18 @@ const generateAdditionalProductImagesFlow = ai.defineFlow(
           prompt: [
             {media: {url: productImage}},
             {
-              text: `You are a professional product photographer.
-          
+              text: `You are a professional product photographer. Your task is to generate an additional product image that visually communicates the item’s features more effectively.
+
 Product Name: ${productName}
 ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
 
-Generate a high-quality 1080x1080 image of this product suitable for a website.
-Showcase the product from a different angle or in a different lifestyle setting that highlights its features and use cases.
-Maintain a consistent style and lighting.`,
+Your generated image should:
+- Showcase the product from a different angle (e.g., front, side, top-down).
+- If applicable to the product, include variations in size or color.
+- Remain fully compliant with the product’s official specifications and design guidelines based on the provided image.
+- Maintain consistent lighting, background, and styling to match the original visual.
+
+Generate a high-quality 1080x1080 image in PNG format.`,
             },
           ],
         })
@@ -69,10 +73,10 @@ Maintain a consistent style and lighting.`,
     );
 
     const imageUrls = generations.map(({media}) => {
-        if (!media || !media.url) {
-            throw new Error('An image generation failed to produce an image.');
-        }
-        return media.url;
+      if (!media || !media.url) {
+        throw new Error('An image generation failed to produce an image.');
+      }
+      return media.url;
     });
 
     if (imageUrls.length === 0) {
