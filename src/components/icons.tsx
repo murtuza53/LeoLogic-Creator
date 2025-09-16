@@ -13,8 +13,17 @@ export const Logo = (props: SVGProps<SVGSVGElement>) => (
     strokeLinecap="round"
     strokeLinejoin="round"
   >
-    <rect width="18" height="18" x="3" y="3" rx="2" />
-    <path d="M12 8v8" />
-    <path d="M12 16h4" />
+    <path d="M12 2a10 10 0 0 0-3.16 19.5A10 10 0 0 0 22 12c0-5.52-4.48-10-10-10z" />
+    <path d="M15.5 8.5a.5.5 0 1 0 0-1 .5.5 0 0 0 0 1z" />
+    <path d="M12 13h.01" />
+    <path d="M12 16h.01" />
+    <path d="M15 13h.01" />
+    <path d="M15 16h.01" />
+    <path d="M9 13h.01" />
+    <path d="M9 16h.01" />
+    <path d="M4.5 10.5c-1.5 0-2.2.5-2.5 1.5" />
+    <path d="M19.5 10.5c1.5 0 2.2.5 2.5 1.5" />
+    <path d="M2.5 16a2.5 2.5 0 0 0 2 2.5" />
+    <path d="M21.5 16a2.5 2.5 0 0 1-2 2.5" />
   </svg>
 );
