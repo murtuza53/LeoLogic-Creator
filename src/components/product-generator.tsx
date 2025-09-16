@@ -9,6 +9,7 @@ import { useToast } from '@/hooks/use-toast';
 export type ProductData = {
   description: string;
   specifications: { name: string; value: string; }[];
+  generatedImageUrl?: string;
 };
 
 export default function ProductGenerator() {

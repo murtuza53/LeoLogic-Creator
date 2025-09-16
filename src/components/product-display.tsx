@@ -231,6 +231,12 @@ export default function ProductDisplay({ isLoading, productData, productName, im
     document.body.removeChild(a);
     URL.revokeObjectURL(url);
   };
+  
+  const handleDownloadGeneratedImage = () => {
+    if (productData?.generatedImageUrl) {
+        downloadFile(productData.generatedImageUrl, `${productName.replace(/ /g, '_')}_1080x1080.webp`, 'image/webp');
+    }
+  }
 
 
   const Placeholder = () => (
@@ -243,33 +249,43 @@ export default function ProductDisplay({ isLoading, productData, productName, im
   );
 
   const LoadingState = () => (
-    <Card className="shadow-lg">
-      <CardHeader>
-        <Skeleton className="h-8 w-3/4 rounded-md" />
-      </CardHeader>
-      <CardContent className="space-y-6">
-        {imagePreview && (
-            <div className="relative aspect-video w-full overflow-hidden rounded-lg">
-              <Image src={imagePreview} alt={productName} fill className="object-contain" sizes="(max-width: 768px) 100vw, 50vw" />
-            </div>
-        )}
-        {!imagePreview && <Skeleton className="h-64 w-full rounded-lg" />}
-        <Separator />
-        <div className="space-y-2">
-          <Skeleton className="h-6 w-1/4 rounded-md" />
-          <Skeleton className="h-4 w-full rounded-md" />
-          <Skeleton className="h-4 w-full rounded-md" />
-          <Skeleton className="h-4 w-3/4 rounded-md" />
-        </div>
-        <Separator />
-        <div className="space-y-2">
-          <Skeleton className="h-6 w-1/4 rounded-md" />
-          <Skeleton className="h-4 w-full rounded-md" />
-          <Skeleton className="h-4 w-full rounded-md" />
-          <Skeleton className="h-4 w-2/3 rounded-md" />
-        </div>
-      </CardContent>
-    </Card>
+    <div className='space-y-4'>
+      <Card className="shadow-lg">
+        <CardHeader>
+          <Skeleton className="h-8 w-3/4 rounded-md" />
+        </CardHeader>
+        <CardContent className="space-y-6">
+          {imagePreview && (
+              <div className="relative aspect-video w-full overflow-hidden rounded-lg">
+                <Image src={imagePreview} alt={productName} fill className="object-contain" sizes="(max-width: 768px) 100vw, 50vw" />
+              </div>
+          )}
+          {!imagePreview && <Skeleton className="h-64 w-full rounded-lg" />}
+          <Separator />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-1/4 rounded-md" />
+            <Skeleton className="h-4 w-full rounded-md" />
+            <Skeleton className="h-4 w-full rounded-md" />
+            <Skeleton className="h-4 w-3/4 rounded-md" />
+          </div>
+          <Separator />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-1/4 rounded-md" />
+            <Skeleton className="h-4 w-full rounded-md" />
+            <Skeleton className="h-4 w-full rounded-md" />
+            <Skeleton className="h-4 w-2/3 rounded-md" />
+          </div>
+        </CardContent>
+      </Card>
+      <Card>
+        <CardHeader>
+            <Skeleton className="h-8 w-1/2" />
+        </CardHeader>
+        <CardContent>
+            <Skeleton className="aspect-square w-full" />
+        </CardContent>
+      </Card>
+    </div>
   );
 
   if (isLoading) {
@@ -281,93 +297,119 @@ export default function ProductDisplay({ isLoading, productData, productName, im
   }
 
   return (
-    <Card className="shadow-lg">
-      <CardHeader className="flex-row items-center justify-between">
-        <CardTitle className="font-headline text-3xl">{productName}</CardTitle>
-        <DropdownMenu>
-          <DropdownMenuTrigger asChild>
-            <Button variant="outline">
-              <Download className="mr-2" />
-              Download
-            </Button>
-          </DropdownMenuTrigger>
-          <DropdownMenuContent>
-            <DropdownMenuItem onClick={() => handleDownload('json')}>Download as JSON</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('csv')}>Download as CSV</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download as PDF</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('docx')}>Download as Word</DropdownMenuItem>
-            <DropdownMenuItem onClick={() => handleDownload('html')}>Download as HTML</DropdownMenuItem>
-          </DropdownMenuContent>
-        </DropdownMenu>
-      </CardHeader>
-      <CardContent className="space-y-6">
-        <div ref={displayContentRef}>
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card" data-html2canvas-ignore="true">
-            <Image
-              ref={imageRef}
-              src={imagePreview}
-              alt={productName}
-              fill
-              className="object-contain"
-              sizes="(max-width: 768px) 100vw, 50vw"
-              crossOrigin="anonymous"
-             />
-          </div>
-          <Separator className="my-6" />
-          <div>
-            <h3 className="font-headline text-xl font-semibold text-foreground">Product Description</h3>
-            <p className="mt-2 text-muted-foreground whitespace-pre-wrap">{productData.description}</p>
-          </div>
-          <Separator className="my-6" />
-          <div>
-            <h3 className="font-headline text-xl font-semibold text-foreground">Product Specifications</h3>
-            <div className="mt-2 rounded-md border">
-              <Table>
-                  <TableHeader>
-                      <TableRow>
-                          <TableHead className="w-[150px]">Specification</TableHead>
-                          <TableHead>Value</TableHead>
-                          <TableHead className="w-[50px]"></TableHead>
-                      </TableRow>
-                  </TableHeader>
-                  <TableBody>
-                      {productData.specifications.map((spec, index) => (
-                          <TableRow key={index}>
-                              <TableCell className="font-medium">
-                                  <Input
-                                      value={spec.name}
-                                      onChange={(e) => handleSpecChange(index, 'name', e.target.value)}
-                                      className="border-none px-0 focus-visible:ring-0"
-                                      placeholder="Name"
-                                  />
-                              </TableCell>
-                              <TableCell>
-                                  <Input
-                                      value={spec.value}
-                                      onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
-                                      className="border-none px-0 focus-visible:ring-0"
-                                      placeholder="Value"
-                                  />
-                              </TableCell>
-                              <TableCell>
-                                  <Button variant="ghost" size="icon" onClick={() => removeSpecRow(index)}>
-                                      <Trash2 className="h-4 w-4 text-destructive" />
-                                      <span className="sr-only">Remove</span>
-                                  </Button>
-                              </TableCell>
-                          </TableRow>
-                      ))}
-                  </TableBody>
-              </Table>
+    <div className='space-y-4'>
+      <Card className="shadow-lg">
+        <CardHeader className="flex-row items-center justify-between">
+          <CardTitle className="font-headline text-3xl">{productName}</CardTitle>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <Button variant="outline">
+                <Download className="mr-2" />
+                Download
+              </Button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent>
+              <DropdownMenuItem onClick={() => handleDownload('json')}>Download as JSON</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownload('csv')}>Download as CSV</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download as PDF</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownload('docx')}>Download as Word</DropdownMenuItem>
+              <DropdownMenuItem onClick={() => handleDownload('html')}>Download as HTML</DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
+        </CardHeader>
+        <CardContent className="space-y-6">
+          <div ref={displayContentRef}>
+            <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card" data-html2canvas-ignore="true">
+              <Image
+                ref={imageRef}
+                src={imagePreview}
+                alt={productName}
+                fill
+                className="object-contain"
+                sizes="(max-width: 768px) 100vw, 50vw"
+                crossOrigin="anonymous"
+               />
             </div>
-            <Button variant="outline" size="sm" className="mt-2" onClick={addSpecRow}>
-              <PlusCircle className="mr-2 h-4 w-4" />
-              Add Specification
-            </Button>
+            <Separator className="my-6" />
+            <div>
+              <h3 className="font-headline text-xl font-semibold text-foreground">Product Description</h3>
+              <p className="mt-2 text-muted-foreground whitespace-pre-wrap">{productData.description}</p>
+            </div>
+            <Separator className="my-6" />
+            <div>
+              <h3 className="font-headline text-xl font-semibold text-foreground">Product Specifications</h3>
+              <div className="mt-2 rounded-md border">
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead className="w-[150px]">Specification</TableHead>
+                            <TableHead>Value</TableHead>
+                            <TableHead className="w-[50px]"></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {productData.specifications.map((spec, index) => (
+                            <TableRow key={index}>
+                                <TableCell className="font-medium">
+                                    <Input
+                                        value={spec.name}
+                                        onChange={(e) => handleSpecChange(index, 'name', e.target.value)}
+                                        className="border-none px-0 focus-visible:ring-0"
+                                        placeholder="Name"
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Input
+                                        value={spec.value}
+                                        onChange={(e) => handleSpecChange(index, 'value', e.target.value)}
+                                        className="border-none px-0 focus-visible:ring-0"
+                                        placeholder="Value"
+                                    />
+                                </TableCell>
+                                <TableCell>
+                                    <Button variant="ghost" size="icon" onClick={() => removeSpecRow(index)}>
+                                        <Trash2 className="h-4 w-4 text-destructive" />
+                                        <span className="sr-only">Remove</span>
+                                    </Button>
+                                </TableCell>
+                            </TableRow>
+                        ))}
+                    </TableBody>
+                </Table>
+              </div>
+              <Button variant="outline" size="sm" className="mt-2" onClick={addSpecRow}>
+                <PlusCircle className="mr-2 h-4 w-4" />
+                Add Specification
+              </Button>
+            </div>
           </div>
-        </div>
-      </CardContent>
-    </Card>
+        </CardContent>
+      </Card>
+
+      {productData.generatedImageUrl && (
+          <Card>
+            <CardHeader className="flex-row items-center justify-between">
+                <CardTitle className="font-headline text-2xl">Generated Image</CardTitle>
+                <Button variant="outline" onClick={handleDownloadGeneratedImage}>
+                    <Download className="mr-2 h-4 w-4" />
+                    Download (WebP)
+                </Button>
+            </CardHeader>
+            <CardContent>
+                <div className="relative aspect-square w-full overflow-hidden rounded-lg border">
+                    <Image
+                        src={productData.generatedImageUrl}
+                        alt={`Generated image of ${productName}`}
+                        fill
+                        className="object-contain"
+                        sizes="(max-width: 768px) 100vw, 50vw"
+                    />
+                </div>
+            </CardContent>
+          </Card>
+      )}
+
+    </div>
   );
 }

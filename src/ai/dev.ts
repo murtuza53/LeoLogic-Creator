@@ -3,3 +3,4 @@ config();
 
 import '@/ai/flows/generate-product-specifications.ts';
 import '@/ai/flows/generate-product-description.ts';
+import '@/ai/flows/generate-product-image.ts';
