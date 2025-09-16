@@ -47,26 +47,28 @@ const generateAdditionalProductImagesFlow = ai.defineFlow(
     outputSchema: GenerateAdditionalProductImagesOutputSchema,
   },
   async ({productName, productImage, additionalInfo}) => {
+    const prompts = [
+      `You are a professional product photographer. Your task is to generate an additional product image that visually communicates the item’s features more effectively by showcasing it from a different angle (e.g., side, top-down). 
+       Product Name: ${productName}
+       ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
+       Maintain consistent lighting, background, and styling to match the original visual. Ensure the image is fully compliant with the product's official specifications.`,
+      `You are a professional product photographer. Your task is to generate an additional product image that shows the product in a real-life application or context. 
+       Product Name: ${productName}
+       ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
+       The image should look realistic and appealing, helping customers visualize how they would use the product. Maintain brand consistency in styling.`,
+      `You are a professional product photographer. Your task is to generate a product image that highlights a specific feature or includes a size/color variation, if applicable.
+       Product Name: ${productName}
+       ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
+       If no specific features are mentioned, create a visually interesting lifestyle shot with the product. Ensure the image is fully compliant with the product's official specifications.`
+    ];
+
     const generations = await Promise.all(
-      Array.from({length: 3}, () =>
+      prompts.map((prompt) =>
         ai.generate({
           model: 'googleai/gemini-2.5-flash-image-preview',
           prompt: [
             {media: {url: productImage}},
-            {
-              text: `You are a professional product photographer. Your task is to generate an additional product image that visually communicates the item’s features more effectively.
-
-Product Name: ${productName}
-${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
-
-Your generated image should:
-- Showcase the product from a different angle (e.g., front, side, top-down).
-- If applicable to the product, include variations in size or color.
-- Remain fully compliant with the product’s official specifications and design guidelines based on the provided image.
-- Maintain consistent lighting, background, and styling to match the original visual.
-
-Generate a high-quality 1080x1080 image in PNG format.`,
-            },
+            { text: prompt },
           ],
         })
       )
