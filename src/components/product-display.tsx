@@ -1,6 +1,7 @@
 "use client";
 
 import Image from 'next/image';
+import { useRef } from 'react';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -15,6 +16,10 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu"
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Document, Packer, Paragraph, TextRun, Table as DocxTable, TableRow as DocxTableRow, TableCell as DocxTableCell, WidthType } from 'docx';
+
 
 type ProductDisplayProps = {
   isLoading: boolean;
@@ -25,6 +30,8 @@ type ProductDisplayProps = {
 };
 
 export default function ProductDisplay({ isLoading, productData, productName, imagePreview, onProductDataChange }: ProductDisplayProps) {
+  const displayContentRef = useRef<HTMLDivElement>(null);
+
   const handleSpecChange = (index: number, field: 'name' | 'value', value: string) => {
     if (!productData) return;
     const newSpecifications = [...productData.specifications];
@@ -44,13 +51,15 @@ export default function ProductDisplay({ isLoading, productData, productName, im
     onProductDataChange({ ...productData, specifications: newSpecifications });
   };
 
-  const handleDownload = (format: 'json' | 'csv' | 'txt') => {
+  const handleDownload = async (format: 'json' | 'csv' | 'txt' | 'pdf' | 'docx' | 'html') => {
     if (!productData) return;
 
     const dataToDownload = {
       productName,
       ...productData,
     };
+    
+    const fileName = `${productName.replace(/ /g, '_')}_${new Date().toISOString()}`;
 
     let content = '';
     let mimeType = '';
@@ -60,6 +69,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
       content = JSON.stringify(dataToDownload, null, 2);
       mimeType = 'application/json';
       fileExtension = 'json';
+      downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
     } else if (format === 'csv') {
       let csv = 'Specification,Value\n';
       dataToDownload.specifications.forEach(spec => {
@@ -68,6 +78,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
       content = csv;
       mimeType = 'text/csv';
       fileExtension = 'csv';
+      downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
     } else if (format === 'txt') {
         let txt = `Product: ${productName}\n\n`;
         txt += `Description:\n${dataToDownload.description}\n\n`;
@@ -78,13 +89,93 @@ export default function ProductDisplay({ isLoading, productData, productName, im
         content = txt;
         mimeType = 'text/plain';
         fileExtension = 'txt';
+        downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
+    } else if (format === 'pdf') {
+        if (displayContentRef.current) {
+            const canvas = await html2canvas(displayContentRef.current);
+            const imgData = canvas.toDataURL('image/png');
+            const pdf = new jsPDF('p', 'mm', 'a4');
+            const pdfWidth = pdf.internal.pageSize.getWidth();
+            const pdfHeight = (canvas.height * pdfWidth) / canvas.width;
+            pdf.addImage(imgData, 'PNG', 0, 0, pdfWidth, pdfHeight);
+            pdf.save(`${fileName}.pdf`);
+        }
+    } else if (format === 'docx') {
+        const doc = new Document({
+            sections: [{
+                children: [
+                    new Paragraph({
+                        children: [new TextRun({ text: productName, bold: true, size: 32 })],
+                    }),
+                    new Paragraph({ text: "" }),
+                    new Paragraph({
+                        children: [new TextRun({ text: "Product Description", bold: true, size: 24 })],
+                    }),
+                    new Paragraph({ text: productData.description }),
+                    new Paragraph({ text: "" }),
+                    new Paragraph({
+                        children: [new TextRun({ text: "Product Specifications", bold: true, size: 24 })],
+                    }),
+                    new DocxTable({
+                        rows: [
+                            new DocxTableRow({
+                                children: [
+                                    new DocxTableCell({ children: [new Paragraph("Specification")], width: { size: 4535, type: WidthType.DXA } }),
+                                    new DocxTableCell({ children: [new Paragraph("Value")], width: { size: 4535, type: WidthType.DXA } }),
+                                ],
+                            }),
+                            ...productData.specifications.map(spec => new DocxTableRow({
+                                children: [
+                                    new DocxTableCell({ children: [new Paragraph(spec.name)] }),
+                                    new DocxTableCell({ children: [new Paragraph(spec.value)] }),
+                                ],
+                            })),
+                        ],
+                    }),
+                ],
+            }],
+        });
+
+        const blob = await Packer.toBlob(doc);
+        downloadFile(blob, `${fileName}.docx`, 'application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    } else if (format === 'html') {
+        content = `
+            <html>
+                <head>
+                    <title>${productName}</title>
+                    <style>
+                        body { font-family: sans-serif; }
+                        h1 { color: #333; }
+                        h2 { color: #555; }
+                        table { border-collapse: collapse; width: 100%; }
+                        th, td { border: 1px solid #ddd; padding: 8px; text-align: left; }
+                        th { background-color: #f2f2f2; }
+                    </style>
+                </head>
+                <body>
+                    <h1>${productName}</h1>
+                    <h2>Product Description</h2>
+                    <p>${productData.description.replace(/\n/g, '<br>')}</p>
+                    <h2>Product Specifications</h2>
+                    <table>
+                        <tr><th>Specification</th><th>Value</th></tr>
+                        ${productData.specifications.map(spec => `<tr><td>${spec.name}</td><td>${spec.value}</td></tr>`).join('')}
+                    </table>
+                </body>
+            </html>
+        `;
+        mimeType = 'text/html';
+        fileExtension = 'html';
+        downloadFile(content, `${fileName}.${fileExtension}`, mimeType);
     }
-    
-    const blob = new Blob([content], { type: mimeType });
+  };
+
+  const downloadFile = (data: string | Blob, fileName: string, mimeType: string) => {
+    const blob = data instanceof Blob ? data : new Blob([data], { type: mimeType });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `${productName.replace(/ /g, '_')}_${new Date().toISOString()}.${fileExtension}`;
+    a.download = fileName;
     document.body.appendChild(a);
     a.click();
     document.body.removeChild(a);
@@ -154,10 +245,13 @@ export default function ProductDisplay({ isLoading, productData, productName, im
             <DropdownMenuItem onClick={() => handleDownload('json')}>Download as JSON</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDownload('csv')}>Download as CSV</DropdownMenuItem>
             <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download as PDF</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload('docx')}>Download as Word</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload('html')}>Download as HTML</DropdownMenuItem>
           </DropdownMenuContent>
         </DropdownMenu>
       </CardHeader>
-      <CardContent className="space-y-6">
+      <CardContent className="space-y-6" ref={displayContentRef}>
         <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card">
           <Image src={imagePreview} alt={productName} fill className="object-contain" sizes="(max-width: 768px) 100vw, 50vw" />
         </div>
