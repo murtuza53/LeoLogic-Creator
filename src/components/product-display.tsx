@@ -19,6 +19,7 @@ import {
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph, TextRun, Table as DocxTable, TableRow as DocxTableRow, TableCell as DocxTableCell, WidthType, ImageRun } from 'docx';
+import { Carousel, CarouselContent, CarouselItem, CarouselNext, CarouselPrevious } from './ui/carousel';
 
 
 type ProductDisplayProps = {
@@ -232,10 +233,9 @@ export default function ProductDisplay({ isLoading, productData, productName, im
     URL.revokeObjectURL(url);
   };
   
-  const handleDownloadGeneratedImage = () => {
-    if (productData?.generatedImageUrl) {
-        downloadFile(productData.generatedImageUrl, `${productName.replace(/ /g, '_')}_1080x1080.webp`, 'image/webp');
-    }
+  const handleDownloadGeneratedImage = (imageUrl: string, index?: number) => {
+    const suffix = typeof index === 'number' ? `_v${index + 1}` : '_1080x1080'
+    downloadFile(imageUrl, `${productName.replace(/ /g, '_')}${suffix}.webp`, 'image/webp');
   }
 
 
@@ -391,7 +391,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
           <Card>
             <CardHeader className="flex-row items-center justify-between">
                 <CardTitle className="font-headline text-2xl">Generated Image</CardTitle>
-                <Button variant="outline" onClick={handleDownloadGeneratedImage}>
+                <Button variant="outline" onClick={() => handleDownloadGeneratedImage(productData.generatedImageUrl!)}>
                     <Download className="mr-2 h-4 w-4" />
                     Download (WebP)
                 </Button>
@@ -406,6 +406,43 @@ export default function ProductDisplay({ isLoading, productData, productName, im
                         sizes="(max-width: 768px) 100vw, 50vw"
                     />
                 </div>
+            </CardContent>
+          </Card>
+      )}
+
+      {productData.additionalImages && productData.additionalImages.length > 0 && (
+          <Card className="md:col-span-2">
+            <CardHeader>
+                <CardTitle className="font-headline text-2xl">Additional Generated Images</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <Carousel className="w-full">
+                    <CarouselContent>
+                        {productData.additionalImages.map((imageUrl, index) => (
+                            <CarouselItem key={index} className="md:basis-1/2 lg:basis-1/3">
+                                <div className="p-1">
+                                  <Card>
+                                      <CardContent className="relative aspect-square flex items-center justify-center p-6">
+                                          <Image
+                                            src={imageUrl}
+                                            alt={`Additional generated image ${index + 1} of ${productName}`}
+                                            fill
+                                            className="object-contain rounded-lg"
+                                            sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
+                                          />
+                                      </CardContent>
+                                      <Button variant="outline" className='w-full' onClick={() => handleDownloadGeneratedImage(imageUrl, index)}>
+                                          <Download className="mr-2 h-4 w-4" />
+                                          Download Image {index+1}
+                                      </Button>
+                                  </Card>
+                                </div>
+                            </CarouselItem>
+                        ))}
+                    </CarouselContent>
+                    <CarouselPrevious />
+                    <CarouselNext />
+                </Carousel>
             </CardContent>
           </Card>
       )}

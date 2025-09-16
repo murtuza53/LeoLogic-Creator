@@ -10,6 +10,7 @@ export type ProductData = {
   description: string;
   specifications: { name: string; value: string; }[];
   generatedImageUrl?: string;
+  additionalImages?: string[];
 };
 
 export default function ProductGenerator() {

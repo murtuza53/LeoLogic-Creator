@@ -4,6 +4,7 @@
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
 import { generateProductSpecifications } from '@/ai/flows/generate-product-specifications';
 import { generateProductImage } from '@/ai/flows/generate-product-image';
+import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-product-images';
 
 export async function generateProductDetails(
   productName: string,
@@ -11,10 +12,11 @@ export async function generateProductDetails(
   additionalInfo?: string
 ) {
   try {
-    const [descriptionResult, specificationsResult, imageResult] = await Promise.all([
+    const [descriptionResult, specificationsResult, imageResult, additionalImagesResult] = await Promise.all([
       generateProductDescription({ productName, productImage, additionalInfo }),
       generateProductSpecifications({ productName, productImage, additionalInfo }),
       generateProductImage({ productImage }),
+      generateAdditionalProductImages({productName, productImage, additionalInfo}),
     ]);
 
     if (!descriptionResult?.description || !specificationsResult?.specifications || !imageResult?.imageUrl) {
@@ -25,6 +27,7 @@ export async function generateProductDetails(
       description: descriptionResult.description,
       specifications: specificationsResult.specifications,
       generatedImageUrl: imageResult.imageUrl,
+      additionalImages: additionalImagesResult.imageUrls,
     };
   } catch (error) {
     console.error('Error generating product details:', error);
