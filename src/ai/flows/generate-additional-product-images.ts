@@ -61,7 +61,7 @@ ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
 
 Generate a high-quality 1080x1080 image of this product suitable for a website.
 Showcase the product from a different angle or in a different lifestyle setting that highlights its features and use cases.
-Maintain a consistent style and lighting. The output format should be webp.`,
+Maintain a consistent style and lighting.`,
             },
           ],
           config: {

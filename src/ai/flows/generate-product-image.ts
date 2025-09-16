@@ -50,7 +50,7 @@ const generateProductImageFlow = ai.defineFlow(
       prompt: [
         {media: {url: productImage}},
         {
-          text: 'Generate a high-quality 1080x1080 version of this product image suitable for a website, with a clean white background. The output format should be webp.',
+          text: 'Generate a high-quality 1080x1080 version of this product image suitable for a website, with a clean white background.',
         },
       ],
       config: {
