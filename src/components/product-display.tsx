@@ -8,7 +8,13 @@ import { type ProductData } from './product-generator';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from '@/components/ui/table';
 import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
-import { PlusCircle, Trash2 } from 'lucide-react';
+import { Download, PlusCircle, Trash2 } from 'lucide-react';
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu"
 
 type ProductDisplayProps = {
   isLoading: boolean;
@@ -36,6 +42,53 @@ export default function ProductDisplay({ isLoading, productData, productName, im
     if (!productData) return;
     const newSpecifications = productData.specifications.filter((_, i) => i !== index);
     onProductDataChange({ ...productData, specifications: newSpecifications });
+  };
+
+  const handleDownload = (format: 'json' | 'csv' | 'txt') => {
+    if (!productData) return;
+
+    const dataToDownload = {
+      productName,
+      ...productData,
+    };
+
+    let content = '';
+    let mimeType = '';
+    let fileExtension = '';
+
+    if (format === 'json') {
+      content = JSON.stringify(dataToDownload, null, 2);
+      mimeType = 'application/json';
+      fileExtension = 'json';
+    } else if (format === 'csv') {
+      let csv = 'Specification,Value\n';
+      dataToDownload.specifications.forEach(spec => {
+        csv += `"${spec.name}","${spec.value}"\n`;
+      });
+      content = csv;
+      mimeType = 'text/csv';
+      fileExtension = 'csv';
+    } else if (format === 'txt') {
+        let txt = `Product: ${productName}\n\n`;
+        txt += `Description:\n${dataToDownload.description}\n\n`;
+        txt += 'Specifications:\n';
+        dataToDownload.specifications.forEach(spec => {
+            txt += `- ${spec.name}: ${spec.value}\n`;
+        });
+        content = txt;
+        mimeType = 'text/plain';
+        fileExtension = 'txt';
+    }
+    
+    const blob = new Blob([content], { type: mimeType });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `${productName.replace(/ /g, '_')}_${new Date().toISOString()}.${fileExtension}`;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
   };
 
 
@@ -88,8 +141,21 @@ export default function ProductDisplay({ isLoading, productData, productName, im
 
   return (
     <Card className="shadow-lg">
-      <CardHeader>
+      <CardHeader className="flex-row items-center justify-between">
         <CardTitle className="font-headline text-3xl">{productName}</CardTitle>
+        <DropdownMenu>
+          <DropdownMenuTrigger asChild>
+            <Button variant="outline">
+              <Download className="mr-2" />
+              Download
+            </Button>
+          </DropdownMenuTrigger>
+          <DropdownMenuContent>
+            <DropdownMenuItem onClick={() => handleDownload('json')}>Download as JSON</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload('csv')}>Download as CSV</DropdownMenuItem>
+            <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
+          </DropdownMenuContent>
+        </DropdownMenu>
       </CardHeader>
       <CardContent className="space-y-6">
         <div className="relative aspect-video w-full overflow-hidden rounded-lg border bg-card">
