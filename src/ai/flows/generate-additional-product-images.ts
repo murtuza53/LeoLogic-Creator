@@ -64,9 +64,6 @@ Showcase the product from a different angle or in a different lifestyle setting 
 Maintain a consistent style and lighting.`,
             },
           ],
-          config: {
-            responseModalities: ['IMAGE'],
-          },
         })
       )
     );

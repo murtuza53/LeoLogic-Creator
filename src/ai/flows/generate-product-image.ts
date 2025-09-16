@@ -53,9 +53,6 @@ const generateProductImageFlow = ai.defineFlow(
           text: 'Generate a high-quality 1080x1080 version of this product image suitable for a website, with a clean white background.',
         },
       ],
-      config: {
-        responseModalities: ['IMAGE'],
-      },
     });
 
     if (!media || !media.url) {
