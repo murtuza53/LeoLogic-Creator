@@ -6,12 +6,13 @@ import { generateProductSpecifications } from '@/ai/flows/generate-product-speci
 
 export async function generateProductDetails(
   productName: string,
-  productImage: string
+  productImage: string,
+  additionalInfo?: string
 ) {
   try {
     const [descriptionResult, specificationsResult] = await Promise.all([
-      generateProductDescription({ productName, productImage }),
-      generateProductSpecifications({ productName, productImage }),
+      generateProductDescription({ productName, productImage, additionalInfo }),
+      generateProductSpecifications({ productName, productImage, additionalInfo }),
     ]);
 
     if (!descriptionResult?.description || !specificationsResult?.specifications) {

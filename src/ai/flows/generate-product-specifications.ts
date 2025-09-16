@@ -1,4 +1,3 @@
-// src/ai/flows/generate-product-specifications.ts
 'use server';
 
 /**
@@ -19,6 +18,7 @@ const GenerateProductSpecificationsInputSchema = z.object({
     .describe(
       "A photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
+  additionalInfo: z.string().optional().describe('Additional information about the product.'),
 });
 export type GenerateProductSpecificationsInput = z.infer<
   typeof GenerateProductSpecificationsInputSchema
@@ -53,7 +53,10 @@ const prompt = ai.definePrompt({
   Each specification should be a key-value pair.
 
   Product Name: {{{productName}}}
-  Product Image: {{media url=productImage}}`,
+  Product Image: {{media url=productImage}}
+  {{#if additionalInfo}}
+  Additional Information: {{{additionalInfo}}}
+  {{/if}}`,
 });
 
 const generateProductSpecificationsFlow = ai.defineFlow(

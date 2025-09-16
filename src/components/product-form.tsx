@@ -11,6 +11,7 @@ import {
   FormItem,
   FormLabel,
   FormMessage,
+  FormDescription,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -18,6 +19,7 @@ import { LoaderCircle, UploadCloud } from "lucide-react";
 import Image from "next/image";
 import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
+import { Textarea } from "./ui/textarea";
 
 const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -36,10 +38,13 @@ const formSchema = z.object({
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
     ),
+  additionalInfo: z.string().max(500, {
+    message: "Additional information must not exceed 500 characters."
+  }).optional(),
 });
 
 type ProductFormProps = {
-  onGenerate: (name: string, imageFile: File) => void;
+  onGenerate: (name: string, imageFile: File, additionalInfo?: string) => void;
   isLoading: boolean;
 };
 
@@ -51,12 +56,13 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
     resolver: zodResolver(formSchema),
     defaultValues: {
       productName: "",
+      additionalInfo: "",
     },
   });
   
   function onSubmit(values: z.infer<typeof formSchema>) {
     const imageFile = values.productImage[0];
-    onGenerate(values.productName, imageFile);
+    onGenerate(values.productName, imageFile, values.additionalInfo);
   }
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -138,6 +144,28 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
                 </FormItem>
               )}
             />
+
+            <FormField
+              control={form.control}
+              name="additionalInfo"
+              render={({ field }) => (
+                <FormItem>
+                  <FormLabel>Additional Information</FormLabel>
+                  <FormControl>
+                    <Textarea
+                      placeholder="e.g., 'Made from sustainably sourced oak, features a minimalist design...'"
+                      className="resize-none"
+                      {...field}
+                    />
+                  </FormControl>
+                   <FormDescription>
+                    Provide any extra details that could help generate better content.
+                  </FormDescription>
+                  <FormMessage />
+                </FormItem>
+              )}
+            />
+
 
             <Button type="submit" disabled={isLoading} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
               {isLoading ? (

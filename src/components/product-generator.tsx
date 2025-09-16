@@ -18,7 +18,7 @@ export default function ProductGenerator() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
 
-  const handleGenerate = async (name: string, imageFile: File) => {
+  const handleGenerate = async (name: string, imageFile: File, additionalInfo?: string) => {
     setIsLoading(true);
     setProductData(null);
     setProductName(name);
@@ -35,7 +35,7 @@ export default function ProductGenerator() {
     reader.onloadend = async () => {
       const base64Image = reader.result as string;
       try {
-        const result = await generateProductDetails(name, base64Image);
+        const result = await generateProductDetails(name, base64Image, additionalInfo);
         if ('error' in result) {
           throw new Error(result.error);
         }

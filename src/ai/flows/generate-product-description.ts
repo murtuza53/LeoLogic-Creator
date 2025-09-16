@@ -19,6 +19,7 @@ const GenerateProductDescriptionInputSchema = z.object({
     .describe(
       'A photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: \'data:<mimetype>;base64,<encoded_data>\'.'  
     ),
+  additionalInfo: z.string().optional().describe('Additional information about the product.'),
 });
 export type GenerateProductDescriptionInput = z.infer<
   typeof GenerateProductDescriptionInputSchema
@@ -49,6 +50,9 @@ const generateProductDescriptionPrompt = ai.definePrompt({
 
   Product Name: {{{productName}}}
   Product Image: {{media url=productImage}}
+  {{#if additionalInfo}}
+  Additional Information: {{{additionalInfo}}}
+  {{/if}}
 
   Description:`, //Crucially important to add "Description:" to the end so that the LLM knows to begin generating the description
 });
