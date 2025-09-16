@@ -235,7 +235,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
   
   const handleDownloadGeneratedImage = (imageUrl: string, index?: number) => {
     const suffix = typeof index === 'number' ? `_v${index + 1}` : '_1080x1080'
-    downloadFile(imageUrl, `${productName.replace(/ /g, '_')}${suffix}.webp`, 'image/webp');
+    downloadFile(imageUrl, `${productName.replace(/ /g, '_')}${suffix}.png`, 'image/png');
   }
 
 
@@ -393,7 +393,7 @@ export default function ProductDisplay({ isLoading, productData, productName, im
                 <CardTitle className="font-headline text-2xl">Generated Image</CardTitle>
                 <Button variant="outline" onClick={() => handleDownloadGeneratedImage(productData.generatedImageUrl!)}>
                     <Download className="mr-2 h-4 w-4" />
-                    Download (WebP)
+                    Download (PNG)
                 </Button>
             </CardHeader>
             <CardContent>

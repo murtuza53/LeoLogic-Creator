@@ -26,7 +26,7 @@ export type GenerateProductImageInput = z.infer<
 const GenerateProductImageOutputSchema = z.object({
   imageUrl: z
     .string()
-    .describe('The data URI of the generated product image in webp format.'),
+    .describe('The data URI of the generated product image in png format.'),
 });
 export type GenerateProductImageOutput = z.infer<
   typeof GenerateProductImageOutputSchema
@@ -50,7 +50,7 @@ const generateProductImageFlow = ai.defineFlow(
       prompt: [
         {media: {url: productImage}},
         {
-          text: 'Generate a high-quality 1080x1080 version of this product image suitable for a website, with a clean white background. The output format should be webp.',
+          text: 'Generate a high-quality 1080x1080 version of this product image suitable for a website, with a clean white background. The output format should be png.',
         },
       ],
       config: {
@@ -62,8 +62,8 @@ const generateProductImageFlow = ai.defineFlow(
       throw new Error('Image generation failed to produce an image.');
     }
 
-    // Ensure the output is in webp format as requested. The model should handle this, but we can verify.
-    // The data URI from gemini-2.5-flash-image-preview might not specify webp, but the underlying data is.
+    // Ensure the output is in png format as requested. The model should handle this, but we can verify.
+    // The data URI from gemini-2.5-flash-image-preview might not specify png, but the underlying data is.
     // For simplicity, we trust the model's output format.
     return {
       imageUrl: media.url,
