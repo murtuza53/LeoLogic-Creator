@@ -27,6 +27,7 @@ const formSchema = z.object({
 export default function QrGenerator() {
   const [qrValue, setQrValue] = useState<string | null>(null);
   const [qrConfig, setQrConfig] = useState({
+      iban: "",
       qrColor: "#000000",
       bgColor: "#FFFFFF",
       borderSize: 10,
@@ -50,6 +51,7 @@ export default function QrGenerator() {
     const qrData = JSON.stringify({ iban: values.iban, amount: "" });
     setQrValue(qrData);
     setQrConfig({
+        iban: values.iban,
         qrColor: values.qrColor,
         bgColor: values.bgColor,
         borderSize: values.borderSize,
@@ -59,24 +61,49 @@ export default function QrGenerator() {
   }
 
   const downloadQR = () => {
-    const svg = document.getElementById("qr-code-svg");
-    if (svg) {
-        const svgData = new XMLSerializer().serializeToString(svg);
-        const canvas = document.createElement("canvas");
-        const ctx = canvas.getContext("2d");
-        const img = new Image();
-        img.onload = () => {
-            canvas.width = img.width;
-            canvas.height = img.height;
-            ctx?.drawImage(img, 0, 0);
-            const pngFile = canvas.toDataURL("image/png");
-            const downloadLink = document.createElement("a");
-            downloadLink.download = "benefit-pay-qr.png";
-            downloadLink.href = pngFile;
-            downloadLink.click();
-        };
-        img.src = "data:image/svg+xml;base64," + btoa(svgData);
-    }
+    if (!qrValue) return;
+    // Create a temporary container for the full-sized QR code
+    const container = document.createElement("div");
+    container.style.position = "absolute";
+    container.style.left = "-9999px";
+    container.style.top = "-9999px";
+    document.body.appendChild(container);
+
+    // Create the SVG string with the user-defined size
+    const svgString = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${qrConfig.qrSize}" height="${qrConfig.qrSize}" viewBox="0 0 256 256">
+        <rect width="256" height="256" fill="${qrConfig.bgColor}"></rect>
+        ${document.querySelector("#qr-code-svg path")?.outerHTML.replace(`fill="${qrConfig.qrColor}"`, "")}
+      </svg>
+    `;
+
+    const svgWithWrapper = `
+      <svg xmlns="http://www.w3.org/2000/svg" width="${qrConfig.qrSize + qrConfig.borderSize * 2}" height="${qrConfig.qrSize + qrConfig.borderSize * 2}">
+        <rect width="100%" height="100%" fill="${qrConfig.bgColor}" rx="${qrConfig.borderRadius}" ry="${qrConfig.borderRadius}"></rect>
+        <g transform="translate(${qrConfig.borderSize}, ${qrConfig.borderSize})">
+            ${new QRCode({ value: qrValue, size: qrConfig.qrSize, fgColor: qrConfig.qrColor, bgColor: 'transparent', level: 'L' }).props.children}
+        </g>
+      </svg>
+    `;
+
+    const svgData = new XMLSerializer().serializeToString(new DOMParser().parseFromString(svgWithWrapper, 'image/svg+xml').documentElement);
+
+    const canvas = document.createElement("canvas");
+    const ctx = canvas.getContext("2d");
+    const img = new Image();
+
+    img.onload = () => {
+        canvas.width = qrConfig.qrSize + qrConfig.borderSize * 2;
+        canvas.height = qrConfig.qrSize + qrConfig.borderSize * 2;
+        ctx?.drawImage(img, 0, 0);
+        const pngFile = canvas.toDataURL("image/png");
+        const downloadLink = document.createElement("a");
+        downloadLink.download = "benefit-pay-qr.png";
+        downloadLink.href = pngFile;
+        downloadLink.click();
+        document.body.removeChild(container);
+    };
+    img.src = "data:image/svg+xml;base64," + btoa(svgData);
   };
 
 
@@ -111,7 +138,7 @@ export default function QrGenerator() {
                     <FormItem>
                       <FormLabel>QR Color</FormLabel>
                       <FormControl>
-                        <Input type="color" {...field} />
+                        <Input type="color" {...field} className="h-10 p-1"/>
                       </FormControl>
                     </FormItem>
                   )}
@@ -123,7 +150,7 @@ export default function QrGenerator() {
                     <FormItem>
                       <FormLabel>Background Color</FormLabel>
                       <FormControl>
-                        <Input type="color" {...field} />
+                        <Input type="color" {...field} className="h-10 p-1"/>
                       </FormControl>
                     </FormItem>
                   )}
@@ -196,7 +223,7 @@ export default function QrGenerator() {
                   </ul>
               </div>
 
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
+              <Button type="submit" className="w-full bg-accent hover:bg-accent/no-underline:90 text-accent-foreground font-bold text-base py-6">
                 Generate QR Code
               </Button>
             </form>
@@ -208,22 +235,26 @@ export default function QrGenerator() {
         <CardHeader>
             <CardTitle>Your QR Code</CardTitle>
         </CardHeader>
-        <CardContent className="flex-1 flex flex-col items-center justify-center p-4">
+        <CardContent className="flex-1 flex flex-col items-center justify-center p-4 w-full">
             {qrValue ? (
-                <div className='flex flex-col items-center gap-4'>
-                    <div style={{ background: qrConfig.bgColor, padding: `${qrConfig.borderSize}px`, borderRadius: `${qrConfig.borderRadius}px` }}>
+                <div className='flex flex-col items-center gap-4 w-full'>
+                    <div 
+                      className="w-full max-w-xs sm:max-w-sm"
+                      style={{ background: form.watch('bgColor'), padding: `${form.watch('borderSize')}px`, borderRadius: `${form.watch('borderRadius')}px` }}
+                    >
                         <QRCode
                             id="qr-code-svg"
                             value={qrValue}
-                            size={qrConfig.qrSize}
-                            fgColor={qrConfig.qrColor}
-                            bgColor={qrConfig.bgColor}
+                            size={256}
+                            fgColor={form.watch('qrColor')}
+                            bgColor={'transparent'}
                             level="L"
+                            className="h-auto w-full"
                         />
                     </div>
                     <Button onClick={downloadQR} variant="outline">
                         <Download className='mr-2 h-4 w-4' />
-                        Download QR
+                        Download QR ({qrConfig.qrSize}px)
                     </Button>
                 </div>
             ) : (
