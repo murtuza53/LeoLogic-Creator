@@ -64,10 +64,10 @@ export default function QrGenerator() {
   const downloadQR = () => {
     const qrCodeElement = document.getElementById('qr-code-svg-wrapper');
     if (!qrCodeElement) return;
-
+  
     html2canvas(qrCodeElement, {
       backgroundColor: null, // Use the element's background color
-      scale: 2, // Increase scale for better quality
+      scale: qrConfig.qrSize / qrCodeElement.offsetWidth, // Scale based on desired output size vs preview size
     }).then(canvas => {
       const pngFile = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
@@ -226,7 +226,7 @@ export default function QrGenerator() {
                             value={qrValue}
                             size={256} // Fixed size for responsive preview
                             fgColor={form.watch('qrColor')}
-                            bgColor={form.watch('bgColor')}
+                            bgColor={"transparent"} // Use transparent for QRCode and control background on the wrapper
                             level="L"
                             className="h-auto w-full"
                         />
