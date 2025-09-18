@@ -7,15 +7,15 @@ import * as z from 'zod';
 import QRCode from "react-qr-code";
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 
 const formSchema = z.object({
-  bpayId: z.string().min(3, {
-    message: "Please enter a valid Benefit Pay ID.",
+  iban: z.string().min(3, {
+    message: "Please enter a valid IBAN.",
   }),
   qrColor: z.string(),
   bgColor: z.string(),
@@ -37,7 +37,7 @@ export default function QrGenerator() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      bpayId: "",
+      iban: "",
       qrColor: '#000000',
       bgColor: '#FFFFFF',
       borderSize: 10,
@@ -47,7 +47,8 @@ export default function QrGenerator() {
   });
 
   function onSubmit(values: z.infer<typeof formSchema>) {
-    setQrValue(values.bpayId); // In a real scenario, you'd format this into a BenefitPay URL
+    const qrData = JSON.stringify({ iban: values.iban, amount: "" });
+    setQrValue(qrData);
     setQrConfig({
         qrColor: values.qrColor,
         bgColor: values.bgColor,
@@ -91,13 +92,16 @@ export default function QrGenerator() {
             <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
               <FormField
                 control={form.control}
-                name="bpayId"
+                name="iban"
                 render={({ field }) => (
                   <FormItem>
-                    <FormLabel>Benefit Pay ID</FormLabel>
+                    <FormLabel>IBAN</FormLabel>
                     <FormControl>
-                      <Input placeholder="e.g., 12345678" {...field} />
+                      <Input placeholder="e.g., BH62AAAA00000000000000" {...field} />
                     </FormControl>
+                     <FormDescription>
+                      We don't save your IBAN in our records.
+                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
