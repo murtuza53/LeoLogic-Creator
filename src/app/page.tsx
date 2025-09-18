@@ -1,4 +1,4 @@
-import { ArrowRight, BrainCircuit } from 'lucide-react';
+import { ArrowRight, Calculator, Library } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -49,7 +49,10 @@ export default function Home() {
                     <Link href="/creator" className='h-full'>
                       <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
-                            <CardTitle className="text-lg font-bold">Smart Product Content Generation</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <Library className="h-5 w-5 text-primary" />
+                                Smart Product Content Generation
+                            </CardTitle>
                           </CardHeader>
                           <CardContent className='p-0 mt-2'>
                             <p className="text-sm text-muted-foreground">
@@ -61,7 +64,10 @@ export default function Home() {
                     <Link href="/math-solver" className='h-full'>
                       <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
-                            <CardTitle className="text-lg font-bold">AI Math Problem Solver</CardTitle>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <Calculator className="h-5 w-5 text-primary" />
+                                AI Math Problem Solver
+                            </CardTitle>
                           </CardHeader>
                           <CardContent className='p-0 mt-2'>
                             <p className="text-sm text-muted-foreground">
