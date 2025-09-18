@@ -61,51 +61,36 @@ export default function QrGenerator() {
   }
 
   const downloadQR = () => {
-    if (!qrValue) return;
-    // Create a temporary container for the full-sized QR code
-    const container = document.createElement("div");
-    container.style.position = "absolute";
-    container.style.left = "-9999px";
-    container.style.top = "-9999px";
-    document.body.appendChild(container);
-
-    // Create the SVG string with the user-defined size
-    const svgString = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="${qrConfig.qrSize}" height="${qrConfig.qrSize}" viewBox="0 0 256 256">
-        <rect width="256" height="256" fill="${qrConfig.bgColor}"></rect>
-        ${document.querySelector("#qr-code-svg path")?.outerHTML.replace(`fill="${qrConfig.qrColor}"`, "")}
-      </svg>
-    `;
-
-    const svgWithWrapper = `
-      <svg xmlns="http://www.w3.org/2000/svg" width="${qrConfig.qrSize + qrConfig.borderSize * 2}" height="${qrConfig.qrSize + qrConfig.borderSize * 2}">
-        <rect width="100%" height="100%" fill="${qrConfig.bgColor}" rx="${qrConfig.borderRadius}" ry="${qrConfig.borderRadius}"></rect>
-        <g transform="translate(${qrConfig.borderSize}, ${qrConfig.borderSize})">
-            ${new QRCode({ value: qrValue, size: qrConfig.qrSize, fgColor: qrConfig.qrColor, bgColor: 'transparent', level: 'L' }).props.children}
-        </g>
-      </svg>
-    `;
-
-    const svgData = new XMLSerializer().serializeToString(new DOMParser().parseFromString(svgWithWrapper, 'image/svg+xml').documentElement);
+    const svg = document.getElementById("qr-code-svg-wrapper");
+    if (!svg) return;
 
     const canvas = document.createElement("canvas");
     const ctx = canvas.getContext("2d");
+    if (!ctx) return;
+    
+    const svgData = new XMLSerializer().serializeToString(svg);
     const img = new Image();
 
     img.onload = () => {
-        canvas.width = qrConfig.qrSize + qrConfig.borderSize * 2;
-        canvas.height = qrConfig.qrSize + qrConfig.borderSize * 2;
-        ctx?.drawImage(img, 0, 0);
-        const pngFile = canvas.toDataURL("image/png");
-        const downloadLink = document.createElement("a");
-        downloadLink.download = "benefit-pay-qr.png";
-        downloadLink.href = pngFile;
-        downloadLink.click();
-        document.body.removeChild(container);
-    };
-    img.src = "data:image/svg+xml;base64," + btoa(svgData);
-  };
+      // Set canvas dimensions based on user's desired size
+      const totalWidth = qrConfig.qrSize + qrConfig.borderSize * 2;
+      const totalHeight = qrConfig.qrSize + qrConfig.borderSize * 2;
+      canvas.width = totalWidth;
+      canvas.height = totalHeight;
 
+      // Draw the image onto the canvas
+      ctx.drawImage(img, 0, 0, totalWidth, totalHeight);
+
+      // Trigger download
+      const pngFile = canvas.toDataURL("image/png");
+      const downloadLink = document.createElement("a");
+      downloadLink.download = "benefit-pay-qr.png";
+      downloadLink.href = pngFile;
+      downloadLink.click();
+    };
+
+    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+  };
 
   return (
     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -239,6 +224,7 @@ export default function QrGenerator() {
             {qrValue ? (
                 <div className='flex flex-col items-center gap-4 w-full'>
                     <div 
+                      id="qr-code-svg-wrapper"
                       className="w-full max-w-xs sm:max-w-sm"
                       style={{ background: form.watch('bgColor'), padding: `${form.watch('borderSize')}px`, borderRadius: `${form.watch('borderRadius')}px` }}
                     >
