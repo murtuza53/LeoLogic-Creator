@@ -13,6 +13,7 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
+import { Switch } from './ui/switch';
 
 const formSchema = z.object({
   iban: z.string().min(3, {
@@ -20,6 +21,7 @@ const formSchema = z.object({
   }),
   qrColor: z.string(),
   bgColor: z.string(),
+  transparentBg: z.boolean(),
   borderSize: z.number().min(0).max(50),
   qrSize: z.number().min(50).max(500),
   borderRadius: z.number().min(0).max(50),
@@ -42,6 +44,7 @@ export default function QrGenerator() {
       iban: "",
       qrColor: '#000000',
       bgColor: '#FFFFFF',
+      transparentBg: false,
       borderSize: 10,
       qrSize: 256,
       borderRadius: 8,
@@ -54,7 +57,7 @@ export default function QrGenerator() {
     setQrConfig({
         iban: values.iban,
         qrColor: values.qrColor,
-        bgColor: values.bgColor,
+        bgColor: values.transparentBg ? 'transparent' : values.bgColor,
         borderSize: values.borderSize,
         qrSize: values.qrSize,
         borderRadius: values.borderRadius,
@@ -64,10 +67,10 @@ export default function QrGenerator() {
   const downloadQR = () => {
     const qrCodeElement = document.getElementById('qr-code-svg-wrapper');
     if (!qrCodeElement) return;
-  
+
     html2canvas(qrCodeElement, {
-      backgroundColor: null, // Use the element's background color
-      scale: qrConfig.qrSize / qrCodeElement.offsetWidth, // Scale based on desired output size vs preview size
+      backgroundColor: null,
+      scale: qrConfig.qrSize / qrCodeElement.offsetWidth,
     }).then(canvas => {
       const pngFile = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
@@ -76,6 +79,8 @@ export default function QrGenerator() {
       downloadLink.click();
     });
   };
+
+  const isBgTransparent = form.watch('transparentBg');
 
 
   return (
@@ -121,12 +126,30 @@ export default function QrGenerator() {
                     <FormItem>
                       <FormLabel>Background Color</FormLabel>
                       <FormControl>
-                        <Input type="color" {...field} className="h-10 p-1"/>
+                        <Input type="color" {...field} className="h-10 p-1" disabled={isBgTransparent}/>
                       </FormControl>
                     </FormItem>
                   )}
                 />
               </div>
+
+               <FormField
+                control={form.control}
+                name="transparentBg"
+                render={({ field }) => (
+                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                    <div className="space-y-0.5">
+                      <FormLabel>Transparent Background</FormLabel>
+                    </div>
+                    <FormControl>
+                      <Switch
+                        checked={field.value}
+                        onCheckedChange={field.onChange}
+                      />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
                <FormField
                   control={form.control}
@@ -212,10 +235,9 @@ export default function QrGenerator() {
                     <div 
                       id="qr-code-svg-wrapper"
                       style={{ 
-                          background: form.watch('bgColor'),
+                          background: isBgTransparent ? 'transparent' : form.watch('bgColor'),
                           padding: `${form.watch('borderSize')}px`, 
                           borderRadius: `${form.watch('borderRadius')}px`,
-                          // Responsive width for preview
                           maxWidth: '100%',
                           width: 'auto',
                           height: 'auto',
@@ -224,9 +246,9 @@ export default function QrGenerator() {
                         <QRCode
                             id="qr-code-svg"
                             value={qrValue}
-                            size={256} // Fixed size for responsive preview
+                            size={256}
                             fgColor={form.watch('qrColor')}
-                            bgColor={"transparent"} // Use transparent for QRCode and control background on the wrapper
+                            bgColor={"transparent"}
                             level="L"
                             className="h-auto w-full"
                         />
