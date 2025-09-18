@@ -20,7 +20,6 @@ const formSchema = z.object({
   }),
   qrColor: z.string(),
   bgColor: z.string(),
-  borderColor: z.string(),
   borderSize: z.number().min(0).max(50),
   qrSize: z.number().min(50).max(500),
   borderRadius: z.number().min(0).max(50),
@@ -32,7 +31,6 @@ export default function QrGenerator() {
       iban: "",
       qrColor: "#000000",
       bgColor: "#FFFFFF",
-      borderColor: "#FFFFFF",
       borderSize: 10,
       qrSize: 256,
       borderRadius: 8,
@@ -44,7 +42,6 @@ export default function QrGenerator() {
       iban: "",
       qrColor: '#000000',
       bgColor: '#FFFFFF',
-      borderColor: '#FFFFFF',
       borderSize: 10,
       qrSize: 256,
       borderRadius: 8,
@@ -58,7 +55,6 @@ export default function QrGenerator() {
         iban: values.iban,
         qrColor: values.qrColor,
         bgColor: values.bgColor,
-        borderColor: values.borderColor,
         borderSize: values.borderSize,
         qrSize: values.qrSize,
         borderRadius: values.borderRadius,
@@ -131,19 +127,6 @@ export default function QrGenerator() {
                   )}
                 />
               </div>
-
-               <FormField
-                control={form.control}
-                name="borderColor"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>Border Color</FormLabel>
-                    <FormControl>
-                      <Input type="color" {...field} className="h-10 p-1" />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
 
                <FormField
                   control={form.control}
@@ -229,7 +212,7 @@ export default function QrGenerator() {
                     <div 
                       id="qr-code-svg-wrapper"
                       style={{ 
-                          background: form.watch('borderColor'),
+                          background: form.watch('bgColor'),
                           padding: `${form.watch('borderSize')}px`, 
                           borderRadius: `${form.watch('borderRadius')}px`,
                           // Responsive width for preview
