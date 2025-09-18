@@ -5,6 +5,7 @@ import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import QRCode from "react-qr-code";
+import html2canvas from 'html2canvas';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
@@ -61,36 +62,24 @@ export default function QrGenerator() {
   }
 
   const downloadQR = () => {
-    const svg = document.getElementById("qr-code-svg-wrapper");
-    if (!svg) return;
+    const qrCodeElement = document.getElementById('qr-code-svg-wrapper');
+    if (!qrCodeElement) return;
 
-    const canvas = document.createElement("canvas");
-    const ctx = canvas.getContext("2d");
-    if (!ctx) return;
-    
-    const svgData = new XMLSerializer().serializeToString(svg);
-    const img = new Image();
-
-    img.onload = () => {
-      // Set canvas dimensions based on user's desired size
-      const totalWidth = qrConfig.qrSize + qrConfig.borderSize * 2;
-      const totalHeight = qrConfig.qrSize + qrConfig.borderSize * 2;
-      canvas.width = totalWidth;
-      canvas.height = totalHeight;
-
-      // Draw the image onto the canvas
-      ctx.drawImage(img, 0, 0, totalWidth, totalHeight);
-
-      // Trigger download
-      const pngFile = canvas.toDataURL("image/png");
-      const downloadLink = document.createElement("a");
-      downloadLink.download = "benefit-pay-qr.png";
+    // Use html2canvas to capture the styled div
+    html2canvas(qrCodeElement, {
+      width: qrConfig.qrSize + qrConfig.borderSize * 2,
+      height: qrConfig.qrSize + qrConfig.borderSize * 2,
+      scale: 2, // Increase scale for better quality
+      backgroundColor: null // Use the element's background color
+    }).then(canvas => {
+      const pngFile = canvas.toDataURL('image/png');
+      const downloadLink = document.createElement('a');
+      downloadLink.download = 'benefit-pay-qr.png';
       downloadLink.href = pngFile;
       downloadLink.click();
-    };
-
-    img.src = "data:image/svg+xml;base64," + btoa(unescape(encodeURIComponent(svgData)));
+    });
   };
+
 
   return (
     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -225,13 +214,18 @@ export default function QrGenerator() {
                 <div className='flex flex-col items-center gap-4 w-full'>
                     <div 
                       id="qr-code-svg-wrapper"
-                      className="w-full max-w-xs sm:max-w-sm"
-                      style={{ background: form.watch('bgColor'), padding: `${form.watch('borderSize')}px`, borderRadius: `${form.watch('borderRadius')}px` }}
+                      style={{ 
+                          background: form.watch('bgColor'), 
+                          padding: `${form.watch('borderSize')}px`, 
+                          borderRadius: `${form.watch('borderRadius')}px`,
+                          width: form.watch('qrSize') + (form.watch('borderSize') * 2),
+                          height: form.watch('qrSize') + (form.watch('borderSize') * 2),
+                      }}
                     >
                         <QRCode
                             id="qr-code-svg"
                             value={qrValue}
-                            size={256}
+                            size={form.watch('qrSize')}
                             fgColor={form.watch('qrColor')}
                             bgColor={'transparent'}
                             level="L"
