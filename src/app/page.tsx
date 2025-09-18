@@ -20,7 +20,7 @@ export default function Home() {
         </Button>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12 md:py-24">
+        <section className="w-full py-12">
           <div className="container mx-auto px-4 md:px-6">
             <div className="grid gap-6 lg:grid-cols-1 lg:gap-12 xl:grid-cols-1">
               <div className="flex flex-col justify-center space-y-4 text-center">
@@ -28,17 +28,6 @@ export default function Home() {
                   <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
                     Generate Digital Content in Seconds
                   </h1>
-                  <p className="mx-auto max-w-[700px] text-lg text-muted-foreground md:text-xl">
-                    Leverage AI to create compelling product descriptions, solve complex math problems, and more.
-                  </p>
-                </div>
-                <div className="flex w-full flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
-                  <Button asChild className="w-full sm:w-auto" size="lg">
-                    <Link href="/creator">
-                      Start Creating Now
-                      <ArrowRight className="ml-2 h-5 w-5" />
-                    </Link>
-                  </Button>
                 </div>
               </div>
             </div>
