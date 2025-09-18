@@ -99,9 +99,6 @@ export default function QrGenerator() {
                     <FormControl>
                       <Input placeholder="e.g., BH62AAAA00000000000000" {...field} />
                     </FormControl>
-                     <FormDescription>
-                      We don't save your IBAN in our records.
-                    </FormDescription>
                     <FormMessage />
                   </FormItem>
                 )}
@@ -189,6 +186,15 @@ export default function QrGenerator() {
                     </FormItem>
                   )}
                 />
+              
+              <div className="space-y-2 text-sm text-muted-foreground rounded-lg border border-dashed p-4">
+                  <p className="font-semibold">Disclaimer:</p>
+                  <ul className="list-disc list-inside space-y-1">
+                    <li>We don&apos;t save your IBAN in our records.</li>
+                    <li>Make sure you have entered a valid IBAN.</li>
+                    <li>Test the QR code before using it in a real application.</li>
+                  </ul>
+              </div>
 
               <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
                 Generate QR Code
