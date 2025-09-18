@@ -44,9 +44,16 @@ const generateProductDescriptionPrompt = ai.definePrompt({
   name: 'generateProductDescriptionPrompt',
   input: {schema: GenerateProductDescriptionInputSchema},
   output: {schema: GenerateProductDescriptionOutputSchema},
-  prompt: `You are an expert copywriter specializing in product descriptions.
+  prompt: `You are an SEO expert and copywriter specializing in e-commerce.
 
-  Based on the product name and image, create a compelling and informative product description.
+  Generate an SEO-optimized product description based on the provided product name, image analysis, and any additional information.
+
+  The description must clearly highlight:
+  - Product type (e.g., material, category, design)
+  - Quality attributes (e.g., durability, craftsmanship, finish)
+  - Application or use case (e.g., ideal environments, target users, functional benefits)
+
+  Ensure the description is concise, keyword-rich, and tailored for e-commerce or marketing platforms.
 
   Product Name: {{{productName}}}
   Product Image: {{media url=productImage}}
@@ -54,7 +61,7 @@ const generateProductDescriptionPrompt = ai.definePrompt({
   Additional Information: {{{additionalInfo}}}
   {{/if}}
 
-  Description:`, //Crucially important to add "Description:" to the end so that the LLM knows to begin generating the description
+  Description:`,
 });
 
 const generateProductDescriptionFlow = ai.defineFlow(
