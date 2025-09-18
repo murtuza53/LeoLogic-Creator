@@ -5,6 +5,7 @@ import { generateProductDescription } from '@/ai/flows/generate-product-descript
 import { generateProductSpecifications } from '@/ai/flows/generate-product-specifications';
 import { generateProductImage } from '@/ai/flows/generate-product-image';
 import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-product-images';
+import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 
 export async function generateProductDetails(
   productName: string,
@@ -43,6 +44,24 @@ export async function generateProductDetails(
     };
   } catch (error) {
     console.error('Error generating product details:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function solveMathProblemAction(problem: string) {
+  try {
+    const result = await solveMathProblem({ problem });
+    if (!result) {
+      throw new Error('AI failed to solve the problem.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error solving math problem:', error);
     return {
       error:
         error instanceof Error

@@ -1,8 +1,9 @@
-import { ArrowRight } from 'lucide-react';
+import { ArrowRight, BrainCircuit } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { Badge } from '@/components/ui/badge';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 
 export default function Home() {
   return (
@@ -25,10 +26,10 @@ export default function Home() {
               <div className="flex flex-col justify-center space-y-4 text-center">
                 <div className="space-y-2">
                   <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-                    Generate Product Content in Seconds
+                    Generate Digital Content in Seconds
                   </h1>
                   <p className="mx-auto max-w-[700px] text-lg text-muted-foreground md:text-xl">
-                    Leverage AI to create compelling product descriptions, detailed specifications, and professional images from a single upload.
+                    Leverage AI to create compelling product descriptions, solve complex math problems, and more.
                   </p>
                 </div>
                 <div className="flex w-full flex-col items-center justify-center space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
@@ -51,29 +52,35 @@ export default function Home() {
                         <Badge variant="outline">Key Features</Badge>
                         <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Why You&apos;ll Love LeoLogic Creator</h2>
                         <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                            Our AI-powered tool is designed to streamline your content creation process, saving you time and boosting your product&apos;s appeal.
+                            Our suite of AI-powered tools is designed to streamline your content creation process, saving you time and boosting your productivity.
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
-                    <div className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md">
-                        <h3 className="text-lg font-bold">AI-Powered Descriptions</h3>
-                        <p className="text-sm text-muted-foreground">
-                            Generate unique, SEO-friendly product descriptions that highlight key features and benefits, tailored for e-commerce.
-                        </p>
-                    </div>
-                    <div className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md">
-                        <h3 className="text-lg font-bold">Detailed Specifications</h3>
-                        <p className="text-sm text-muted-foreground">
-                            Automatically extract and format technical specifications from your product images, ensuring accuracy and clarity.
-                        </p>
-                    </div>
-                    <div className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md">
-                        <h3 className="text-lg font-bold">Studio-Quality Images</h3>
-                        <p className="text-sm text-muted-foreground">
-                            Create professional-grade product photos with clean backgrounds and generate multiple lifestyle shots and variations.
-                        </p>
-                    </div>
+                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-2">
+                    <Link href="/creator" className='h-full'>
+                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                          <CardHeader className='p-0'>
+                            <CardTitle className="text-lg font-bold">Smart Product Content Generation</CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                                Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
+                            </p>
+                          </CardContent>
+                      </Card>
+                    </Link>
+                    <Link href="/math-solver" className='h-full'>
+                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                          <CardHeader className='p-0'>
+                            <CardTitle className="text-lg font-bold">AI Math Problem Solver</CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
+                            </p>
+                          </CardContent>
+                      </Card>
+                    </Link>
                 </div>
             </div>
         </section>
