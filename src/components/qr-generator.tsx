@@ -20,6 +20,7 @@ const formSchema = z.object({
   }),
   qrColor: z.string(),
   bgColor: z.string(),
+  borderColor: z.string(),
   borderSize: z.number().min(0).max(50),
   qrSize: z.number().min(50).max(500),
   borderRadius: z.number().min(0).max(50),
@@ -31,6 +32,7 @@ export default function QrGenerator() {
       iban: "",
       qrColor: "#000000",
       bgColor: "#FFFFFF",
+      borderColor: "#FFFFFF",
       borderSize: 10,
       qrSize: 256,
       borderRadius: 8,
@@ -42,6 +44,7 @@ export default function QrGenerator() {
       iban: "",
       qrColor: '#000000',
       bgColor: '#FFFFFF',
+      borderColor: '#FFFFFF',
       borderSize: 10,
       qrSize: 256,
       borderRadius: 8,
@@ -55,6 +58,7 @@ export default function QrGenerator() {
         iban: values.iban,
         qrColor: values.qrColor,
         bgColor: values.bgColor,
+        borderColor: values.borderColor,
         borderSize: values.borderSize,
         qrSize: values.qrSize,
         borderRadius: values.borderRadius,
@@ -65,12 +69,9 @@ export default function QrGenerator() {
     const qrCodeElement = document.getElementById('qr-code-svg-wrapper');
     if (!qrCodeElement) return;
 
-    // Use html2canvas to capture the styled div
     html2canvas(qrCodeElement, {
-      width: qrConfig.qrSize + qrConfig.borderSize * 2,
-      height: qrConfig.qrSize + qrConfig.borderSize * 2,
+      backgroundColor: null, // Use the element's background color
       scale: 2, // Increase scale for better quality
-      backgroundColor: null // Use the element's background color
     }).then(canvas => {
       const pngFile = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
@@ -130,6 +131,19 @@ export default function QrGenerator() {
                   )}
                 />
               </div>
+
+               <FormField
+                control={form.control}
+                name="borderColor"
+                render={({ field }) => (
+                  <FormItem>
+                    <FormLabel>Border Color</FormLabel>
+                    <FormControl>
+                      <Input type="color" {...field} className="h-10 p-1" />
+                    </FormControl>
+                  </FormItem>
+                )}
+              />
 
                <FormField
                   control={form.control}
@@ -215,19 +229,21 @@ export default function QrGenerator() {
                     <div 
                       id="qr-code-svg-wrapper"
                       style={{ 
-                          background: form.watch('bgColor'), 
+                          background: form.watch('borderColor'),
                           padding: `${form.watch('borderSize')}px`, 
                           borderRadius: `${form.watch('borderRadius')}px`,
-                          width: form.watch('qrSize') + (form.watch('borderSize') * 2),
-                          height: form.watch('qrSize') + (form.watch('borderSize') * 2),
+                          // Responsive width for preview
+                          maxWidth: '100%',
+                          width: 'auto',
+                          height: 'auto',
                       }}
                     >
                         <QRCode
                             id="qr-code-svg"
                             value={qrValue}
-                            size={form.watch('qrSize')}
+                            size={256} // Fixed size for responsive preview
                             fgColor={form.watch('qrColor')}
-                            bgColor={'transparent'}
+                            bgColor={form.watch('bgColor')}
                             level="L"
                             className="h-auto w-full"
                         />
