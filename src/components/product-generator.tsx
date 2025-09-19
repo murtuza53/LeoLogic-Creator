@@ -5,6 +5,7 @@ import ProductForm from '@/components/product-form';
 import ProductDisplay from '@/components/product-display';
 import { generateProductDetails } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import GenerationCounter from './generation-counter';
 
 export type ProductData = {
   description: string;
@@ -18,6 +19,7 @@ export default function ProductGenerator() {
   const [productData, setProductData] = useState<ProductData | null>(null);
   const [productName, setProductName] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
+  const [generationCount, setGenerationCount] = useState(0);
   const { toast } = useToast();
 
   const handleGenerate = async (name: string, imageFile: File, generateAdditionalImages: boolean, additionalInfo?: string) => {
@@ -42,6 +44,7 @@ export default function ProductGenerator() {
           throw new Error(result.error);
         }
         setProductData(result as ProductData);
+        setGenerationCount(prev => prev + 1);
       } catch (error) {
         console.error(error);
         toast({
@@ -67,15 +70,20 @@ export default function ProductGenerator() {
   };
 
   return (
-    <div className="mt-8 grid gap-12 md:grid-cols-2 md:gap-8 lg:mt-12">
-      <ProductForm onGenerate={handleGenerate} isLoading={isLoading} />
-      <ProductDisplay
-        isLoading={isLoading}
-        productData={productData}
-        productName={productName}
-        imagePreview={imagePreview}
-        onProductDataChange={setProductData}
-      />
-    </div>
+    <>
+      <div className="fixed bottom-4 right-4 z-50">
+          <GenerationCounter featureKey="product" count={generationCount} />
+      </div>
+      <div className="mt-8 grid gap-12 md:grid-cols-2 md:gap-8 lg:mt-12">
+        <ProductForm onGenerate={handleGenerate} isLoading={isLoading} />
+        <ProductDisplay
+          isLoading={isLoading}
+          productData={productData}
+          productName={productName}
+          imagePreview={imagePreview}
+          onProductDataChange={setProductData}
+        />
+      </div>
+    </>
   );
 }

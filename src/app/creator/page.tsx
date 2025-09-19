@@ -18,12 +18,14 @@ export default function CreatorPage() {
           </a>
           <span className="font-semibold">LeoLogic Creator</span>
         </nav>
-        <Button variant="outline" asChild>
-          <Link href="/">
-            <Home className="mr-2 h-4 w-4" />
-            Back to Home
-          </Link>
-        </Button>
+        <div className="flex items-center gap-4">
+          <Button variant="outline" asChild>
+            <Link href="/">
+              <Home className="mr-2 h-4 w-4" />
+              Back to Home
+            </Link>
+          </Button>
+        </div>
       </header>
       <main className="flex-1 p-4 md:p-8 lg:p-10">
         <div className="mx-auto max-w-6xl">

@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
+import GenerationCounter from './generation-counter';
 
 const formSchema = z.object({
   iban: z.string().min(3, {
@@ -29,6 +30,7 @@ const formSchema = z.object({
 
 export default function QrGenerator() {
   const [qrValue, setQrValue] = useState<string | null>(null);
+  const [generationCount, setGenerationCount] = useState(0);
   const [qrConfig, setQrConfig] = useState({
       iban: "",
       qrColor: "#000000",
@@ -62,6 +64,7 @@ export default function QrGenerator() {
         qrSize: values.qrSize,
         borderRadius: values.borderRadius,
     });
+    setGenerationCount(prev => prev + 1);
   }
 
   const downloadQR = () => {
@@ -84,187 +87,192 @@ export default function QrGenerator() {
 
 
   return (
-    <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
-      <Card className="shadow-lg">
-        <CardHeader>
-          <CardTitle>QR Code Customization</CardTitle>
-          <CardDescription>Enter your details and customize the design.</CardDescription>
-        </CardHeader>
-        <CardContent>
-          <Form {...form}>
-            <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
-              <FormField
-                control={form.control}
-                name="iban"
-                render={({ field }) => (
-                  <FormItem>
-                    <FormLabel>IBAN</FormLabel>
-                    <FormControl>
-                      <Input placeholder="e.g., BH62AAAA00000000000000" {...field} />
-                    </FormControl>
-                    <FormMessage />
-                  </FormItem>
-                )}
-              />
-              <div className="grid grid-cols-2 gap-4">
+    <>
+      <div className="fixed bottom-4 right-4 z-50">
+        <GenerationCounter featureKey="qr" count={generationCount} />
+      </div>
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <Card className="shadow-lg">
+          <CardHeader>
+            <CardTitle>QR Code Customization</CardTitle>
+            <CardDescription>Enter your details and customize the design.</CardDescription>
+          </CardHeader>
+          <CardContent>
+            <Form {...form}>
+              <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="qrColor"
+                  name="iban"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>QR Color</FormLabel>
+                      <FormLabel>IBAN</FormLabel>
                       <FormControl>
-                        <Input type="color" {...field} className="h-10 p-1"/>
+                        <Input placeholder="e.g., BH62AAAA00000000000000" {...field} />
                       </FormControl>
+                      <FormMessage />
                     </FormItem>
                   )}
                 />
-                 <FormField
-                  control={form.control}
-                  name="bgColor"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Background Color</FormLabel>
-                      <FormControl>
-                        <Input type="color" {...field} className="h-10 p-1" disabled={isBgTransparent}/>
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              </div>
-
-               <FormField
-                control={form.control}
-                name="transparentBg"
-                render={({ field }) => (
-                  <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
-                    <div className="space-y-0.5">
-                      <FormLabel>Transparent Background</FormLabel>
-                    </div>
-                    <FormControl>
-                      <Switch
-                        checked={field.value}
-                        onCheckedChange={field.onChange}
-                      />
-                    </FormControl>
-                  </FormItem>
-                )}
-              />
-
-               <FormField
-                  control={form.control}
-                  name="qrSize"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>QR Size: {field.value}px</FormLabel>
-                      <FormControl>
-                         <Slider
-                            min={50}
-                            max={500}
-                            step={1}
-                            value={[field.value]}
-                            onValueChange={(vals) => field.onChange(vals[0])}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="borderSize"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Border Size: {field.value}px</FormLabel>
-                      <FormControl>
-                         <Slider
-                            min={0}
-                            max={50}
-                            step={1}
-                            value={[field.value]}
-                            onValueChange={(vals) => field.onChange(vals[0])}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-
-                <FormField
-                  control={form.control}
-                  name="borderRadius"
-                  render={({ field }) => (
-                    <FormItem>
-                      <FormLabel>Border Radius: {field.value}px</FormLabel>
-                      <FormControl>
-                         <Slider
-                            min={0}
-                            max={50}
-                            step={1}
-                            value={[field.value]}
-                            onValueChange={(vals) => field.onChange(vals[0])}
-                        />
-                      </FormControl>
-                    </FormItem>
-                  )}
-                />
-              
-              <div className="space-y-2 text-sm text-muted-foreground rounded-lg border border-dashed p-4">
-                  <p className="font-semibold">Disclaimer:</p>
-                  <ul className="list-disc list-inside space-y-1">
-                    <li>We don&apos;t save your IBAN in our records.</li>
-                    <li>Make sure you have entered a valid IBAN.</li>
-                    <li>Test the QR code before using it in a real application.</li>
-                  </ul>
-              </div>
-
-              <Button type="submit" className="w-full bg-accent hover:bg-accent/no-underline:90 text-accent-foreground font-bold text-base py-6">
-                Generate QR Code
-              </Button>
-            </form>
-          </Form>
-        </CardContent>
-      </Card>
-      
-      <Card className="shadow-lg flex flex-col items-center justify-center">
-        <CardHeader>
-            <CardTitle>Your QR Code</CardTitle>
-        </CardHeader>
-        <CardContent className="flex-1 flex flex-col items-center justify-center p-4 w-full">
-            {qrValue ? (
-                <div className='flex flex-col items-center gap-4 w-full'>
-                    <div 
-                      id="qr-code-svg-wrapper"
-                      style={{ 
-                          background: isBgTransparent ? 'transparent' : form.watch('bgColor'),
-                          padding: `${form.watch('borderSize')}px`, 
-                          borderRadius: `${form.watch('borderRadius')}px`,
-                          maxWidth: '100%',
-                          width: 'auto',
-                          height: 'auto',
-                      }}
-                    >
-                        <QRCode
-                            id="qr-code-svg"
-                            value={qrValue}
-                            size={256}
-                            fgColor={form.watch('qrColor')}
-                            bgColor={"transparent"}
-                            level="L"
-                            className="h-auto w-full"
-                        />
-                    </div>
-                    <Button onClick={downloadQR} variant="outline">
-                        <Download className='mr-2 h-4 w-4' />
-                        Download QR ({qrConfig.qrSize}px)
-                    </Button>
+                <div className="grid grid-cols-2 gap-4">
+                  <FormField
+                    control={form.control}
+                    name="qrColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>QR Color</FormLabel>
+                        <FormControl>
+                          <Input type="color" {...field} className="h-10 p-1"/>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                  <FormField
+                    control={form.control}
+                    name="bgColor"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Background Color</FormLabel>
+                        <FormControl>
+                          <Input type="color" {...field} className="h-10 p-1" disabled={isBgTransparent}/>
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
                 </div>
-            ) : (
-                <div className="text-center text-muted-foreground p-8 border-2 border-dashed rounded-lg">
-                    <p>Your generated QR code will appear here.</p>
+
+                <FormField
+                  control={form.control}
+                  name="transparentBg"
+                  render={({ field }) => (
+                    <FormItem className="flex flex-row items-center justify-between rounded-lg border p-3">
+                      <div className="space-y-0.5">
+                        <FormLabel>Transparent Background</FormLabel>
+                      </div>
+                      <FormControl>
+                        <Switch
+                          checked={field.value}
+                          onCheckedChange={field.onChange}
+                        />
+                      </FormControl>
+                    </FormItem>
+                  )}
+                />
+
+                <FormField
+                    control={form.control}
+                    name="qrSize"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>QR Size: {field.value}px</FormLabel>
+                        <FormControl>
+                          <Slider
+                              min={50}
+                              max={500}
+                              step={1}
+                              value={[field.value]}
+                              onValueChange={(vals) => field.onChange(vals[0])}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="borderSize"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Border Size: {field.value}px</FormLabel>
+                        <FormControl>
+                          <Slider
+                              min={0}
+                              max={50}
+                              step={1}
+                              value={[field.value]}
+                              onValueChange={(vals) => field.onChange(vals[0])}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+
+                  <FormField
+                    control={form.control}
+                    name="borderRadius"
+                    render={({ field }) => (
+                      <FormItem>
+                        <FormLabel>Border Radius: {field.value}px</FormLabel>
+                        <FormControl>
+                          <Slider
+                              min={0}
+                              max={50}
+                              step={1}
+                              value={[field.value]}
+                              onValueChange={(vals) => field.onChange(vals[0])}
+                          />
+                        </FormControl>
+                      </FormItem>
+                    )}
+                  />
+                
+                <div className="space-y-2 text-sm text-muted-foreground rounded-lg border border-dashed p-4">
+                    <p className="font-semibold">Disclaimer:</p>
+                    <ul className="list-disc list-inside space-y-1">
+                      <li>We don&apos;t save your IBAN in our records.</li>
+                      <li>Make sure you have entered a valid IBAN.</li>
+                      <li>Test the QR code before using it in a real application.</li>
+                    </ul>
                 </div>
-            )}
-        </CardContent>
-      </Card>
-    </div>
+
+                <Button type="submit" className="w-full bg-accent hover:bg-accent/no-underline:90 text-accent-foreground font-bold text-base py-6">
+                  Generate QR Code
+                </Button>
+              </form>
+            </Form>
+          </CardContent>
+        </Card>
+        
+        <Card className="shadow-lg flex flex-col items-center justify-center">
+          <CardHeader>
+              <CardTitle>Your QR Code</CardTitle>
+          </CardHeader>
+          <CardContent className="flex-1 flex flex-col items-center justify-center p-4 w-full">
+              {qrValue ? (
+                  <div className='flex flex-col items-center gap-4 w-full'>
+                      <div 
+                        id="qr-code-svg-wrapper"
+                        style={{ 
+                            background: isBgTransparent ? 'transparent' : form.watch('bgColor'),
+                            padding: `${form.watch('borderSize')}px`, 
+                            borderRadius: `${form.watch('borderRadius')}px`,
+                            maxWidth: '100%',
+                            width: 'auto',
+                            height: 'auto',
+                        }}
+                      >
+                          <QRCode
+                              id="qr-code-svg"
+                              value={qrValue}
+                              size={256}
+                              fgColor={form.watch('qrColor')}
+                              bgColor={"transparent"}
+                              level="L"
+                              className="h-auto w-full"
+                          />
+                      </div>
+                      <Button onClick={downloadQR} variant="outline">
+                          <Download className='mr-2 h-4 w-4' />
+                          Download QR ({qrConfig.qrSize}px)
+                      </Button>
+                  </div>
+              ) : (
+                  <div className="text-center text-muted-foreground p-8 border-2 border-dashed rounded-lg">
+                      <p>Your generated QR code will appear here.</p>
+                  </div>
+              )}
+          </CardContent>
+        </Card>
+      </div>
+    </>
   );
 }

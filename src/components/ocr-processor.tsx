@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph } from 'docx';
+import GenerationCounter from './generation-counter';
 
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -29,6 +30,7 @@ export default function OcrProcessor() {
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(null);
   const [activeTab, setActiveTab] = useState('styled');
   const [copied, setCopied] = useState(false);
+  const [generationCount, setGenerationCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const styledContentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -54,6 +56,7 @@ export default function OcrProcessor() {
           throw new Error(result.error);
         }
         setExtractedData(result as ExtractedData);
+        setGenerationCount(prev => prev + 1);
       } catch (error) {
         console.error(error);
         toast({
@@ -151,7 +154,7 @@ export default function OcrProcessor() {
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
         const ratio = canvasHeight / canvasWidth;
-        const imgHeight = pdfWidth * ratio;
+        let imgHeight = pdfWidth * ratio;
         let heightLeft = imgHeight;
         let position = 0;
 
@@ -205,89 +208,94 @@ export default function OcrProcessor() {
   );
 
   return (
-    <div className="mt-8" onPaste={handlePaste}>
-      {!imagePreview && (
-        <Card 
-          className="relative mt-2 flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-20 hover:border-primary/50 transition-colors cursor-pointer shadow-inner"
-          onClick={() => fileInputRef.current?.click()}
-        >
-          <div className="text-center">
-            <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
-            <div className="mt-4 flex text-lg leading-6 text-muted-foreground">
-              <span className="font-semibold text-primary">
-                Upload a file
-              </span>
-              <p className="pl-1">, paste an image, or drag and drop</p>
+    <>
+      <div className="fixed bottom-4 right-4 z-50">
+          <GenerationCounter featureKey="ocr" count={generationCount} />
+      </div>
+      <div className="mt-8" onPaste={handlePaste}>
+        {!imagePreview && (
+          <Card 
+            className="relative mt-2 flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-20 hover:border-primary/50 transition-colors cursor-pointer shadow-inner"
+            onClick={() => fileInputRef.current?.click()}
+          >
+            <div className="text-center">
+              <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+              <div className="mt-4 flex text-lg leading-6 text-muted-foreground">
+                <span className="font-semibold text-primary">
+                  Upload a file
+                </span>
+                <p className="pl-1">, paste an image, or drag and drop</p>
+              </div>
+              <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, GIF, WEBP up to 10MB</p>
+              <input 
+                  id="file-upload" 
+                  type="file" 
+                  className="sr-only"
+                  ref={fileInputRef}
+                  accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                  onChange={handleImageChange}
+                />
             </div>
-            <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, GIF, WEBP up to 10MB</p>
-            <input 
-                id="file-upload" 
-                type="file" 
-                className="sr-only"
-                ref={fileInputRef}
-                accept={ACCEPTED_IMAGE_TYPES.join(',')}
-                onChange={handleImageChange}
-              />
+          </Card>
+        )}
+
+        {isLoading && <LoadingState />}
+
+        {!isLoading && imagePreview && extractedData && (
+          <div className="grid md:grid-cols-2 gap-8 animate-in fade-in-50">
+            <Card className="shadow-lg p-4">
+              <p className='text-sm font-semibold text-muted-foreground mb-2'>Original Image</p>
+              <div className="relative w-full min-h-[400px] max-h-[80vh] rounded-md overflow-hidden border">
+                <Image src={imagePreview} alt="Original input" layout="fill" objectFit="contain" />
+              </div>
+            </Card>
+            <Card className="shadow-lg p-4 flex flex-col">
+              <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+                  <div className='flex justify-between items-center mb-2'>
+                      <TabsList>
+                          <TabsTrigger value="styled"><Code className='mr-2 h-4 w-4' /> Styled HTML</TabsTrigger>
+                          <TabsTrigger value="plain"><FileText className='mr-2 h-4 w-4' /> Plain Text</TabsTrigger>
+                      </TabsList>
+                      <div className='flex items-center gap-2'>
+                        <Button variant="outline" onClick={handleCopy}>
+                            {copied ? <ClipboardCheck className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
+                            {copied ? 'Copied!' : 'Copy'}
+                        </Button>
+                        <DropdownMenu>
+                            <DropdownMenuTrigger asChild>
+                                <Button variant="outline">
+                                    <Download className="mr-2 h-4 w-4" />
+                                    Download
+                                </Button>
+                            </DropdownMenuTrigger>
+                            <DropdownMenuContent>
+                                <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownload('html')}>Download as HTML</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download as PDF</DropdownMenuItem>
+                                <DropdownMenuItem onClick={() => handleDownload('docx')}>Download as Word (.docx)</DropdownMenuItem>
+                            </DropdownMenuContent>
+                        </DropdownMenu>
+                      </div>
+                  </div>
+                  <TabsContent value="styled" className="h-full">
+                      <Card className='h-full'>
+                          <CardContent className='p-4 h-full overflow-auto max-h-[75vh]'>
+                              <div ref={styledContentRef} dangerouslySetInnerHTML={{ __html: extractedData.styledHtml }} />
+                          </CardContent>
+                      </Card>
+                  </TabsContent>
+                  <TabsContent value="plain" className="h-full">
+                      <Card className='h-full'>
+                          <CardContent className='p-4 h-full'>
+                              <pre className="whitespace-pre-wrap text-sm text-foreground overflow-auto max-h-[75vh]">{extractedData.plainText}</pre>
+                          </CardContent>
+                      </Card>
+                  </TabsContent>
+              </Tabs>
+            </Card>
           </div>
-        </Card>
-      )}
-
-      {isLoading && <LoadingState />}
-
-      {!isLoading && imagePreview && extractedData && (
-        <div className="grid md:grid-cols-2 gap-8 animate-in fade-in-50">
-          <Card className="shadow-lg p-4">
-            <p className='text-sm font-semibold text-muted-foreground mb-2'>Original Image</p>
-            <div className="relative w-full min-h-[400px] max-h-[80vh] rounded-md overflow-hidden border">
-              <Image src={imagePreview} alt="Original input" layout="fill" objectFit="contain" />
-            </div>
-          </Card>
-          <Card className="shadow-lg p-4 flex flex-col">
-            <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-                <div className='flex justify-between items-center mb-2'>
-                    <TabsList>
-                        <TabsTrigger value="styled"><Code className='mr-2 h-4 w-4' /> Styled HTML</TabsTrigger>
-                        <TabsTrigger value="plain"><FileText className='mr-2 h-4 w-4' /> Plain Text</TabsTrigger>
-                    </TabsList>
-                    <div className='flex items-center gap-2'>
-                      <Button variant="outline" onClick={handleCopy}>
-                          {copied ? <ClipboardCheck className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
-                          {copied ? 'Copied!' : 'Copy'}
-                      </Button>
-                      <DropdownMenu>
-                          <DropdownMenuTrigger asChild>
-                              <Button variant="outline">
-                                  <Download className="mr-2 h-4 w-4" />
-                                  Download
-                              </Button>
-                          </DropdownMenuTrigger>
-                          <DropdownMenuContent>
-                              <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDownload('html')}>Download as HTML</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download as PDF</DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => handleDownload('docx')}>Download as Word (.docx)</DropdownMenuItem>
-                          </DropdownMenuContent>
-                      </DropdownMenu>
-                    </div>
-                </div>
-                <TabsContent value="styled" className="h-full">
-                    <Card className='h-full'>
-                        <CardContent className='p-4 h-full overflow-auto max-h-[75vh]'>
-                            <div ref={styledContentRef} dangerouslySetInnerHTML={{ __html: extractedData.styledHtml }} />
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-                <TabsContent value="plain" className="h-full">
-                    <Card className='h-full'>
-                        <CardContent className='p-4 h-full'>
-                            <pre className="whitespace-pre-wrap text-sm text-foreground overflow-auto max-h-[75vh]">{extractedData.plainText}</pre>
-                        </CardContent>
-                    </Card>
-                </TabsContent>
-            </Tabs>
-          </Card>
-        </div>
-      )}
-    </div>
+        )}
+      </div>
+    </>
   );
 }
