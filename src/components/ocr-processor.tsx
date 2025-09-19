@@ -6,9 +6,14 @@ import { useToast } from '@/hooks/use-toast';
 import { extractTextFromImageAction } from '@/app/actions';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
-import { LoaderCircle, UploadCloud, Clipboard, ClipboardCheck, Code, FileText } from 'lucide-react';
+import { LoaderCircle, UploadCloud, Clipboard, ClipboardCheck, Code, FileText, Download } from 'lucide-react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { Skeleton } from './ui/skeleton';
+import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigger } from './ui/dropdown-menu';
+import jsPDF from 'jspdf';
+import html2canvas from 'html2canvas';
+import { Document, Packer, Paragraph } from 'docx';
+
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
@@ -25,6 +30,7 @@ export default function OcrProcessor() {
   const [activeTab, setActiveTab] = useState('styled');
   const [copied, setCopied] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const styledContentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
   const handleImageProcess = useCallback(async (file: File) => {
@@ -112,6 +118,65 @@ export default function OcrProcessor() {
       toast({ variant: "destructive", title: "Copy Failed", description: "Could not copy text to clipboard." });
     });
   };
+
+  const downloadFile = (blob: Blob, fileName: string) => {
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = fileName;
+    document.body.appendChild(a);
+    a.click();
+    document.body.removeChild(a);
+    URL.revokeObjectURL(url);
+  };
+
+  const handleDownload = async (format: 'txt' | 'html' | 'pdf' | 'docx') => {
+    if (!extractedData) return;
+
+    const fileName = `extracted_content_${new Date().toISOString()}`;
+
+    if (format === 'txt') {
+      const blob = new Blob([extractedData.plainText], { type: 'text/plain' });
+      downloadFile(blob, `${fileName}.txt`);
+    } else if (format === 'html') {
+      const blob = new Blob([extractedData.styledHtml], { type: 'text/html' });
+      downloadFile(blob, `${fileName}.html`);
+    } else if (format === 'pdf') {
+      if (styledContentRef.current) {
+        const canvas = await html2canvas(styledContentRef.current, { scale: 2 });
+        const imgData = canvas.toDataURL('image/png');
+        const pdf = new jsPDF('p', 'mm', 'a4');
+        const pdfWidth = pdf.internal.pageSize.getWidth();
+        const pdfHeight = pdf.internal.pageSize.getHeight();
+        const canvasWidth = canvas.width;
+        const canvasHeight = canvas.height;
+        const ratio = canvasWidth / canvasHeight;
+        const imgWidth = pdfWidth - 20;
+        const imgHeight = imgWidth / ratio;
+        let heightLeft = imgHeight;
+        let position = 10;
+
+        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+        heightLeft -= (pdfHeight - 20);
+
+        while (heightLeft > 0) {
+            position = heightLeft - imgHeight + 10;
+            pdf.addPage();
+            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
+            heightLeft -= (pdfHeight - 20);
+        }
+        pdf.save(`${fileName}.pdf`);
+      }
+    } else if (format === 'docx') {
+      const doc = new Document({
+        sections: [{
+          children: extractedData.plainText.split('\n').map(p => new Paragraph(p)),
+        }],
+      });
+      const blob = await Packer.toBlob(doc);
+      downloadFile(blob, `${fileName}.docx`);
+    }
+  };
   
   const LoadingState = () => (
      <div className="grid md:grid-cols-2 gap-8 mt-8">
@@ -185,15 +250,31 @@ export default function OcrProcessor() {
                         <TabsTrigger value="styled"><Code className='mr-2 h-4 w-4' /> Styled HTML</TabsTrigger>
                         <TabsTrigger value="plain"><FileText className='mr-2 h-4 w-4' /> Plain Text</TabsTrigger>
                     </TabsList>
-                    <Button variant="outline" onClick={handleCopy}>
-                        {copied ? <ClipboardCheck className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
-                        {copied ? 'Copied!' : 'Copy'}
-                    </Button>
+                    <div className='flex items-center gap-2'>
+                      <Button variant="outline" onClick={handleCopy}>
+                          {copied ? <ClipboardCheck className="mr-2 h-4 w-4" /> : <Clipboard className="mr-2 h-4 w-4" />}
+                          {copied ? 'Copied!' : 'Copy'}
+                      </Button>
+                      <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                              <Button variant="outline">
+                                  <Download className="mr-2 h-4 w-4" />
+                                  Download
+                              </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent>
+                              <DropdownMenuItem onClick={() => handleDownload('txt')}>Download as TXT</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDownload('html')}>Download as HTML</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDownload('pdf')}>Download as PDF</DropdownMenuItem>
+                              <DropdownMenuItem onClick={() => handleDownload('docx')}>Download as Word (.docx)</DropdownMenuItem>
+                          </DropdownMenuContent>
+                      </DropdownMenu>
+                    </div>
                 </div>
                 <TabsContent value="styled" className="h-full">
                     <Card className='h-full'>
                         <CardContent className='p-4 h-full overflow-auto max-h-[75vh]'>
-                            <div dangerouslySetInnerHTML={{ __html: extractedData.styledHtml }} />
+                            <div ref={styledContentRef} dangerouslySetInnerHTML={{ __html: extractedData.styledHtml }} />
                         </CardContent>
                     </Card>
                 </TabsContent>
