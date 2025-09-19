@@ -150,20 +150,19 @@ export default function OcrProcessor() {
         const pdfHeight = pdf.internal.pageSize.getHeight();
         const canvasWidth = canvas.width;
         const canvasHeight = canvas.height;
-        const ratio = canvasWidth / canvasHeight;
-        const imgWidth = pdfWidth - 20;
-        const imgHeight = imgWidth / ratio;
+        const ratio = canvasHeight / canvasWidth;
+        const imgHeight = pdfWidth * ratio;
         let heightLeft = imgHeight;
-        let position = 10;
+        let position = 0;
 
-        pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-        heightLeft -= (pdfHeight - 20);
+        pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+        heightLeft -= pdfHeight;
 
         while (heightLeft > 0) {
-            position = heightLeft - imgHeight + 10;
+            position = heightLeft - imgHeight;
             pdf.addPage();
-            pdf.addImage(imgData, 'PNG', 10, position, imgWidth, imgHeight);
-            heightLeft -= (pdfHeight - 20);
+            pdf.addImage(imgData, 'PNG', 0, position, pdfWidth, imgHeight);
+            heightLeft -= pdfHeight;
         }
         pdf.save(`${fileName}.pdf`);
       }
