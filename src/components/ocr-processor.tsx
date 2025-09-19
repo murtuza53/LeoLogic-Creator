@@ -13,7 +13,6 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph } from 'docx';
-import GenerationCounter from './generation-counter';
 
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -30,7 +29,6 @@ export default function OcrProcessor() {
   const [extractedData, setExtractedData] = useState<ExtractedData | null>(null);
   const [activeTab, setActiveTab] = useState('styled');
   const [copied, setCopied] = useState(false);
-  const [generationCount, setGenerationCount] = useState(0);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const styledContentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
@@ -56,7 +54,15 @@ export default function OcrProcessor() {
           throw new Error(result.error);
         }
         setExtractedData(result as ExtractedData);
-        setGenerationCount(prev => prev + 1);
+        
+        // Increment counter
+        const key = 'generation_count_ocr';
+        const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
+        const newCount = currentCount + 1;
+        localStorage.setItem(key, newCount.toString());
+        // Dispatch event for same-tab update
+        window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
+
       } catch (error) {
         console.error(error);
         toast({
@@ -209,9 +215,6 @@ export default function OcrProcessor() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50">
-          <GenerationCounter featureKey="ocr" count={generationCount} />
-      </div>
       <div className="mt-8" onPaste={handlePaste}>
         {!imagePreview && (
           <Card 

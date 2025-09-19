@@ -2,8 +2,8 @@ import { ArrowRight, Calculator, Library, QrCode, ScanText } from 'lucide-react'
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
-import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import GenerationCounter from '@/components/generation-counter';
 
 export default function Home() {
   return (
@@ -47,7 +47,7 @@ export default function Home() {
                 </div>
                 <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
                     <Link href="/creator" className='h-full'>
-                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
                             <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                 <Library className="h-5 w-5 text-primary" />
@@ -59,10 +59,13 @@ export default function Home() {
                                 Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
                             </p>
                           </CardContent>
+                          <div className="absolute bottom-4 right-4">
+                            <GenerationCounter featureKey="product" />
+                          </div>
                       </Card>
                     </Link>
                     <Link href="/math-solver" className='h-full'>
-                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
                             <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                 <Calculator className="h-5 w-5 text-primary" />
@@ -74,10 +77,13 @@ export default function Home() {
                               Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
                             </p>
                           </CardContent>
+                          <div className="absolute bottom-4 right-4">
+                              <GenerationCounter featureKey="math" />
+                          </div>
                       </Card>
                     </Link>
                     <Link href="/benefit-pay-qr" className='h-full'>
-                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
                             <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                 <QrCode className="h-5 w-5 text-primary" />
@@ -89,10 +95,13 @@ export default function Home() {
                               Create and customize QR codes for Benefit Pay transactions quickly and easily.
                             </p>
                           </CardContent>
+                           <div className="absolute bottom-4 right-4">
+                              <GenerationCounter featureKey="qr" />
+                          </div>
                       </Card>
                     </Link>
                      <Link href="/ocr" className='h-full'>
-                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
                             <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                 <ScanText className="h-5 w-5 text-primary" />
@@ -104,6 +113,9 @@ export default function Home() {
                               Extract text and reconstruct its original formatting from any image with high accuracy.
                             </p>
                           </CardContent>
+                          <div className="absolute bottom-4 right-4">
+                            <GenerationCounter featureKey="ocr" />
+                          </div>
                       </Card>
                     </Link>
                 </div>

@@ -4,7 +4,7 @@ import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
-import { BlockMath, InlineMath } from 'react-katex';
+import { BlockMath } from 'react-katex';
 
 import { solveMathProblemAction } from '@/app/actions';
 import { Button } from '@/components/ui/button';
@@ -14,7 +14,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { LoaderCircle, WandSparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
-import GenerationCounter from './generation-counter';
 
 const formSchema = z.object({
   problem: z.string().min(3, {
@@ -37,7 +36,6 @@ type Solution = {
 export default function MathSolver() {
   const [isLoading, setIsLoading] = useState(false);
   const [solution, setSolution] = useState<Solution | null>(null);
-  const [generationCount, setGenerationCount] = useState(0);
   const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -56,7 +54,15 @@ export default function MathSolver() {
         throw new Error(result.error);
       }
       setSolution(result as Solution);
-      setGenerationCount(prev => prev + 1);
+      
+      // Increment counter
+      const key = 'generation_count_math';
+      const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
+      const newCount = currentCount + 1;
+      localStorage.setItem(key, newCount.toString());
+      // Dispatch event for same-tab update
+      window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
+
     } catch (error) {
       console.error(error);
       toast({
@@ -71,9 +77,6 @@ export default function MathSolver() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50">
-        <GenerationCounter featureKey="math" count={generationCount} />
-      </div>
       <div className="mt-8 grid gap-8">
         <Card className="shadow-lg">
           <CardHeader>

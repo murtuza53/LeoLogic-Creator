@@ -8,13 +8,12 @@ import QRCode from "react-qr-code";
 import html2canvas from 'html2canvas';
 
 import { Button } from '@/components/ui/button';
-import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage, FormDescription } from '@/components/ui/form';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
-import GenerationCounter from './generation-counter';
 
 const formSchema = z.object({
   iban: z.string().min(3, {
@@ -30,7 +29,6 @@ const formSchema = z.object({
 
 export default function QrGenerator() {
   const [qrValue, setQrValue] = useState<string | null>(null);
-  const [generationCount, setGenerationCount] = useState(0);
   const [qrConfig, setQrConfig] = useState({
       iban: "",
       qrColor: "#000000",
@@ -64,7 +62,14 @@ export default function QrGenerator() {
         qrSize: values.qrSize,
         borderRadius: values.borderRadius,
     });
-    setGenerationCount(prev => prev + 1);
+    
+    // Increment counter
+    const key = 'generation_count_qr';
+    const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
+    const newCount = currentCount + 1;
+    localStorage.setItem(key, newCount.toString());
+    // Dispatch event for same-tab update
+    window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
   }
 
   const downloadQR = () => {
@@ -88,9 +93,6 @@ export default function QrGenerator() {
 
   return (
     <>
-      <div className="fixed bottom-4 right-4 z-50">
-        <GenerationCounter featureKey="qr" count={generationCount} />
-      </div>
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="shadow-lg">
           <CardHeader>

@@ -5,30 +5,41 @@ import { Badge } from '@/components/ui/badge';
 
 type GenerationCounterProps = {
   featureKey: string;
-  count: number;
 };
 
-export default function GenerationCounter({ featureKey, count }: GenerationCounterProps) {
+export default function GenerationCounter({ featureKey }: GenerationCounterProps) {
   const [displayCount, setDisplayCount] = useState(0);
 
   useEffect(() => {
-    const storedCount = localStorage.getItem(`generation_count_${featureKey}`);
-    setDisplayCount(storedCount ? parseInt(storedCount, 10) : 0);
+    const handleStorageChange = () => {
+      const storedCount = localStorage.getItem(`generation_count_${featureKey}`);
+      setDisplayCount(storedCount ? parseInt(storedCount, 10) : 0);
+    };
+
+    // Initial load
+    handleStorageChange();
+
+    // Listen for changes from other tabs/windows
+    window.addEventListener('storage', handleStorageChange);
+
+    // Custom event to listen for changes within the same tab
+    const handleLocalstorageUpdate = (event: Event) => {
+        if ((event as CustomEvent).detail.key === `generation_count_${featureKey}`) {
+            handleStorageChange();
+        }
+    };
+    window.addEventListener('localstorage-update', handleLocalstorageUpdate);
+
+
+    return () => {
+      window.removeEventListener('storage', handleStorageChange);
+      window.removeEventListener('localstorage-update', handleLocalstorageUpdate);
+    };
   }, [featureKey]);
 
-  useEffect(() => {
-    if (count > 0) {
-      const newCount = displayCount + 1;
-      localStorage.setItem(`generation_count_${featureKey}`, newCount.toString());
-      setDisplayCount(newCount);
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [count, featureKey]);
-
-
   return (
-    <Badge variant="outline" className="hidden md:flex">
-      Generations: {displayCount}
+    <Badge variant="secondary" className="flex">
+      Used: {displayCount}
     </Badge>
   );
 }
