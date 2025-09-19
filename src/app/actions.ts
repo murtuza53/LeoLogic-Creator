@@ -7,7 +7,7 @@ import { generateProductImage } from '@/ai/flows/generate-product-image';
 import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-product-images';
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
-import { incrementCount, getFeatureCounts as getFeatureCountsFromDb } from '@/lib/firebase';
+import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 
 export async function generateProductDetails(
   productName: string,

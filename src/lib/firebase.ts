@@ -37,7 +37,7 @@ export async function incrementCount(feature: Feature): Promise<void> {
   }
 }
 
-export async function getFeatureCounts(): Promise<Record<Feature, number>> {
+export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>> {
     const initialCounts: Record<Feature, number> = {
         product: 0,
         math: 0,
