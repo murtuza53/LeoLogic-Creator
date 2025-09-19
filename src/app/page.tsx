@@ -45,75 +45,83 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
+                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-2">
                     <Link href="/creator" className='h-full'>
-                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <Library className="h-5 w-5 text-primary" />
-                                Smart Product Content Generation
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-2'>
-                            <p className="text-sm text-muted-foreground">
-                                Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
-                            </p>
-                          </CardContent>
-                          <div className="absolute bottom-4 right-4">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <div className='p-6 pb-12'>
+                            <CardHeader className='p-0'>
+                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                  <Library className="h-5 w-5 text-primary" />
+                                  Smart Product Content Generation
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className='p-0 mt-2'>
+                              <p className="text-sm text-muted-foreground">
+                                  Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
+                              </p>
+                            </CardContent>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
                             <GenerationCounter featureKey="product" />
                           </div>
                       </Card>
                     </Link>
                     <Link href="/math-solver" className='h-full'>
-                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <Calculator className="h-5 w-5 text-primary" />
-                                AI Math Problem Solver
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-2'>
-                            <p className="text-sm text-muted-foreground">
-                              Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
-                            </p>
-                          </CardContent>
-                          <div className="absolute bottom-4 right-4">
+                       <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                           <div className='p-6 pb-12'>
+                            <CardHeader className='p-0'>
+                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                  <Calculator className="h-5 w-5 text-primary" />
+                                  AI Math Problem Solver
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className='p-0 mt-2'>
+                              <p className="text-sm text-muted-foreground">
+                                Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
+                              </p>
+                            </CardContent>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
                               <GenerationCounter featureKey="math" />
                           </div>
                       </Card>
                     </Link>
                     <Link href="/benefit-pay-qr" className='h-full'>
-                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <QrCode className="h-5 w-5 text-primary" />
-                                Benefit Pay QR Generator
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-2'>
-                            <p className="text-sm text-muted-foreground">
-                              Create and customize QR codes for Benefit Pay transactions quickly and easily.
-                            </p>
-                          </CardContent>
-                           <div className="absolute bottom-4 right-4">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <div className='p-6 pb-12'>
+                            <CardHeader className='p-0'>
+                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                  <QrCode className="h-5 w-5 text-primary" />
+                                  Benefit Pay QR Generator
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className='p-0 mt-2'>
+                              <p className="text-sm text-muted-foreground">
+                                Create and customize QR codes for Benefit Pay transactions quickly and easily.
+                              </p>
+                            </CardContent>
+                          </div>
+                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
                               <GenerationCounter featureKey="qr" />
                           </div>
                       </Card>
                     </Link>
                      <Link href="/ocr" className='h-full'>
-                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <ScanText className="h-5 w-5 text-primary" />
-                                Optical Character Recognition (OCR)
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-2'>
-                            <p className="text-sm text-muted-foreground">
-                              Extract text and reconstruct its original formatting from any image with high accuracy.
-                            </p>
-                          </CardContent>
-                          <div className="absolute bottom-4 right-4">
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <div className='p-6 pb-12'>
+                            <CardHeader className='p-0'>
+                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                  <ScanText className="h-5 w-5 text-primary" />
+                                  Optical Character Recognition (OCR)
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className='p-0 mt-2'>
+                              <p className="text-sm text-muted-foreground">
+                                Extract text and reconstruct its original formatting from any image with high accuracy.
+                              </p>
+                            </CardContent>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
                             <GenerationCounter featureKey="ocr" />
                           </div>
                       </Card>

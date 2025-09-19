@@ -1,7 +1,6 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { Badge } from '@/components/ui/badge';
 
 type GenerationCounterProps = {
   featureKey: string;
@@ -38,8 +37,8 @@ export default function GenerationCounter({ featureKey }: GenerationCounterProps
   }, [featureKey]);
 
   return (
-    <Badge variant="secondary" className="flex">
-      Used: {displayCount}
-    </Badge>
+    <span className="text-xs font-medium text-foreground/80">
+      Generated: {displayCount}
+    </span>
   );
 }
