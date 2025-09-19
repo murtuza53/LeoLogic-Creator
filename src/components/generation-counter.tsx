@@ -4,9 +4,10 @@ import { useEffect, useState } from 'react';
 
 type GenerationCounterProps = {
   featureKey: string;
+  label: string;
 };
 
-export default function GenerationCounter({ featureKey }: GenerationCounterProps) {
+export default function GenerationCounter({ featureKey, label }: GenerationCounterProps) {
   const [displayCount, setDisplayCount] = useState(0);
 
   useEffect(() => {
@@ -38,7 +39,7 @@ export default function GenerationCounter({ featureKey }: GenerationCounterProps
 
   return (
     <span className="text-xs font-medium text-foreground/80">
-      Generated: {displayCount}
+      {label}: {displayCount}
     </span>
   );
 }

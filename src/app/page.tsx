@@ -62,7 +62,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
-                            <GenerationCounter featureKey="product" />
+                            <GenerationCounter featureKey="product" label="Generated" />
                           </div>
                       </Card>
                     </Link>
@@ -82,7 +82,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                              <GenerationCounter featureKey="math" />
+                              <GenerationCounter featureKey="math" label="Solved" />
                           </div>
                       </Card>
                     </Link>
@@ -102,7 +102,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                              <GenerationCounter featureKey="qr" />
+                              <GenerationCounter featureKey="qr" label="Generated" />
                           </div>
                       </Card>
                     </Link>
@@ -122,7 +122,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                            <GenerationCounter featureKey="ocr" />
+                            <GenerationCounter featureKey="ocr" label="Recognised" />
                           </div>
                       </Card>
                     </Link>
