@@ -4,8 +4,11 @@ import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GenerationCounter from '@/components/generation-counter';
+import { getFeatureCounts } from './actions';
 
-export default function Home() {
+export default async function Home() {
+  const counts = await getFeatureCounts();
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
@@ -62,7 +65,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
-                            <GenerationCounter featureKey="product" label="Generated" />
+                            <GenerationCounter count={counts.product} label="Generated" />
                           </div>
                       </Card>
                     </Link>
@@ -82,7 +85,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                              <GenerationCounter featureKey="math" label="Solved" />
+                              <GenerationCounter count={counts.math} label="Solved" />
                           </div>
                       </Card>
                     </Link>
@@ -102,7 +105,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                              <GenerationCounter featureKey="qr" label="Generated" />
+                              <GenerationCounter count={counts.qr} label="Generated" />
                           </div>
                       </Card>
                     </Link>
@@ -122,7 +125,7 @@ export default function Home() {
                             </CardContent>
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                            <GenerationCounter featureKey="ocr" label="Recognised" />
+                            <GenerationCounter count={counts.ocr} label="Recognised" />
                           </div>
                       </Card>
                     </Link>

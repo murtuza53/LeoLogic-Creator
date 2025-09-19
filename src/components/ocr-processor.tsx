@@ -13,6 +13,7 @@ import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuTrigge
 import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph } from 'docx';
+import { useRouter } from 'next/navigation';
 
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -32,6 +33,7 @@ export default function OcrProcessor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const styledContentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleImageProcess = useCallback(async (file: File) => {
     setIsLoading(true);
@@ -54,15 +56,7 @@ export default function OcrProcessor() {
           throw new Error(result.error);
         }
         setExtractedData(result as ExtractedData);
-        
-        // Increment counter
-        const key = 'generation_count_ocr';
-        const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
-        const newCount = currentCount + 1;
-        localStorage.setItem(key, newCount.toString());
-        // Dispatch event for same-tab update
-        window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
-
+        router.refresh();
       } catch (error) {
         console.error(error);
         toast({
@@ -84,7 +78,7 @@ export default function OcrProcessor() {
       });
       setIsLoading(false);
     };
-  }, [toast, imagePreview]);
+  }, [toast, imagePreview, router]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

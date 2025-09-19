@@ -14,6 +14,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { LoaderCircle, WandSparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
+import { useRouter } from 'next/navigation';
 
 const formSchema = z.object({
   problem: z.string().min(3, {
@@ -37,6 +38,7 @@ export default function MathSolver() {
   const [isLoading, setIsLoading] = useState(false);
   const [solution, setSolution] = useState<Solution | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -54,14 +56,7 @@ export default function MathSolver() {
         throw new Error(result.error);
       }
       setSolution(result as Solution);
-      
-      // Increment counter
-      const key = 'generation_count_math';
-      const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
-      const newCount = currentCount + 1;
-      localStorage.setItem(key, newCount.toString());
-      // Dispatch event for same-tab update
-      window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
+      router.refresh();
 
     } catch (error) {
       console.error(error);

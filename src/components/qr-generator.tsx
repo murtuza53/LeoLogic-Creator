@@ -6,6 +6,7 @@ import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import QRCode from "react-qr-code";
 import html2canvas from 'html2canvas';
+import { useRouter } from 'next/navigation';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -14,6 +15,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
+import { incrementQrCodeCounterAction } from '@/app/actions';
+import { useToast } from '@/hooks/use-toast';
 
 const formSchema = z.object({
   iban: z.string().min(3, {
@@ -37,6 +40,8 @@ export default function QrGenerator() {
       qrSize: 256,
       borderRadius: 8,
   })
+  const router = useRouter();
+  const { toast } = useToast();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -51,7 +56,7 @@ export default function QrGenerator() {
     },
   });
 
-  function onSubmit(values: z.infer<typeof formSchema>) {
+  async function onSubmit(values: z.infer<typeof formSchema>) {
     const qrData = JSON.stringify({ iban: values.iban, amount: "" });
     setQrValue(qrData);
     setQrConfig({
@@ -63,13 +68,16 @@ export default function QrGenerator() {
         borderRadius: values.borderRadius,
     });
     
-    // Increment counter
-    const key = 'generation_count_qr';
-    const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
-    const newCount = currentCount + 1;
-    localStorage.setItem(key, newCount.toString());
-    // Dispatch event for same-tab update
-    window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
+    const result = await incrementQrCodeCounterAction();
+    if (result?.error) {
+      toast({
+        variant: "destructive",
+        title: "Counter Error",
+        description: "Could not update the global counter.",
+      });
+    } else {
+      router.refresh();
+    }
   }
 
   const downloadQR = () => {

@@ -5,6 +5,7 @@ import ProductForm from '@/components/product-form';
 import ProductDisplay from '@/components/product-display';
 import { generateProductDetails } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { useRouter } from 'next/navigation';
 
 export type ProductData = {
   description: string;
@@ -19,6 +20,7 @@ export default function ProductGenerator() {
   const [productName, setProductName] = useState('');
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
+  const router = useRouter();
 
   const handleGenerate = async (name: string, imageFile: File, generateAdditionalImages: boolean, additionalInfo?: string) => {
     setIsLoading(true);
@@ -42,15 +44,7 @@ export default function ProductGenerator() {
           throw new Error(result.error);
         }
         setProductData(result as ProductData);
-        
-        // Increment counter
-        const key = 'generation_count_product';
-        const currentCount = parseInt(localStorage.getItem(key) || '0', 10);
-        const newCount = currentCount + 1;
-        localStorage.setItem(key, newCount.toString());
-        // Dispatch event for same-tab update
-        window.dispatchEvent(new CustomEvent('localstorage-update', { detail: { key } }));
-
+        router.refresh();
       } catch (error) {
         console.error(error);
         toast({

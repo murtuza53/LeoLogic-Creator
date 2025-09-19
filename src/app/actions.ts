@@ -7,6 +7,7 @@ import { generateProductImage } from '@/ai/flows/generate-product-image';
 import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-product-images';
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
+import { incrementCount, getFeatureCounts as getFeatureCountsFromDb } from '@/lib/firebase';
 
 export async function generateProductDetails(
   productName: string,
@@ -36,6 +37,8 @@ export async function generateProductDetails(
     if (!descriptionResult?.description || !specificationsResult?.specifications || !imageResult?.imageUrl) {
       throw new Error('AI failed to generate complete details.');
     }
+    
+    await incrementCount('product');
 
     return {
       description: descriptionResult.description,
@@ -60,6 +63,7 @@ export async function solveMathProblemAction(problem: string) {
     if (!result) {
       throw new Error('AI failed to solve the problem.');
     }
+    await incrementCount('math');
     return result;
   } catch (error) {
     console.error('Error solving math problem:', error);
@@ -78,6 +82,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
     if (!result) {
       throw new Error('AI failed to extract text from the image.');
     }
+    await incrementCount('ocr');
     return result;
   } catch (error) {
     console.error('Error extracting text from image:', error);
@@ -88,4 +93,22 @@ export async function extractTextFromImageAction(imageDataUri: string) {
           : 'An unknown error occurred.',
     };
   }
+}
+
+export async function incrementQrCodeCounterAction() {
+  try {
+    await incrementCount('qr');
+  } catch (error) {
+     console.error('Error incrementing QR code counter:', error);
+     return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function getFeatureCounts() {
+  return await getFeatureCountsFromDb();
 }
