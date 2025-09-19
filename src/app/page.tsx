@@ -1,4 +1,4 @@
-import { ArrowRight, Calculator, Library, QrCode } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -45,7 +45,7 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
+                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-2">
                     <Link href="/creator" className='h-full'>
                       <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
                           <CardHeader className='p-0'>
@@ -87,6 +87,21 @@ export default function Home() {
                           <CardContent className='p-0 mt-2'>
                             <p className="text-sm text-muted-foreground">
                               Create and customize QR codes for Benefit Pay transactions quickly and easily.
+                            </p>
+                          </CardContent>
+                      </Card>
+                    </Link>
+                     <Link href="/ocr" className='h-full'>
+                      <Card className="grid gap-1 rounded-lg border border-border/50 bg-card p-6 shadow-sm transition-all hover:shadow-md h-full">
+                          <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <ScanText className="h-5 w-5 text-primary" />
+                                Optical Character Recognition (OCR)
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Extract text and reconstruct its original formatting from any image with high accuracy.
                             </p>
                           </CardContent>
                       </Card>

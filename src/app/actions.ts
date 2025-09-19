@@ -6,6 +6,7 @@ import { generateProductSpecifications } from '@/ai/flows/generate-product-speci
 import { generateProductImage } from '@/ai/flows/generate-product-image';
 import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-product-images';
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
+import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 
 export async function generateProductDetails(
   productName: string,
@@ -62,6 +63,24 @@ export async function solveMathProblemAction(problem: string) {
     return result;
   } catch (error) {
     console.error('Error solving math problem:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function extractTextFromImageAction(imageDataUri: string) {
+  try {
+    const result = await extractTextFromImage({ imageDataUri });
+    if (!result) {
+      throw new Error('AI failed to extract text from the image.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error extracting text from image:', error);
     return {
       error:
         error instanceof Error
