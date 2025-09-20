@@ -1,4 +1,4 @@
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, FileImage, Image as ImageIcon } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -50,15 +50,15 @@ export default async function Home() {
                 </div>
                 <div className="mx-auto max-w-5xl pt-12">
                   <Tabs defaultValue="smart-tools" className="w-full">
-                    <TabsList className="grid w-full grid-cols-3">
-                      <TabsTrigger value="smart-tools">Smart Tools</TabsTrigger>
-                      <TabsTrigger value="image-tools">Image Tools</TabsTrigger>
-                      <TabsTrigger value="document-tools">Document Tools</TabsTrigger>
+                    <TabsList className="grid h-auto w-full grid-cols-1 justify-center rounded-lg bg-muted/50 p-1 md:w-auto md:grid-cols-3 mx-auto">
+                      <TabsTrigger value="smart-tools" className="text-base font-semibold py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-md">Smart Tools</TabsTrigger>
+                      <TabsTrigger value="image-tools" className="text-base font-semibold py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-md">Image Tools</TabsTrigger>
+                      <TabsTrigger value="document-tools" className="text-base font-semibold py-2.5 data-[state=active]:bg-card data-[state=active]:shadow-md">Document Tools</TabsTrigger>
                     </TabsList>
                     <TabsContent value="smart-tools">
                       <div className="grid items-start gap-8 py-8 sm:grid-cols-2 lg:grid-cols-2">
                         <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                          <Link href="/creator" className='flex flex-col h-full p-6 pb-12'>
+                           <div className='flex flex-col h-full p-6 pb-12'>
                               <CardHeader className='p-0'>
                                 <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                     <Library className="h-5 w-5 text-primary" />
@@ -70,13 +70,13 @@ export default async function Home() {
                                     Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
                                 </p>
                               </CardContent>
-                          </Link>
+                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
                             <GenerationCounter count={counts.product} label="Products Generated" />
                           </div>
                         </Card>
                         <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                           <Link href="/math-solver" className='flex flex-col h-full p-6 pb-12'>
+                           <div className='flex flex-col h-full p-6 pb-12'>
                                <CardHeader className='p-0'>
                                 <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                     <Calculator className="h-5 w-5 text-primary" />
@@ -88,13 +88,13 @@ export default async function Home() {
                                   Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
                                 </p>
                               </CardContent>
-                           </Link>
+                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
                               <GenerationCounter count={counts.math} label="Problems Solved" />
                           </div>
                         </Card>
                         <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                           <Link href="/benefit-pay-qr" className='flex flex-col h-full p-6 pb-12'>
+                           <div className='flex flex-col h-full p-6 pb-12'>
                               <CardHeader className='p-0'>
                                 <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                     <QrCode className="h-5 w-5 text-primary" />
@@ -106,13 +106,13 @@ export default async function Home() {
                                   Create and customize QR codes for Benefit Pay transactions quickly and easily.
                                 </p>
                               </CardContent>
-                           </Link>
+                           </div>
                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
                               <GenerationCounter count={counts.qr} label="QRs Generated" />
                            </div>
                         </Card>
                         <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                          <Link href="/ocr" className='flex flex-col h-full p-6 pb-12'>
+                          <div className='flex flex-col h-full p-6 pb-12'>
                               <CardHeader className='p-0'>
                                 <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                     <ScanText className="h-5 w-5 text-primary" />
@@ -124,7 +124,7 @@ export default async function Home() {
                                   Extract text and reconstruct its original formatting from any image with high accuracy.
                                 </p>
                               </CardContent>
-                          </Link>
+                          </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
                             <GenerationCounter count={counts.ocr} label="Images Recognized" />
                           </div>
@@ -140,8 +140,8 @@ export default async function Home() {
                     </TabsContent>
                     <TabsContent value="document-tools">
                        <div className="grid items-start gap-8 py-8 sm:grid-cols-2 lg:grid-cols-2">
-                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:_shadow-md h-full overflow-hidden">
-                            <Link href="/pdf-merger" className='flex flex-col h-full p-6 pb-12'>
+                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
                                   <CardTitle className="flex items-center gap-2 text-lg font-bold">
                                       <FileJson className="h-5 w-5 text-primary" />
@@ -153,7 +153,7 @@ export default async function Home() {
                                     Combine multiple PDF documents into a single, organized file effortlessly.
                                   </p>
                                 </CardContent>
-                            </Link>
+                            </div>
                             <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
                               <GenerationCounter count={counts.pdf} label="PDFs Merged" />
                             </div>
@@ -171,3 +171,5 @@ export default async function Home() {
     </div>
   );
 }
+
+    
