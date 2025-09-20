@@ -82,7 +82,7 @@ export default async function Home() {
                           </CardContent>
                        </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                          <GenerationCounter count={counts.math} label="Solved" />
+                          <GenerationCounter count={counts.math} label="SOLVED" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
@@ -100,7 +100,7 @@ export default async function Home() {
                           </CardContent>
                        </Link>
                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                          <GenerationCounter count={counts.qr} label="Generated" />
+                          <GenerationCounter count={counts.qr} label="GENERATED" />
                        </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
@@ -118,7 +118,7 @@ export default async function Home() {
                           </CardContent>
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                        <GenerationCounter count={counts.ocr} label="Recognised" />
+                        <GenerationCounter count={counts.ocr} label="RECOGNISED" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:_shadow-md h-full overflow-hidden">
@@ -137,24 +137,6 @@ export default async function Home() {
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
                         <GenerationCounter count={counts.pdf} label="Merged" />
-                      </div>
-                    </Card>
-                    <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                      <Link href="/extract-pdf-images" className='flex flex-col h-full p-6 pb-12'>
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <FileImage className="h-5 w-5 text-primary" />
-                                Extract Images from PDF
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-2'>
-                            <p className="text-sm text-muted-foreground">
-                              Upload a PDF to automatically extract all embedded images for download.
-                            </p>
-                          </CardContent>
-                      </Link>
-                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
-                        <GenerationCounter count={counts.pdfImages} label="Extracted" />
                       </div>
                     </Card>
                 </div>

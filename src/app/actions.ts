@@ -144,49 +144,6 @@ export async function mergePdfsAction(pdfDataUris: string[]) {
   }
 }
 
-export async function extractImagesFromPdfAction(pdfDataUri: string) {
-    try {
-        await import('canvas');
-        const pdfBytes = Buffer.from(pdfDataUri.split(',')[1], 'base64');
-        const pdfDoc = await PDFDocument.load(pdfBytes);
-        const imageObjects = pdfDoc.context.indirectObjects.values();
-        
-        const images: string[] = [];
-        for (const ref of imageObjects) {
-            const maybeImage = ref.as(Object);
-            if (
-                maybeImage instanceof Map &&
-                maybeImage.get('Subtype')?.toString() === '/Image'
-            ) {
-                const image = await pdfDoc.embedJpg(ref.toString());
-                const dataUri = await image.asDataUri();
-                images.push(dataUri);
-            }
-        }
-        
-        if (images.length === 0) {
-            return { images: [] };
-        }
-
-        await incrementCount('pdfImages');
-
-        return { images };
-    } catch (error: any) {
-        console.error('Error extracting images from PDF:', error);
-        if (error.message.includes('Failed to load external module canvas')) {
-            return {
-                error: 'This feature is unavailable in the current environment due to a missing system dependency (canvas).',
-            };
-        }
-        return {
-            error:
-                error instanceof Error
-                    ? error.message
-                    : 'An unknown error occurred while extracting images from the PDF.',
-        };
-    }
-}
-
 
 export async function getFeatureCounts() {
   return await getFeatureCountsFromDb();
