@@ -82,7 +82,7 @@ export default async function Home() {
                           </CardContent>
                        </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                          <GenerationCounter count={counts.math} label="SOLVED" />
+                          <GenerationCounter count={counts.math} label="Solved" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
@@ -100,7 +100,7 @@ export default async function Home() {
                           </CardContent>
                        </Link>
                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                          <GenerationCounter count={counts.qr} label="GENERATED" />
+                          <GenerationCounter count={counts.qr} label="Generated" />
                        </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
@@ -118,7 +118,7 @@ export default async function Home() {
                           </CardContent>
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                        <GenerationCounter count={counts.ocr} label="RECOGNISED" />
+                        <GenerationCounter count={counts.ocr} label="Recognized" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:_shadow-md h-full overflow-hidden">
