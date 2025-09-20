@@ -10,7 +10,7 @@ export default function MathSolverPage() {
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
         <nav className="flex items-center gap-2 text-lg font-medium md:text-sm">
           <a
-            href="#"
+            href="/"
             className="flex items-center gap-2 font-semibold text-foreground"
           >
             <Logo className="h-6 w-6 text-primary" />
