@@ -1,4 +1,4 @@
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, FileImage } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -146,6 +146,26 @@ export default async function Home() {
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
                             <GenerationCounter count={counts.pdf} label="Merged" />
+                          </div>
+                      </Card>
+                    </Link>
+                     <Link href="/extract-pdf-images" className='h-full'>
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <div className='p-6 pb-12'>
+                            <CardHeader className='p-0'>
+                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                  <FileImage className="h-5 w-5 text-primary" />
+                                  Extract Images from PDF
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className='p-0 mt-2'>
+                              <p className="text-sm text-muted-foreground">
+                                Upload a PDF to automatically extract all embedded images for download.
+                              </p>
+                            </CardContent>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
+                            <GenerationCounter count={counts.pdfImages} label="Extracted" />
                           </div>
                       </Card>
                     </Link>

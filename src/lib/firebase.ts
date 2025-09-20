@@ -24,19 +24,24 @@ const db = getFirestore(app);
 const COUNTERS_COLLECTION = 'generationCounters';
 const COUNTERS_DOC_ID = 'featureCounts';
 
-export type Feature = 'product' | 'math' | 'qr' | 'ocr' | 'pdf';
+export type Feature = 'product' | 'math' | 'qr' | 'ocr' | 'pdf' | 'pdfImages';
 
 export async function incrementCount(feature: Feature): Promise<void> {
   try {
     const counterRef = doc(db, COUNTERS_COLLECTION, COUNTERS_DOC_ID);
     
+    // Explicitly create the update payload
     const payload: DocumentData = {};
     payload[feature] = increment(1);
 
+    // Use setDoc with merge to create the document if it doesn't exist
+    // and update the specific field.
     await setDoc(counterRef, payload, { merge: true });
 
   } catch (error) {
+    // It's better to throw the error to be handled by the caller
     console.error(`Failed to increment count for ${feature}:`, error);
+    throw new Error(`Failed to increment count for ${feature}.`);
   }
 }
 
@@ -47,6 +52,7 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
         qr: 0,
         ocr: 0,
         pdf: 0,
+        pdfImages: 0,
     };
 
     try {
@@ -55,19 +61,19 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
 
         if (docSnap.exists()) {
             const data = docSnap.data();
+            // Merge fetched data with initial counts to ensure all keys are present
             const counts: Record<Feature, number> = {
-                product: data.product || 0,
-                math: data.math || 0,
-                qr: data.qr || 0,
-                ocr: data.ocr || 0,
-                pdf: data.pdf || 0,
+                ...initialCounts,
+                ...data
             };
             return counts;
         } else {
+            // Document doesn't exist, return the initial zeroed counts
             return initialCounts;
         }
     } catch (error) {
         console.error("Error fetching feature counts:", error);
+        // In case of error, return the default zeroed counts
         return initialCounts;
     }
 }
