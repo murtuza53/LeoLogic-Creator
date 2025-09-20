@@ -241,7 +241,7 @@ export async function removeBackgroundAction(imageDataUri: string) {
     if (!result) {
       throw new Error('AI failed to remove background from the image.');
     }
-    await incrementCount('removeBackground');
+    await incrementCount('imgRemoveBg');
     return result;
   } catch (error) {
     console.error('Error removing background from image:', error);
@@ -260,7 +260,7 @@ export async function changeBackgroundAction(imageDataUri: string, backgroundCol
     if (!result) {
       throw new Error('AI failed to change background of the image.');
     }
-    await incrementCount('changeBackground');
+    await incrementCount('imgChangeBg');
     return result;
   } catch (error) {
     console.error('Error changing background of image:', error);

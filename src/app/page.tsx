@@ -173,7 +173,7 @@ export default async function Home() {
                                 </CardContent>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
-                              <GenerationCounter count={counts.removeBackground} label="Backgrounds Removed" />
+                              <GenerationCounter count={counts.imgRemoveBg} label="Backgrounds Removed" />
                             </div>
                           </Card>
                         </Link>
@@ -193,7 +193,7 @@ export default async function Home() {
                                 </CardContent>
                             </div>
                             <div className="absolute bottom-0 left-0 right-0 p-2 bg-indigo-100 dark:bg-indigo-900/50 text-center">
-                              <GenerationCounter count={counts.changeBackground} label="Backgrounds Changed" />
+                              <GenerationCounter count={counts.imgChangeBg} label="Backgrounds Changed" />
                             </div>
                           </Card>
                         </Link>
