@@ -9,7 +9,7 @@ import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
-import 'canvas';
+
 
 
 export async function generateProductDetails(
@@ -146,6 +146,7 @@ export async function mergePdfsAction(pdfDataUris: string[]) {
 
 export async function extractImagesFromPdfAction(pdfDataUri: string) {
     try {
+        await import('canvas');
         const pdfBytes = Buffer.from(pdfDataUri.split(',')[1], 'base64');
         const pdfDoc = await PDFDocument.load(pdfBytes);
         const imageObjects = pdfDoc.context.indirectObjects.values();
