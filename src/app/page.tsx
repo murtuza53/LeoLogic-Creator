@@ -58,7 +58,7 @@ export default async function Home() {
                     <h3 className="text-2xl font-bold text-center">Smart Tools</h3>
                     <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
                       <Link href="/creator" className="h-full block">
-                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
                                   <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -66,7 +66,7 @@ export default async function Home() {
                                       Smart Product Content
                                   </CardTitle>
                                 </CardHeader>
-                                <CardContent className='p-0 mt-2'>
+                                <CardContent className='p-0 mt-2 flex-1'>
                                   <p className="text-sm text-muted-foreground">
                                       Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
                                   </p>
@@ -78,7 +78,7 @@ export default async function Home() {
                           </Card>
                       </Link>
                       <Link href="/math-solver" className="h-full block">
-                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                   <CardHeader className='p-0'>
                                   <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -86,7 +86,7 @@ export default async function Home() {
                                       AI Math Solver
                                   </CardTitle>
                                 </CardHeader>
-                                <CardContent className='p-0 mt-2'>
+                                <CardContent className='p-0 mt-2 flex-1'>
                                   <p className="text-sm text-muted-foreground">
                                     Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
                                   </p>
@@ -98,7 +98,7 @@ export default async function Home() {
                           </Card>
                       </Link>
                       <Link href="/benefit-pay-qr" className="h-full block">
-                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
                                   <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -106,7 +106,7 @@ export default async function Home() {
                                       Benefit Pay QR Generator
                                   </CardTitle>
                                 </CardHeader>
-                                <CardContent className='p-0 mt-2'>
+                                <CardContent className='p-0 mt-2 flex-1'>
                                   <p className="text-sm text-muted-foreground">
                                     Create and customize QR codes for Benefit Pay transactions quickly and easily.
                                   </p>
@@ -118,7 +118,7 @@ export default async function Home() {
                           </Card>
                       </Link>
                       <Link href="/ocr" className="h-full block">
-                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                             <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
                                   <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -126,7 +126,7 @@ export default async function Home() {
                                       Optical Character Recognition
                                   </CardTitle>
                                 </CardHeader>
-                                <CardContent className='p-0 mt-2'>
+                                <CardContent className='p-0 mt-2 flex-1'>
                                   <p className="text-sm text-muted-foreground">
                                     Extract text and reconstruct its original formatting from any image with high accuracy.
                                   </p>
@@ -144,7 +144,7 @@ export default async function Home() {
                     <h3 className="text-2xl font-bold text-center">Image Tools</h3>
                      <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
                         <Link href="/image-to-webp" className="h-full block">
-                            <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                   <CardHeader className='p-0'>
                                     <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -152,7 +152,7 @@ export default async function Home() {
                                         Image to WebP
                                     </CardTitle>
                                   </CardHeader>
-                                  <CardContent className='p-0 mt-2'>
+                                  <CardContent className='p-0 mt-2 flex-1'>
                                     <p className="text-sm text-muted-foreground">
                                       Convert images to WebP format, remove backgrounds, and change background colors.
                                     </p>
@@ -163,7 +163,7 @@ export default async function Home() {
                               </div>
                             </Card>
                         </Link>
-                        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center">
+                        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center h-full">
                             <ImageIcon className="h-12 w-12 text-muted-foreground" />
                             <h3 className="mt-4 text-lg font-semibold">More Image Tools Coming Soon</h3>
                             <p className="mt-2 text-sm text-muted-foreground">Stay tuned for new image generation and editing tools!</p>
@@ -175,7 +175,7 @@ export default async function Home() {
                      <h3 className="text-2xl font-bold text-center">Document Tools</h3>
                      <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
                         <Link href="/pdf-merger" className="h-full block">
-                            <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                   <CardHeader className='p-0'>
                                     <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -183,7 +183,7 @@ export default async function Home() {
                                         Merge Multiple PDFs
                                     </CardTitle>
                                   </CardHeader>
-                                  <CardContent className='p-0 mt-2'>
+                                  <CardContent className='p-0 mt-2 flex-1'>
                                     <p className="text-sm text-muted-foreground">
                                       Combine multiple PDF documents into a single, organized file effortlessly.
                                     </p>
@@ -195,7 +195,7 @@ export default async function Home() {
                             </Card>
                         </Link>
                         <Link href="/table-extractor" className="h-full block">
-                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                             <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
                                   <CardTitle className="flex items-center gap-2 text-lg font-bold">
@@ -203,7 +203,7 @@ export default async function Home() {
                                       Image to Excel
                                   </CardTitle>
                                 </CardHeader>
-                                <CardContent className='p-0 mt-2'>
+                                <CardContent className='p-0 mt-2 flex-1'>
                                   <p className="text-sm text-muted-foreground">
                                     Extract tabular data from an image and export it to a styled Excel file.
                                   </p>
