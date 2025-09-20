@@ -8,6 +8,8 @@ import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
+import { PDFDocument } from 'pdf-lib';
+
 
 export async function generateProductDetails(
   productName: string,
@@ -105,6 +107,38 @@ export async function incrementQrCodeCounterAction() {
         error instanceof Error
           ? error.message
           : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function mergePdfsAction(pdfDataUris: string[]) {
+  try {
+    const mergedPdf = await PDFDocument.create();
+
+    for (const dataUri of pdfDataUris) {
+      const pdfBytes = Buffer.from(dataUri.split(',')[1], 'base64');
+      const pdf = await PDFDocument.load(pdfBytes);
+      const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
+      copiedPages.forEach((page) => {
+        mergedPdf.addPage(page);
+      });
+    }
+
+    const mergedPdfBytes = await mergedPdf.save();
+    const mergedPdfDataUri = `data:application/pdf;base64,${Buffer.from(
+      mergedPdfBytes
+    ).toString('base64')}`;
+    
+    await incrementCount('pdf');
+
+    return { mergedPdf: mergedPdfDataUri };
+  } catch (error) {
+    console.error('Error merging PDFs:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred while merging PDFs.',
     };
   }
 }

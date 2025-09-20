@@ -1,4 +1,4 @@
-import { ArrowRight, Calculator, Library, QrCode, ScanText } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -48,7 +48,7 @@ export default async function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-2">
+                <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
                     <Link href="/creator" className='h-full'>
                       <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                           <div className='p-6 pb-12'>
@@ -126,6 +126,26 @@ export default async function Home() {
                           </div>
                           <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
                             <GenerationCounter count={counts.ocr} label="Recognised" />
+                          </div>
+                      </Card>
+                    </Link>
+                     <Link href="/pdf-merger" className='h-full'>
+                      <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                          <div className='p-6 pb-12'>
+                            <CardHeader className='p-0'>
+                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                  <FileJson className="h-5 w-5 text-primary" />
+                                  Merge Multiple PDFs
+                              </CardTitle>
+                            </CardHeader>
+                            <CardContent className='p-0 mt-2'>
+                              <p className="text-sm text-muted-foreground">
+                                Combine multiple PDF documents into a single, organized file effortlessly.
+                              </p>
+                            </CardContent>
+                          </div>
+                          <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
+                            <GenerationCounter count={counts.pdf} label="Merged" />
                           </div>
                       </Card>
                     </Link>

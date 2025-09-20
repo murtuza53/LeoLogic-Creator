@@ -24,14 +24,12 @@ const db = getFirestore(app);
 const COUNTERS_COLLECTION = 'generationCounters';
 const COUNTERS_DOC_ID = 'featureCounts';
 
-export type Feature = 'product' | 'math' | 'qr' | 'ocr';
+export type Feature = 'product' | 'math' | 'qr' | 'ocr' | 'pdf';
 
 export async function incrementCount(feature: Feature): Promise<void> {
   try {
     const counterRef = doc(db, COUNTERS_COLLECTION, COUNTERS_DOC_ID);
     
-    // Using an update with the increment function is more atomic and safer
-    // for counters than set with merge.
     const payload: DocumentData = {};
     payload[feature] = increment(1);
 
@@ -39,8 +37,6 @@ export async function incrementCount(feature: Feature): Promise<void> {
 
   } catch (error) {
     console.error(`Failed to increment count for ${feature}:`, error);
-    // Depending on requirements, you might want to throw the error
-    // or handle it silently.
   }
 }
 
@@ -50,6 +46,7 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
         math: 0,
         qr: 0,
         ocr: 0,
+        pdf: 0,
     };
 
     try {
@@ -58,23 +55,19 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
 
         if (docSnap.exists()) {
             const data = docSnap.data();
-            // Securely merge fetched data with initial data to ensure all keys are present
-            // and default to 0 if a field is missing in Firestore.
             const counts: Record<Feature, number> = {
                 product: data.product || 0,
                 math: data.math || 0,
                 qr: data.qr || 0,
                 ocr: data.ocr || 0,
+                pdf: data.pdf || 0,
             };
             return counts;
         } else {
-            // If the document doesn't exist yet, return the initial zero counts.
-            // The first call to incrementCount will create it.
             return initialCounts;
         }
     } catch (error) {
         console.error("Error fetching feature counts:", error);
-        // In case of error, return the default zero counts to prevent breaking the UI.
         return initialCounts;
     }
 }
