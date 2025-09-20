@@ -207,18 +207,12 @@ export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
 }
 
 export async function convertImagesToWebpAction(
-  images: {
-    dataUri: string;
-    removeBackground?: boolean;
-    backgroundColor?: string;
-  }[]
+  images: { dataUri: string }[]
 ) {
   try {
     const conversionPromises = images.map(image => 
       convertImageToWebp({
         imageDataUri: image.dataUri,
-        removeBackground: image.removeBackground,
-        backgroundColor: image.backgroundColor,
       })
     );
 

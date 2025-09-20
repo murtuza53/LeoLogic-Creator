@@ -8,9 +8,6 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Trash2, Download, WandSparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { Input } from './ui/input';
-import { Switch } from './ui/switch';
-import { Label } from './ui/label';
 
 const MAX_FILES = 3;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
@@ -19,9 +16,6 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 type ImageFile = {
   file: File;
   previewUrl: string;
-  removeBackground: boolean;
-  backgroundColor: string;
-  isTransparent: boolean;
 };
 
 type ConvertedImage = {
@@ -59,9 +53,6 @@ export default function ImageToWebpConverter() {
       newFiles.push({
         file,
         previewUrl: URL.createObjectURL(file),
-        removeBackground: false,
-        backgroundColor: '#FFFFFF',
-        isTransparent: false,
       });
     }
 
@@ -74,14 +65,6 @@ export default function ImageToWebpConverter() {
       URL.revokeObjectURL(fileToRemove.previewUrl);
     }
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
-  };
-  
-  const handleOptionChange = (index: number, option: Partial<ImageFile>) => {
-     setFiles(prevFiles => {
-        const newFiles = [...prevFiles];
-        newFiles[index] = { ...newFiles[index], ...option };
-        return newFiles;
-     });
   };
 
   const handleConvert = async () => {
@@ -96,14 +79,12 @@ export default function ImageToWebpConverter() {
     try {
       const imagePayloads = await Promise.all(
         files.map(imageFile => {
-          return new Promise<{ dataUri: string; removeBackground?: boolean; backgroundColor?: string }>((resolve, reject) => {
+          return new Promise<{ dataUri: string }>((resolve, reject) => {
             const reader = new FileReader();
             reader.readAsDataURL(imageFile.file);
             reader.onload = () => {
               resolve({
                 dataUri: reader.result as string,
-                removeBackground: imageFile.removeBackground || imageFile.isTransparent,
-                backgroundColor: imageFile.isTransparent || imageFile.removeBackground ? undefined : imageFile.backgroundColor,
               });
             };
             reader.onerror = reject;
@@ -181,55 +162,16 @@ export default function ImageToWebpConverter() {
             <Card className="shadow-lg">
                 <CardHeader>
                     <CardTitle>Image Queue ({files.length}/{MAX_FILES})</CardTitle>
-                    <CardDescription>Configure background options for each image before converting.</CardDescription>
+                    <CardDescription>Review your images before converting.</CardDescription>
                 </CardHeader>
                 <CardContent className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3">
                     {files.map((imageFile, index) => (
-                        <Card key={index} className="overflow-hidden">
+                        <Card key={index} className="overflow-hidden relative">
                           <CardContent className="p-4 space-y-4">
                             <div className="relative aspect-video w-full rounded-md overflow-hidden border">
                                 <Image src={imageFile.previewUrl} alt={`Preview of ${imageFile.file.name}`} layout="fill" objectFit="contain" />
                             </div>
                             <p className="text-sm font-medium truncate">{imageFile.file.name}</p>
-                            <div className="space-y-3">
-                                <div className="flex items-center justify-between rounded-lg border p-3">
-                                  <Label htmlFor={`transparent-switch-${index}`}>Transparent BG</Label>
-                                  <Switch
-                                    id={`transparent-switch-${index}`}
-                                    checked={imageFile.isTransparent}
-                                    onCheckedChange={(checked) => handleOptionChange(index, { isTransparent: checked, removeBackground: checked })}
-                                  />
-                                </div>
-                                <div className="flex items-center justify-between rounded-lg border p-3">
-                                    <Label htmlFor={`remove-bg-switch-${index}`}>Remove BG Only</Label>
-                                    <Switch
-                                        id={`remove-bg-switch-${index}`}
-                                        checked={imageFile.removeBackground}
-                                        onCheckedChange={(checked) => handleOptionChange(index, { removeBackground: checked, isTransparent: checked })}
-                                        disabled={imageFile.isTransparent}
-                                    />
-                                </div>
-                                <div className="space-y-2 rounded-lg border p-3">
-                                    <Label htmlFor={`bg-color-${index}`}>Background Color</Label>
-                                    <div className="flex items-center gap-2">
-                                    <Input
-                                        id={`bg-color-${index}`}
-                                        type="color"
-                                        value={imageFile.backgroundColor}
-                                        onChange={(e) => handleOptionChange(index, { backgroundColor: e.target.value })}
-                                        disabled={imageFile.removeBackground || imageFile.isTransparent}
-                                        className="h-8 w-12 p-1"
-                                    />
-                                    <Input
-                                        type="text"
-                                        value={imageFile.backgroundColor}
-                                        onChange={(e) => handleOptionChange(index, { backgroundColor: e.target.value })}
-                                        disabled={imageFile.removeBackground || imageFile.isTransparent}
-                                        className="h-8"
-                                    />
-                                    </div>
-                                </div>
-                            </div>
                            </CardContent>
                            <Button variant="destructive" size="sm" className="absolute top-2 right-2 h-7 w-7" onClick={() => removeFile(index)}>
                                 <Trash2 className="h-4 w-4" />

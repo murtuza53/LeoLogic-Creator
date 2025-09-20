@@ -1,10 +1,10 @@
 'use server';
 
 /**
- * @fileOverview Defines a Genkit flow for converting an image to WebP format with optional background modifications.
+ * @fileOverview Defines a Genkit flow for converting an image to WebP format.
  *
  * It exports:
- * - `convertImageToWebp`: An async function that takes an image data URI and conversion options.
+ * - `convertImageToWebp`: An async function that takes an image data URI.
  * - `ConvertImageToWebpInput`: The input type for the `convertImageToWebp` function.
  * - `ConvertImageToWebpOutput`: The output type for the `convertImageToWebp` function.
  */
@@ -18,8 +18,6 @@ const ConvertImageToWebpInputSchema = z.object({
     .describe(
       "A photo to be converted, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
     ),
-  removeBackground: z.boolean().optional().describe('Whether to make the background transparent.'),
-  backgroundColor: z.string().optional().describe('A hex color code to set as the new background (e.g., #FF0000). This is ignored if removeBackground is true.'),
 });
 export type ConvertImageToWebpInput = z.infer<typeof ConvertImageToWebpInputSchema>;
 
@@ -40,14 +38,8 @@ const convertImageToWebpFlow = ai.defineFlow(
     inputSchema: ConvertImageToWebpInputSchema,
     outputSchema: ConvertImageToWebpOutputSchema,
   },
-  async ({ imageDataUri, removeBackground, backgroundColor }) => {
+  async ({ imageDataUri }) => {
     let promptText = 'Convert the provided image to WebP format.';
-
-    if (removeBackground) {
-        promptText += ' The background of the image should be removed and made transparent.';
-    } else if (backgroundColor) {
-        promptText += ` The existing background should be replaced with a solid color: ${backgroundColor}.`;
-    }
 
     const { media } = await ai.generate({
       model: 'googleai/gemini-2.5-flash-image-preview',
