@@ -5,6 +5,12 @@ import { Logo } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GenerationCounter from '@/components/generation-counter';
 import { getFeatureCounts } from './actions';
+import {
+  Accordion,
+  AccordionContent,
+  AccordionItem,
+  AccordionTrigger,
+} from "@/components/ui/accordion"
 
 export default async function Home() {
   const counts = await getFeatureCounts();
@@ -47,11 +53,11 @@ export default async function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto max-w-5xl pt-12 space-y-12">
+                <div className="mx-auto max-w-5xl pt-12 space-y-8">
                   <div className="space-y-6">
                     <h3 className="text-2xl font-bold text-center">Smart Tools</h3>
                     <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                      <a href="/creator" className="h-full block">
+                      <Link href="/creator" className="h-full block">
                           <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
@@ -70,8 +76,8 @@ export default async function Home() {
                               <GenerationCounter count={counts.smartProduct} label="Products Generated" />
                             </div>
                           </Card>
-                      </a>
-                      <a href="/math-solver" className="h-full block">
+                      </Link>
+                      <Link href="/math-solver" className="h-full block">
                           <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                   <CardHeader className='p-0'>
@@ -90,8 +96,8 @@ export default async function Home() {
                                 <GenerationCounter count={counts.aiMath} label="Problems Solved" />
                             </div>
                           </Card>
-                      </a>
-                      <a href="/benefit-pay-qr" className="h-full block">
+                      </Link>
+                      <Link href="/benefit-pay-qr" className="h-full block">
                           <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
@@ -110,8 +116,8 @@ export default async function Home() {
                                 <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
                               </div>
                           </Card>
-                      </a>
-                      <a href="/ocr" className="h-full block">
+                      </Link>
+                      <Link href="/ocr" className="h-full block">
                           <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                             <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
@@ -130,23 +136,45 @@ export default async function Home() {
                               <GenerationCounter count={counts.ocr} label="Images Recognized" />
                             </div>
                           </Card>
-                      </a>
+                      </Link>
                     </div>
                   </div>
 
                   <div className="space-y-6">
                     <h3 className="text-2xl font-bold text-center">Image Tools</h3>
-                    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center mt-4">
-                        <ImageIcon className="h-16 w-16 text-muted-foreground" />
-                        <h3 className="mt-4 text-lg font-semibold">No Image Tools Yet</h3>
-                        <p className="mt-2 text-sm text-muted-foreground">Stay tuned for new image generation and editing tools!</p>
-                    </div>
+                     <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
+                        <Link href="/image-to-webp" className="h-full block">
+                            <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                              <div className='flex flex-col h-full p-6 pb-12'>
+                                  <CardHeader className='p-0'>
+                                    <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                        <ImageIcon className="h-5 w-5 text-primary" />
+                                        Image to WebP
+                                    </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className='p-0 mt-2'>
+                                    <p className="text-sm text-muted-foreground">
+                                      Convert images to WebP format, remove backgrounds, and change background colors.
+                                    </p>
+                                  </CardContent>
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-yellow-100 dark:bg-yellow-900/50 text-center">
+                                <GenerationCounter count={counts.imageToWebp} label="Images Converted" />
+                              </div>
+                            </Card>
+                        </Link>
+                        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center">
+                            <ImageIcon className="h-12 w-12 text-muted-foreground" />
+                            <h3 className="mt-4 text-lg font-semibold">More Image Tools Coming Soon</h3>
+                            <p className="mt-2 text-sm text-muted-foreground">Stay tuned for new image generation and editing tools!</p>
+                        </div>
+                     </div>
                   </div>
 
                   <div className="space-y-6">
                      <h3 className="text-2xl font-bold text-center">Document Tools</h3>
                      <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                        <a href="/pdf-merger" className="h-full block">
+                        <Link href="/pdf-merger" className="h-full block">
                             <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                               <div className='flex flex-col h-full p-6 pb-12'>
                                   <CardHeader className='p-0'>
@@ -165,8 +193,8 @@ export default async function Home() {
                                 <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
                               </div>
                             </Card>
-                        </a>
-                        <a href="/table-extractor" className="h-full block">
+                        </Link>
+                        <Link href="/table-extractor" className="h-full block">
                           <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
                             <div className='flex flex-col h-full p-6 pb-12'>
                                 <CardHeader className='p-0'>
@@ -185,7 +213,7 @@ export default async function Home() {
                               <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
                             </div>
                           </Card>
-                        </a>
+                        </Link>
                      </div>
                   </div>
                 </div>
