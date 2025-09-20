@@ -1,3 +1,4 @@
+
 import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -48,203 +49,215 @@ export default async function Home() {
                     </div>
                 </div>
                 <div className="mx-auto max-w-5xl pt-12 space-y-8">
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-bold text-center">Smart Tools</h3>
-                    <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                      <Link href="/creator" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                              <div className='flex flex-col h-full p-6 pb-12'>
-                                <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <Library className="h-5 w-5 text-primary" />
-                                      Smart Product Content
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                      Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
-                                  </p>
-                                </CardContent>
-                              </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
-                              <GenerationCounter count={counts.smartProduct} label="Products Generated" />
-                            </div>
-                          </Card>
-                      </Link>
-                      <Link href="/math-solver" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                              <div className='flex flex-col h-full p-6 pb-12'>
-                                  <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <Calculator className="h-5 w-5 text-primary" />
-                                      AI Math Solver
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                    Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
-                                  </p>
-                                </CardContent>
-                              </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                                <GenerationCounter count={counts.aiMath} label="Problems Solved" />
-                            </div>
-                          </Card>
-                      </Link>
-                      <Link href="/benefit-pay-qr" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                              <div className='flex flex-col h-full p-6 pb-12'>
-                                <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <QrCode className="h-5 w-5 text-primary" />
-                                      Benefit Pay QR Generator
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                    Create and customize QR codes for Benefit Pay transactions quickly and easily.
-                                  </p>
-                                </CardContent>
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                                <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
-                              </div>
-                          </Card>
-                      </Link>
-                      <Link href="/ocr" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                            <div className='flex flex-col h-full p-6 pb-12'>
-                                <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <ScanText className="h-5 w-5 text-primary" />
-                                      Optical Character Recognition
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                    Extract text and reconstruct its original formatting from any image with high accuracy.
-                                  </p>
-                                </CardContent>
-                            </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                              <GenerationCounter count={counts.ocr} label="Images Recognized" />
-                            </div>
-                          </Card>
-                      </Link>
-                    </div>
-                  </div>
+                  <Card className="shadow-lg">
+                      <CardHeader>
+                          <CardTitle className="text-2xl font-bold text-center">Smart Tools</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div className="grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
+                              <Link href="/creator" className="h-full block">
+                                  <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                      <div className='flex flex-col h-full p-6 pb-12'>
+                                        <CardHeader className='p-0'>
+                                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                              <Library className="h-5 w-5 text-primary" />
+                                              Smart Product Content
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='p-0 mt-2 flex-1'>
+                                          <p className="text-sm text-muted-foreground">
+                                              Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
+                                          </p>
+                                        </CardContent>
+                                      </div>
+                                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
+                                      <GenerationCounter count={counts.smartProduct} label="Products Generated" />
+                                    </div>
+                                  </Card>
+                              </Link>
+                              <Link href="/math-solver" className="h-full block">
+                                  <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                      <div className='flex flex-col h-full p-6 pb-12'>
+                                          <CardHeader className='p-0'>
+                                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                              <Calculator className="h-5 w-5 text-primary" />
+                                              AI Math Solver
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='p-0 mt-2 flex-1'>
+                                          <p className="text-sm text-muted-foreground">
+                                            Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
+                                          </p>
+                                        </CardContent>
+                                      </div>
+                                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
+                                        <GenerationCounter count={counts.aiMath} label="Problems Solved" />
+                                    </div>
+                                  </Card>
+                              </Link>
+                              <Link href="/benefit-pay-qr" className="h-full block">
+                                  <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                      <div className='flex flex-col h-full p-6 pb-12'>
+                                        <CardHeader className='p-0'>
+                                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                              <QrCode className="h-5 w-5 text-primary" />
+                                              Benefit Pay QR Generator
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='p-0 mt-2 flex-1'>
+                                          <p className="text-sm text-muted-foreground">
+                                            Create and customize QR codes for Benefit Pay transactions quickly and easily.
+                                          </p>
+                                        </CardContent>
+                                      </div>
+                                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
+                                        <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
+                                      </div>
+                                  </Card>
+                              </Link>
+                              <Link href="/ocr" className="h-full block">
+                                  <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                    <div className='flex flex-col h-full p-6 pb-12'>
+                                        <CardHeader className='p-0'>
+                                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                              <ScanText className="h-5 w-5 text-primary" />
+                                              Optical Character Recognition
+                                          </CardTitle>
+                                        </CardHeader>
+                                        <CardContent className='p-0 mt-2 flex-1'>
+                                          <p className="text-sm text-muted-foreground">
+                                            Extract text and reconstruct its original formatting from any image with high accuracy.
+                                          </p>
+                                        </CardContent>
+                                    </div>
+                                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
+                                      <GenerationCounter count={counts.ocr} label="Images Recognized" />
+                                    </div>
+                                  </Card>
+                              </Link>
+                          </div>
+                      </CardContent>
+                  </Card>
 
-                  <div className="space-y-6">
-                    <h3 className="text-2xl font-bold text-center">Image Tools</h3>
-                     <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                        <Link href="/image-to-webp" className="h-full block">
-                            <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                              <div className='flex flex-col h-full p-6 pb-12'>
-                                  <CardHeader className='p-0'>
-                                    <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                        <ImageIcon className="h-5 w-5 text-primary" />
-                                        Image to WebP
-                                    </CardTitle>
-                                  </CardHeader>
-                                  <CardContent className='p-0 mt-2 flex-1'>
-                                    <p className="text-sm text-muted-foreground">
-                                      Convert images to the efficient WebP format with just one click.
-                                    </p>
-                                  </CardContent>
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-yellow-100 dark:bg-yellow-900/50 text-center">
-                                <GenerationCounter count={counts.imageToWebp} label="Images Converted" />
-                              </div>
-                            </Card>
-                        </Link>
-                        <Link href="/remove-background" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                            <div className='flex flex-col h-full p-6 pb-12'>
-                                <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <Eraser className="h-5 w-5 text-primary" />
-                                      Remove Background
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                    Upload an image to automatically remove its background.
-                                  </p>
-                                </CardContent>
-                            </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
-                              <GenerationCounter count={counts.imgRemoveBg} label="Backgrounds Removed" />
-                            </div>
-                          </Card>
-                        </Link>
-                        <Link href="/change-background" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                            <div className='flex flex-col h-full p-6 pb-12'>
-                                <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <Palette className="h-5 w-5 text-primary" />
-                                      Change Background
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                    Replace an image's background with a color of your choice.
-                                  </p>
-                                </CardContent>
-                            </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-indigo-100 dark:bg-indigo-900/50 text-center">
-                              <GenerationCounter count={counts.imgChangeBg} label="Backgrounds Changed" />
-                            </div>
-                          </Card>
-                        </Link>
-                     </div>
-                  </div>
+                  <Card className="shadow-lg">
+                      <CardHeader>
+                          <CardTitle className="text-2xl font-bold text-center">Image Tools</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div className="grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
+                            <Link href="/image-to-webp" className="h-full block">
+                                <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                  <div className='flex flex-col h-full p-6 pb-12'>
+                                      <CardHeader className='p-0'>
+                                        <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                            <ImageIcon className="h-5 w-5 text-primary" />
+                                            Image to WebP
+                                        </CardTitle>
+                                      </CardHeader>
+                                      <CardContent className='p-0 mt-2 flex-1'>
+                                        <p className="text-sm text-muted-foreground">
+                                          Convert images to the efficient WebP format with just one click.
+                                        </p>
+                                      </CardContent>
+                                  </div>
+                                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-yellow-100 dark:bg-yellow-900/50 text-center">
+                                    <GenerationCounter count={counts.imageToWebp} label="Images Converted" />
+                                  </div>
+                                </Card>
+                            </Link>
+                            <Link href="/remove-background" className="h-full block">
+                              <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                <div className='flex flex-col h-full p-6 pb-12'>
+                                    <CardHeader className='p-0'>
+                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                          <Eraser className="h-5 w-5 text-primary" />
+                                          Remove Background
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='p-0 mt-2 flex-1'>
+                                      <p className="text-sm text-muted-foreground">
+                                        Upload an image to automatically remove its background.
+                                      </p>
+                                    </CardContent>
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
+                                  <GenerationCounter count={counts.imgRemoveBg} label="Backgrounds Removed" />
+                                </div>
+                              </Card>
+                            </Link>
+                            <Link href="/change-background" className="h-full block">
+                              <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                <div className='flex flex-col h-full p-6 pb-12'>
+                                    <CardHeader className='p-0'>
+                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                          <Palette className="h-5 w-5 text-primary" />
+                                          Change Background
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='p-0 mt-2 flex-1'>
+                                      <p className="text-sm text-muted-foreground">
+                                        Replace an image's background with a color of your choice.
+                                      </p>
+                                    </CardContent>
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-indigo-100 dark:bg-indigo-900/50 text-center">
+                                  <GenerationCounter count={counts.imgChangeBg} label="Backgrounds Changed" />
+                                </div>
+                              </Card>
+                            </Link>
+                          </div>
+                      </CardContent>
+                  </Card>
 
-                  <div className="space-y-6">
-                     <h3 className="text-2xl font-bold text-center">Document Tools</h3>
-                     <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                        <Link href="/pdf-merger" className="h-full block">
-                            <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                              <div className='flex flex-col h-full p-6 pb-12'>
-                                  <CardHeader className='p-0'>
-                                    <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                        <FileJson className="h-5 w-5 text-primary" />
-                                        Merge Multiple PDFs
-                                    </CardTitle>
-                                  </CardHeader>
-                                  <CardContent className='p-0 mt-2 flex-1'>
-                                    <p className="text-sm text-muted-foreground">
-                                      Combine multiple PDF documents into a single, organized file effortlessly.
-                                    </p>
-                                  </CardContent>
-                              </div>
-                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
-                                <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
-                              </div>
-                            </Card>
-                        </Link>
-                        <Link href="/table-extractor" className="h-full block">
-                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                            <div className='flex flex-col h-full p-6 pb-12'>
-                                <CardHeader className='p-0'>
-                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                      <FileSpreadsheet className="h-5 w-5 text-primary" />
-                                      Image to Excel
-                                  </CardTitle>
-                                </CardHeader>
-                                <CardContent className='p-0 mt-2 flex-1'>
-                                  <p className="text-sm text-muted-foreground">
-                                    Extract tabular data from an image and export it to a styled Excel file.
-                                  </p>
-                                </CardContent>
-                            </div>
-                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
-                              <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
-                            </div>
-                          </Card>
-                        </Link>
-                     </div>
-                  </div>
+                  <Card className="shadow-lg">
+                      <CardHeader>
+                          <CardTitle className="text-2xl font-bold text-center">Document Tools</CardTitle>
+                      </CardHeader>
+                      <CardContent>
+                          <div className="grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
+                            <Link href="/pdf-merger" className="h-full block">
+                                <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                  <div className='flex flex-col h-full p-6 pb-12'>
+                                      <CardHeader className='p-0'>
+                                        <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                            <FileJson className="h-5 w-5 text-primary" />
+                                            Merge Multiple PDFs
+                                        </CardTitle>
+                                      </CardHeader>
+                                      <CardContent className='p-0 mt-2 flex-1'>
+                                        <p className="text-sm text-muted-foreground">
+                                          Combine multiple PDF documents into a single, organized file effortlessly.
+                                        </p>
+                                      </CardContent>
+                                  </div>
+                                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
+                                    <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
+                                  </div>
+                                </Card>
+                            </Link>
+                            <Link href="/table-extractor" className="h-full block">
+                              <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                <div className='flex flex-col h-full p-6 pb-12'>
+                                    <CardHeader className='p-0'>
+                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                          <FileSpreadsheet className="h-5 w-5 text-primary" />
+                                          Image to Excel
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='p-0 mt-2 flex-1'>
+                                      <p className="text-sm text-muted-foreground">
+                                        Extract tabular data from an image and export it to a styled Excel file.
+                                      </p>
+                                    </CardContent>
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
+                                  <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
+                                </div>
+                              </Card>
+                            </Link>
+                          </div>
+                      </CardContent>
+                  </Card>
                 </div>
             </div>
         </section>
