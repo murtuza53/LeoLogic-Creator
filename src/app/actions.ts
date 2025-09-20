@@ -42,7 +42,7 @@ export async function generateProductDetails(
       throw new Error('AI failed to generate complete details.');
     }
     
-    await incrementCount('product');
+    await incrementCount('smartProduct');
 
     return {
       description: descriptionResult.description,
@@ -67,7 +67,7 @@ export async function solveMathProblemAction(problem: string) {
     if (!result) {
       throw new Error('AI failed to solve the problem.');
     }
-    await incrementCount('math');
+    await incrementCount('aiMath');
     return result;
   } catch (error) {
     console.error('Error solving math problem:', error);
@@ -101,7 +101,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
 
 export async function incrementQrCodeCounterAction() {
   try {
-    await incrementCount('qr');
+    await incrementCount('benefitPay');
   } catch (error) {
      console.error('Error incrementing QR code counter:', error);
      return {
@@ -131,7 +131,7 @@ export async function mergePdfsAction(pdfDataUris: string[]) {
       mergedPdfBytes
     ).toString('base64')}`;
     
-    await incrementCount('pdf');
+    await incrementCount('mergePdf');
 
     return { mergedPdf: mergedPdfDataUri };
   } catch (error) {
@@ -191,7 +191,7 @@ export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
     const buffer = await workbook.xlsx.writeBuffer();
     const excelDataUri = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${Buffer.from(buffer).toString('base64')}`;
 
-    await incrementCount('table');
+    await incrementCount('imageExcel');
 
     return { excelDataUri };
   } catch (error) {

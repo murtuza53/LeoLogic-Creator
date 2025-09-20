@@ -73,7 +73,7 @@ export default async function Home() {
                                   </CardContent>
                                </div>
                               <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
-                                <GenerationCounter count={counts.product} label="Products Generated" />
+                                <GenerationCounter count={counts.smartProduct} label="Products Generated" />
                               </div>
                             </Card>
                         </Link>
@@ -93,7 +93,7 @@ export default async function Home() {
                                   </CardContent>
                                </div>
                               <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                                  <GenerationCounter count={counts.math} label="Problems Solved" />
+                                  <GenerationCounter count={counts.aiMath} label="Problems Solved" />
                               </div>
                             </Card>
                         </Link>
@@ -113,7 +113,7 @@ export default async function Home() {
                                   </CardContent>
                                </div>
                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                                  <GenerationCounter count={counts.qr} label="QRs Generated" />
+                                  <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
                                </div>
                             </Card>
                         </Link>
@@ -164,7 +164,7 @@ export default async function Home() {
                                     </CardContent>
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
-                                  <GenerationCounter count={counts.pdf} label="PDFs Merged" />
+                                  <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
                                 </div>
                               </Card>
                           </Link>
@@ -184,7 +184,7 @@ export default async function Home() {
                                   </CardContent>
                               </div>
                               <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
-                                <GenerationCounter count={counts.table} label="Tables Extracted" />
+                                <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
                               </div>
                             </Card>
                           </Link>
