@@ -1,5 +1,3 @@
-"use client";
-
 type GenerationCounterProps = {
   count: number;
   label: string;
