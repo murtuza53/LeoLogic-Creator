@@ -5,7 +5,6 @@ import { Logo } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GenerationCounter from '@/components/generation-counter';
 import { getFeatureCounts } from './actions';
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from '@/components/ui/accordion';
 
 export default async function Home() {
   const counts = await getFeatureCounts();
@@ -48,153 +47,147 @@ export default async function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto max-w-5xl pt-12">
-                  <Accordion type="single" collapsible defaultValue="smart-tools" className="w-full">
-                    <AccordionItem value="smart-tools">
-                      <AccordionTrigger className="text-xl font-semibold py-4">Smart Tools</AccordionTrigger>
-                      <AccordionContent>
-                        <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                           <a href="/creator" className="h-full block">
-                              <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                                 <div className='flex flex-col h-full p-6 pb-12'>
-                                    <CardHeader className='p-0'>
-                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                          <Library className="h-5 w-5 text-primary" />
-                                          Smart Product Content
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='p-0 mt-2'>
-                                      <p className="text-sm text-muted-foreground">
-                                          Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
-                                      </p>
-                                    </CardContent>
-                                 </div>
-                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
-                                  <GenerationCounter count={counts.smartProduct} label="Products Generated" />
-                                </div>
-                              </Card>
-                          </a>
-                          <a href="/math-solver" className="h-full block">
-                              <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                                 <div className='flex flex-col h-full p-6 pb-12'>
-                                     <CardHeader className='p-0'>
-                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                          <Calculator className="h-5 w-5 text-primary" />
-                                          AI Math Solver
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='p-0 mt-2'>
-                                      <p className="text-sm text-muted-foreground">
-                                        Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
-                                      </p>
-                                    </CardContent>
-                                 </div>
-                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                                    <GenerationCounter count={counts.aiMath} label="Problems Solved" />
-                                </div>
-                              </Card>
-                          </a>
-                          <a href="/benefit-pay-qr" className="h-full block">
-                              <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                                 <div className='flex flex-col h-full p-6 pb-12'>
-                                    <CardHeader className='p-0'>
-                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                          <QrCode className="h-5 w-5 text-primary" />
-                                          Benefit Pay QR Generator
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='p-0 mt-2'>
-                                      <p className="text-sm text-muted-foreground">
-                                        Create and customize QR codes for Benefit Pay transactions quickly and easily.
-                                      </p>
-                                    </CardContent>
-                                 </div>
-                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                                    <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
-                                 </div>
-                              </Card>
-                          </a>
-                          <a href="/ocr" className="h-full block">
-                              <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                                <div className='flex flex-col h-full p-6 pb-12'>
-                                    <CardHeader className='p-0'>
-                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                          <ScanText className="h-5 w-5 text-primary" />
-                                          Optical Character Recognition
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='p-0 mt-2'>
-                                      <p className="text-sm text-muted-foreground">
-                                        Extract text and reconstruct its original formatting from any image with high accuracy.
-                                      </p>
-                                    </CardContent>
-                                </div>
-                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                                  <GenerationCounter count={counts.ocr} label="Images Recognized" />
-                                </div>
-                              </Card>
-                          </a>
-                        </div>
-                      </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="image-tools">
-                       <AccordionTrigger className="text-xl font-semibold py-4">Image Tools</AccordionTrigger>
-                       <AccordionContent>
-                          <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center mt-4">
-                              <ImageIcon className="h-16 w-16 text-muted-foreground" />
-                              <h3 className="mt-4 text-lg font-semibold">No Image Tools Yet</h3>
-                              <p className="mt-2 text-sm text-muted-foreground">Stay tuned for new image generation and editing tools!</p>
-                          </div>
-                       </AccordionContent>
-                    </AccordionItem>
-                    <AccordionItem value="document-tools">
-                       <AccordionTrigger className="text-xl font-semibold py-4">Document Tools</AccordionTrigger>
-                       <AccordionContent>
-                         <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
-                            <a href="/pdf-merger" className="h-full block">
-                                <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                                  <div className='flex flex-col h-full p-6 pb-12'>
-                                      <CardHeader className='p-0'>
-                                        <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                            <FileJson className="h-5 w-5 text-primary" />
-                                            Merge Multiple PDFs
-                                        </CardTitle>
-                                      </CardHeader>
-                                      <CardContent className='p-0 mt-2'>
-                                        <p className="text-sm text-muted-foreground">
-                                          Combine multiple PDF documents into a single, organized file effortlessly.
-                                        </p>
-                                      </CardContent>
-                                  </div>
-                                  <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
-                                    <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
-                                  </div>
-                                </Card>
-                            </a>
-                            <a href="/table-extractor" className="h-full block">
-                              <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                                <div className='flex flex-col h-full p-6 pb-12'>
-                                    <CardHeader className='p-0'>
-                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                          <FileSpreadsheet className="h-5 w-5 text-primary" />
-                                          Image to Excel
-                                      </CardTitle>
-                                    </CardHeader>
-                                    <CardContent className='p-0 mt-2'>
-                                      <p className="text-sm text-muted-foreground">
-                                        Extract tabular data from an image and export it to a styled Excel file.
-                                      </p>
-                                    </CardContent>
-                                </div>
-                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
-                                  <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
-                                </div>
-                              </Card>
-                            </a>
-                         </div>
-                       </AccordionContent>
-                    </AccordionItem>
-                  </Accordion>
+                <div className="mx-auto max-w-5xl pt-12 space-y-12">
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-bold text-center">Smart Tools</h3>
+                    <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
+                      <a href="/creator" className="h-full block">
+                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                              <div className='flex flex-col h-full p-6 pb-12'>
+                                <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <Library className="h-5 w-5 text-primary" />
+                                      Smart Product Content
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2'>
+                                  <p className="text-sm text-muted-foreground">
+                                      Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
+                                  </p>
+                                </CardContent>
+                              </div>
+                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
+                              <GenerationCounter count={counts.smartProduct} label="Products Generated" />
+                            </div>
+                          </Card>
+                      </a>
+                      <a href="/math-solver" className="h-full block">
+                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                              <div className='flex flex-col h-full p-6 pb-12'>
+                                  <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <Calculator className="h-5 w-5 text-primary" />
+                                      AI Math Solver
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2'>
+                                  <p className="text-sm text-muted-foreground">
+                                    Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
+                                  </p>
+                                </CardContent>
+                              </div>
+                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
+                                <GenerationCounter count={counts.aiMath} label="Problems Solved" />
+                            </div>
+                          </Card>
+                      </a>
+                      <a href="/benefit-pay-qr" className="h-full block">
+                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                              <div className='flex flex-col h-full p-6 pb-12'>
+                                <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <QrCode className="h-5 w-5 text-primary" />
+                                      Benefit Pay QR Generator
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2'>
+                                  <p className="text-sm text-muted-foreground">
+                                    Create and customize QR codes for Benefit Pay transactions quickly and easily.
+                                  </p>
+                                </CardContent>
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
+                                <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
+                              </div>
+                          </Card>
+                      </a>
+                      <a href="/ocr" className="h-full block">
+                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <div className='flex flex-col h-full p-6 pb-12'>
+                                <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <ScanText className="h-5 w-5 text-primary" />
+                                      Optical Character Recognition
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2'>
+                                  <p className="text-sm text-muted-foreground">
+                                    Extract text and reconstruct its original formatting from any image with high accuracy.
+                                  </p>
+                                </CardContent>
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
+                              <GenerationCounter count={counts.ocr} label="Images Recognized" />
+                            </div>
+                          </Card>
+                      </a>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                    <h3 className="text-2xl font-bold text-center">Image Tools</h3>
+                    <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center mt-4">
+                        <ImageIcon className="h-16 w-16 text-muted-foreground" />
+                        <h3 className="mt-4 text-lg font-semibold">No Image Tools Yet</h3>
+                        <p className="mt-2 text-sm text-muted-foreground">Stay tuned for new image generation and editing tools!</p>
+                    </div>
+                  </div>
+
+                  <div className="space-y-6">
+                     <h3 className="text-2xl font-bold text-center">Document Tools</h3>
+                     <div className="pt-4 grid items-start gap-8 sm:grid-cols-2 lg:grid-cols-2">
+                        <a href="/pdf-merger" className="h-full block">
+                            <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                              <div className='flex flex-col h-full p-6 pb-12'>
+                                  <CardHeader className='p-0'>
+                                    <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                        <FileJson className="h-5 w-5 text-primary" />
+                                        Merge Multiple PDFs
+                                    </CardTitle>
+                                  </CardHeader>
+                                  <CardContent className='p-0 mt-2'>
+                                    <p className="text-sm text-muted-foreground">
+                                      Combine multiple PDF documents into a single, organized file effortlessly.
+                                    </p>
+                                  </CardContent>
+                              </div>
+                              <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
+                                <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
+                              </div>
+                            </Card>
+                        </a>
+                        <a href="/table-extractor" className="h-full block">
+                          <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <div className='flex flex-col h-full p-6 pb-12'>
+                                <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <FileSpreadsheet className="h-5 w-5 text-primary" />
+                                      Image to Excel
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2'>
+                                  <p className="text-sm text-muted-foreground">
+                                    Extract tabular data from an image and export it to a styled Excel file.
+                                  </p>
+                                </CardContent>
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
+                              <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
+                            </div>
+                          </Card>
+                        </a>
+                     </div>
+                  </div>
                 </div>
             </div>
         </section>
