@@ -50,120 +50,108 @@ export default async function Home() {
                 </div>
                 <div className="mx-auto grid max-w-5xl items-start gap-8 py-12 sm:grid-cols-2 md:gap-12 lg:grid-cols-3">
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                      <Link href="/creator" className='h-full'>
-                          <div className='p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <Library className="h-5 w-5 text-primary" />
-                                  Smart Product Content Generation
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-2'>
-                              <p className="text-sm text-muted-foreground">
-                                  Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
-                              </p>
-                            </CardContent>
-                          </div>
+                      <Link href="/creator" className='flex flex-col h-full p-6 pb-12'>
+                          <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <Library className="h-5 w-5 text-primary" />
+                                Smart Product Content Generation
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                                Generate unique, SEO-friendly product descriptions, detailed specifications, and studio-quality images from a single upload.
+                            </p>
+                          </CardContent>
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
                         <GenerationCounter count={counts.product} label="Generated" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                       <Link href="/math-solver" className='h-full'>
-                           <div className='p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <Calculator className="h-5 w-5 text-primary" />
-                                  AI Math Problem Solver
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-2'>
-                              <p className="text-sm text-muted-foreground">
-                                Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
-                              </p>
-                            </CardContent>
-                          </div>
+                       <Link href="/math-solver" className='flex flex-col h-full p-6 pb-12'>
+                           <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <Calculator className="h-5 w-5 text-primary" />
+                                AI Math Problem Solver
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Get step-by-step solutions to complex math problems, from algebra to calculus, with clear, AI-driven explanations.
+                            </p>
+                          </CardContent>
                        </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
                           <GenerationCounter count={counts.math} label="Solved" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                       <Link href="/benefit-pay-qr" className='h-full'>
-                          <div className='p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <QrCode className="h-5 w-5 text-primary" />
-                                  Benefit Pay QR Generator
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-2'>
-                              <p className="text-sm text-muted-foreground">
-                                Create and customize QR codes for Benefit Pay transactions quickly and easily.
-                              </p>
-                            </CardContent>
-                          </div>
+                       <Link href="/benefit-pay-qr" className='flex flex-col h-full p-6 pb-12'>
+                          <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <QrCode className="h-5 w-5 text-primary" />
+                                Benefit Pay QR Generator
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Create and customize QR codes for Benefit Pay transactions quickly and easily.
+                            </p>
+                          </CardContent>
                        </Link>
                        <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
                           <GenerationCounter count={counts.qr} label="Generated" />
                        </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                      <Link href="/ocr" className='h-full'>
-                          <div className='p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <ScanText className="h-5 w-5 text-primary" />
-                                  Optical Character Recognition (OCR)
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-2'>
-                              <p className="text-sm text-muted-foreground">
-                                Extract text and reconstruct its original formatting from any image with high accuracy.
-                              </p>
-                            </CardContent>
-                          </div>
+                      <Link href="/ocr" className='flex flex-col h-full p-6 pb-12'>
+                          <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <ScanText className="h-5 w-5 text-primary" />
+                                Optical Character Recognition (OCR)
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Extract text and reconstruct its original formatting from any image with high accuracy.
+                            </p>
+                          </CardContent>
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
                         <GenerationCounter count={counts.ocr} label="Recognised" />
                       </div>
                     </Card>
-                    <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                      <Link href="/pdf-merger" className='h-full'>
-                          <div className='p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <FileJson className="h-5 w-5 text-primary" />
-                                  Merge Multiple PDFs
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-2'>
-                              <p className="text-sm text-muted-foreground">
-                                Combine multiple PDF documents into a single, organized file effortlessly.
-                              </p>
-                            </CardContent>
-                          </div>
+                    <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:_shadow-md h-full overflow-hidden">
+                      <Link href="/pdf-merger" className='flex flex-col h-full p-6 pb-12'>
+                          <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <FileJson className="h-5 w-5 text-primary" />
+                                Merge Multiple PDFs
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Combine multiple PDF documents into a single, organized file effortlessly.
+                            </p>
+                          </CardContent>
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
                         <GenerationCounter count={counts.pdf} label="Merged" />
                       </div>
                     </Card>
                     <Card className="relative grid gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
-                      <Link href="/extract-pdf-images" className='h-full'>
-                          <div className='p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <FileImage className="h-5 w-5 text-primary" />
-                                  Extract Images from PDF
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-2'>
-                              <p className="text-sm text-muted-foreground">
-                                Upload a PDF to automatically extract all embedded images for download.
-                              </p>
-                            </CardContent>
-                          </div>
+                      <Link href="/extract-pdf-images" className='flex flex-col h-full p-6 pb-12'>
+                          <CardHeader className='p-0'>
+                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                <FileImage className="h-5 w-5 text-primary" />
+                                Extract Images from PDF
+                            </CardTitle>
+                          </CardHeader>
+                          <CardContent className='p-0 mt-2'>
+                            <p className="text-sm text-muted-foreground">
+                              Upload a PDF to automatically extract all embedded images for download.
+                            </p>
+                          </CardContent>
                       </Link>
                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
                         <GenerationCounter count={counts.pdfImages} label="Extracted" />
