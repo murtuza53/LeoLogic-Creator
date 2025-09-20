@@ -171,8 +171,13 @@ export async function extractImagesFromPdfAction(pdfDataUri: string) {
         await incrementCount('pdfImages');
 
         return { images };
-    } catch (error) {
+    } catch (error: any) {
         console.error('Error extracting images from PDF:', error);
+        if (error.message.includes('Failed to load external module canvas')) {
+            return {
+                error: 'This feature is unavailable in the current environment due to a missing system dependency (canvas).',
+            };
+        }
         return {
             error:
                 error instanceof Error

@@ -58,7 +58,13 @@ export default function PdfImageExtractor() {
         const result = await extractImagesFromPdfAction(dataUri);
 
         if (result.error) {
-          throw new Error(result.error);
+            toast({
+              variant: "destructive",
+              title: "Extraction Failed",
+              description: result.error,
+            });
+            setIsLoading(false);
+            return;
         }
         
         if (result.images && result.images.length > 0) {
@@ -74,15 +80,25 @@ export default function PdfImageExtractor() {
           });
         }
         router.refresh();
+        setIsLoading(false);
       };
+      
+      reader.onerror = () => {
+        toast({
+            variant: "destructive",
+            title: "File Read Error",
+            description: "Could not read the selected PDF file.",
+        });
+        setIsLoading(false);
+      }
+
     } catch (error) {
       console.error(error);
       toast({
         variant: "destructive",
         title: "Extraction Failed",
-        description: "There was an issue extracting images from your PDF. Please try again.",
+        description: "An unexpected error occurred. Please try again.",
       });
-    } finally {
       setIsLoading(false);
     }
   };
