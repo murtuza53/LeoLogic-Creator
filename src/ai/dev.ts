@@ -9,3 +9,5 @@ import '@/ai/flows/solve-math-problem.ts';
 import '@/ai/flows/extract-text-from-image.ts';
 import '@/ai/flows/extract-table-from-image.ts';
 import '@/ai/flows/convert-image-to-webp.ts';
+import '@/ai/flows/remove-background.ts';
+import '@/ai/flows/change-background.ts';

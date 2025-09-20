@@ -9,6 +9,8 @@ import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
+import { removeBackground } from '@/ai/flows/remove-background';
+import { changeBackground } from '@/ai/flows/change-background';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
@@ -228,6 +230,45 @@ export async function convertImagesToWebpAction(
         error instanceof Error
           ? error.message
           : 'An unknown error occurred during image conversion.',
+    };
+  }
+}
+
+
+export async function removeBackgroundAction(imageDataUri: string) {
+  try {
+    const result = await removeBackground({ imageDataUri });
+    if (!result) {
+      throw new Error('AI failed to remove background from the image.');
+    }
+    await incrementCount('removeBackground');
+    return result;
+  } catch (error) {
+    console.error('Error removing background from image:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function changeBackgroundAction(imageDataUri: string, backgroundColor: string) {
+  try {
+    const result = await changeBackground({ imageDataUri, backgroundColor });
+    if (!result) {
+      throw new Error('AI failed to change background of the image.');
+    }
+    await incrementCount('changeBackground');
+    return result;
+  } catch (error) {
+    console.error('Error changing background of image:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
     };
   }
 }

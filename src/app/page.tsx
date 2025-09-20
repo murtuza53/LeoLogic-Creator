@@ -1,16 +1,10 @@
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GenerationCounter from '@/components/generation-counter';
 import { getFeatureCounts } from './actions';
-import {
-  Accordion,
-  AccordionContent,
-  AccordionItem,
-  AccordionTrigger,
-} from "@/components/ui/accordion"
 
 export default async function Home() {
   const counts = await getFeatureCounts();
@@ -154,7 +148,7 @@ export default async function Home() {
                                   </CardHeader>
                                   <CardContent className='p-0 mt-2 flex-1'>
                                     <p className="text-sm text-muted-foreground">
-                                      Convert images to WebP format, remove backgrounds, and change background colors.
+                                      Convert images to the efficient WebP format with just one click.
                                     </p>
                                   </CardContent>
                               </div>
@@ -163,11 +157,46 @@ export default async function Home() {
                               </div>
                             </Card>
                         </Link>
-                        <div className="flex flex-col items-center justify-center rounded-lg border border-dashed py-20 text-center h-full">
-                            <ImageIcon className="h-12 w-12 text-muted-foreground" />
-                            <h3 className="mt-4 text-lg font-semibold">More Image Tools Coming Soon</h3>
-                            <p className="mt-2 text-sm text-muted-foreground">Stay tuned for new image generation and editing tools!</p>
-                        </div>
+                        <Link href="/remove-background" className="h-full block">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <div className='flex flex-col h-full p-6 pb-12'>
+                                <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <Eraser className="h-5 w-5 text-primary" />
+                                      Remove Background
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2 flex-1'>
+                                  <p className="text-sm text-muted-foreground">
+                                    Upload an image to automatically remove its background.
+                                  </p>
+                                </CardContent>
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
+                              <GenerationCounter count={counts.removeBackground} label="Backgrounds Removed" />
+                            </div>
+                          </Card>
+                        </Link>
+                        <Link href="/change-background" className="h-full block">
+                          <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                            <div className='flex flex-col h-full p-6 pb-12'>
+                                <CardHeader className='p-0'>
+                                  <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                      <Palette className="h-5 w-5 text-primary" />
+                                      Change Background
+                                  </CardTitle>
+                                </CardHeader>
+                                <CardContent className='p-0 mt-2 flex-1'>
+                                  <p className="text-sm text-muted-foreground">
+                                    Replace an image's background with a color of your choice.
+                                  </p>
+                                </CardContent>
+                            </div>
+                            <div className="absolute bottom-0 left-0 right-0 p-2 bg-indigo-100 dark:bg-indigo-900/50 text-center">
+                              <GenerationCounter count={counts.changeBackground} label="Backgrounds Changed" />
+                            </div>
+                          </Card>
+                        </Link>
                      </div>
                   </div>
 
