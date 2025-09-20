@@ -24,7 +24,7 @@ const db = getFirestore(app);
 const COUNTERS_COLLECTION = 'generationCounters';
 const COUNTERS_DOC_ID = 'featureCounts';
 
-export type Feature = 'product' | 'math' | 'qr' | 'ocr' | 'pdf';
+export type Feature = 'product' | 'math' | 'qr' | 'ocr' | 'pdf' | 'table';
 
 export async function incrementCount(feature: Feature): Promise<void> {
   try {
@@ -52,6 +52,7 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
         qr: 0,
         ocr: 0,
         pdf: 0,
+        table: 0,
     };
 
     try {

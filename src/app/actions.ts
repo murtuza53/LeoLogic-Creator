@@ -7,9 +7,10 @@ import { generateProductImage } from '@/ai/flows/generate-product-image';
 import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-product-images';
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
+import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
-
+import * as ExcelJS from 'exceljs';
 
 
 export async function generateProductDetails(
@@ -140,6 +141,66 @@ export async function mergePdfsAction(pdfDataUris: string[]) {
         error instanceof Error
           ? error.message
           : 'An unknown error occurred while merging PDFs.',
+    };
+  }
+}
+
+export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
+  try {
+    const result = await extractTableFromImage({ imageDataUri });
+    if (!result) {
+      throw new Error('AI failed to extract table from the image.');
+    }
+
+    if (!result.hasData || result.rows.length === 0) {
+      return { excelDataUri: null, message: 'No tabular data was found in the image.' };
+    }
+
+    const workbook = new ExcelJS.Workbook();
+    const worksheet = workbook.addWorksheet('Extracted Data');
+
+    result.rows.forEach((row, rowIndex) => {
+      const worksheetRow = worksheet.getRow(rowIndex + 1);
+      row.cells.forEach((cell, cellIndex) => {
+        const worksheetCell = worksheetRow.getCell(cellIndex + 1);
+        worksheetCell.value = cell.value;
+
+        const style: Partial<ExcelJS.Style> = {};
+        const font: Partial<ExcelJS.Font> = {};
+        const fill: Partial<ExcelJS.Fill> = {};
+
+        if (cell.style?.bold) font.bold = true;
+        if (cell.style?.italic) font.italic = true;
+        if (cell.style?.textColor) {
+          font.color = { argb: cell.style.textColor.replace('#', 'FF') };
+        }
+
+        if (cell.style?.backgroundColor) {
+          fill.type = 'pattern';
+          fill.pattern = 'solid';
+          fill.fgColor = { argb: cell.style.backgroundColor.replace('#', 'FF') };
+        }
+
+        if (Object.keys(font).length > 0) style.font = font;
+        if (fill.type) style.fill = fill;
+
+        worksheetCell.style = style;
+      });
+    });
+
+    const buffer = await workbook.xlsx.writeBuffer();
+    const excelDataUri = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${Buffer.from(buffer).toString('base64')}`;
+
+    await incrementCount('table');
+
+    return { excelDataUri };
+  } catch (error) {
+    console.error('Error extracting table from image:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
     };
   }
 }
