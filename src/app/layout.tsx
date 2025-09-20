@@ -6,6 +6,7 @@ import 'katex/dist/katex.min.css';
 export const metadata: Metadata = {
   title: 'LeoLogic Creator',
   description: 'Generate product descriptions and specifications with AI.',
+  manifest: '/manifest.json',
 };
 
 export default function RootLayout({
