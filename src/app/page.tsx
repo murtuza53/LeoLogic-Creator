@@ -283,7 +283,7 @@ export default async function Home() {
         </section>
       </main>
       <footer className="flex items-center justify-center p-6 border-t">
-         <p className="text-xs text-muted-foreground">&copy; 2024 Leo Creator. All rights reserved.</p>
+         <p className="text-xs text-muted-foreground">&copy; 2025 LeoLogic Creator. All rights reserved.</p>
       </footer>
     </div>
   );
