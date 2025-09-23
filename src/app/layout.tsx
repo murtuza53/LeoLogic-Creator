@@ -2,7 +2,6 @@ import type { Metadata } from 'next';
 import './globals.css';
 import { Toaster } from '@/components/ui/toaster';
 import 'katex/dist/katex.min.css';
-import AdSenseSnippet from '@/components/adsense-snippet';
 
 export const metadata: Metadata = {
   title: 'Leo Creator',
@@ -25,7 +24,6 @@ export default function RootLayout({
       <body className="font-body antialiased">
         {children}
         <Toaster />
-        <AdSenseSnippet />
       </body>
     </html>
   );
