@@ -41,12 +41,12 @@ const resizeAndCropImageFlow = ai.defineFlow(
   },
   async ({ imageDataUri, targetSize }) => {
     const promptText = `
-      You are an expert image editor. Your task is to process an image according to the following steps, ensuring the final output is a perfect ${targetSize}x${targetSize} pixel WebP image.
+      You are an expert image editor. Your task is to process an image to create a perfect ${targetSize}x${targetSize} pixel WebP image with a white background. Follow these steps precisely:
 
-      1.  **Isolate Subject:** Remove the background from the image.
-      2.  **Set White Background:** Replace the original background with a solid, clean white background.
-      3.  **Resize to Fit:** Resize the subject (while maintaining its original aspect ratio) to fit perfectly within a ${targetSize}x${targetSize} canvas. If the subject is not perfectly square, add white bars (letterboxing or pillarboxing) to fill the remaining space. Do not crop the main subject.
-      4.  **Convert to WebP:** Convert and output the final image in WebP format.
+      1.  **Isolate Subject & Set White Background:** Remove the background from the image and replace it with a solid, clean white background (#FFFFFF).
+      2.  **Resize to Fill:** Resize the image, maintaining its original aspect ratio, so that its shortest side (either width or height) becomes equal to the target size of ${targetSize} pixels.
+      3.  **Center Crop:** After resizing, perform a center crop to make the image a perfect ${targetSize}x${targetSize} square. The subject should be centered in the final image.
+      4.  **Convert to WebP:** Convert and output the final, cropped image in WebP format.
     `;
 
     const { media } = await ai.generate({
