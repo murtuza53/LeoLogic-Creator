@@ -41,10 +41,11 @@ const resizeAndCropImageFlow = ai.defineFlow(
   },
   async ({ imageDataUri, targetSize }) => {
     const promptText = `
-      Perform the following operations on the image in order:
-      1.  **Remove Background:** Isolate the main subject and make the background transparent.
-      2.  **Resize:** Resize the image so that its smaller dimension (width or height) is equal to ${targetSize} pixels. Maintain the original aspect ratio during this step.
-      3.  **Center Crop:** Crop the resized image from the center to create a final square image of size ${targetSize}x${targetSize} pixels.
+      You are an expert image editor. Your task is to process an image according to the following steps, ensuring the final output is a perfect square of ${targetSize}x${targetSize} pixels.
+
+      1.  **Isolate Subject:** Remove the background from the image, making it transparent.
+      2.  **Resize to Fit:** Resize the isolated subject so that its largest dimension (either width or height) fits within a ${targetSize}x${targetSize} canvas while maintaining its original aspect ratio.
+      3.  **Place on Canvas:** Center the resized subject onto a new, transparent ${targetSize}x${targetSize} pixel canvas. Do not crop the subject. If the subject is not square, there will be transparent space on two sides (top/bottom or left/right).
       4.  **Output:** Provide the final image as a PNG with a transparent background.
     `;
 
