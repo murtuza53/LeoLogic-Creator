@@ -44,7 +44,7 @@ const resizeAndCropImageFlow = ai.defineFlow(
       You are an expert image editor. Your task is to process an image to create a perfect ${targetSize}x${targetSize} pixel WebP image. 
       Follow these steps precisely:
       1.  Isolate the main subject and replace the background with solid white (#FFFFFF).
-      2.  Resize the image to fill the ${targetSize}x${targetSize} canvas while maintaining the original aspect ratio.
+      2.  Resize the image so its shortest side matches the target size of ${targetSize} pixels, maintaining the aspect ratio.
       3.  Perform a center crop to ensure the final output is exactly ${targetSize}x${targetSize} pixels.
       4.  The final output must be in WebP format.
     `;
