@@ -70,7 +70,7 @@ export default async function Home() {
                                           </p>
                                         </CardContent>
                                       </div>
-                                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-blue-100 dark:bg-blue-900/50 text-center">
+                                    <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
                                       <GenerationCounter count={counts.smartProduct} label="Products Generated" />
                                     </div>
                                   </Card>
@@ -110,7 +110,7 @@ export default async function Home() {
                                           </p>
                                         </CardContent>
                                       </div>
-                                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
+                                      <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
                                         <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
                                       </div>
                                   </Card>
@@ -180,7 +180,7 @@ export default async function Home() {
                                       </p>
                                     </CardContent>
                                 </div>
-                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
+                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-rose-100 dark:bg-rose-900/50 text-center">
                                   <GenerationCounter count={counts.imgRemoveBg} label="Backgrounds Removed" />
                                 </div>
                               </Card>
