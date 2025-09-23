@@ -15,7 +15,7 @@ export default async function Home() {
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
         <div className="flex items-center gap-2">
           <Logo className="h-6 w-6 text-primary" />
-          <span className="font-semibold">LeoLogic Creator</span>
+          <span className="font-semibold">Leo Creator</span>
         </div>
         <Button asChild>
           <a href="/creator">
@@ -42,7 +42,7 @@ export default async function Home() {
             <div className="container mx-auto px-4 md:px-6">
                 <div className="flex flex-col items-center justify-center space-y-4 text-center">
                     <div className="space-y-2">
-                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Why You&apos;ll Love LeoLogic Creator</h2>
+                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Why You&apos;ll Love Leo Creator</h2>
                         <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
                             Our suite of AI-powered tools is designed to streamline your content creation process, saving you time and boosting your productivity.
                         </p>
@@ -283,7 +283,7 @@ export default async function Home() {
         </section>
       </main>
       <footer className="flex items-center justify-center p-6 border-t">
-         <p className="text-xs text-muted-foreground">&copy; 2024 LeoLogic Creator. All rights reserved.</p>
+         <p className="text-xs text-muted-foreground">&copy; 2024 Leo Creator. All rights reserved.</p>
       </footer>
     </div>
   );

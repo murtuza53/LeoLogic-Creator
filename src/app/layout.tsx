@@ -4,7 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import 'katex/dist/katex.min.css';
 
 export const metadata: Metadata = {
-  title: 'LeoLogic Creator',
+  title: 'Leo Creator',
   description: 'Generate product descriptions and specifications with AI.',
   manifest: '/manifest.json',
 };

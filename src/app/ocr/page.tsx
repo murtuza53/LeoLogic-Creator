@@ -14,9 +14,9 @@ export default function OcrPage() {
             className="flex items-center gap-2 font-semibold text-foreground"
           >
             <Logo className="h-6 w-6 text-primary" />
-            <span className="sr-only">LeoLogic Creator</span>
+            <span className="sr-only">Leo Creator</span>
           </a>
-          <span className="font-semibold">LeoLogic Creator</span>
+          <span className="font-semibold">Leo Creator</span>
         </nav>
         <div className="flex items-center gap-4">
           <Button variant="outline" asChild>
