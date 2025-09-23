@@ -1,4 +1,6 @@
+"use client";
 
+import { useEffect, useState } from 'react';
 import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -6,9 +8,40 @@ import { Logo } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import GenerationCounter from '@/components/generation-counter';
 import { getFeatureCounts } from './actions';
+import { Feature } from '@/lib/firebase';
+import { Skeleton } from '@/components/ui/skeleton';
 
-export default async function Home() {
-  const counts = await getFeatureCounts();
+export default function Home() {
+  const [counts, setCounts] = useState<Record<Feature, number> | null>(null);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    async function fetchCounts() {
+      try {
+        const featureCounts = await getFeatureCounts();
+        setCounts(featureCounts);
+      } catch (error) {
+        console.error("Failed to fetch feature counts:", error);
+        // Set to default zeros on error
+        const initialCounts: Record<Feature, number> = {
+            smartProduct: 0,
+            aiMath: 0,
+            benefitPay: 0,
+            ocr: 0,
+            mergePdf: 0,
+            imageExcel: 0,
+            imageToWebp: 0,
+            imgRemoveBg: 0,
+            imgChangeBg: 0,
+            resizeCropImage: 0,
+        };
+        setCounts(initialCounts);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchCounts();
+  }, []);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -71,7 +104,7 @@ export default async function Home() {
                                         </CardContent>
                                       </div>
                                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-purple-100 dark:bg-purple-900/50 text-center">
-                                      <GenerationCounter count={counts.smartProduct} label="Products Generated" />
+                                      <GenerationCounter count={counts?.smartProduct} isLoading={loading} label="Products Generated" />
                                     </div>
                                   </Card>
                               </Link>
@@ -91,7 +124,7 @@ export default async function Home() {
                                         </CardContent>
                                       </div>
                                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-green-100 dark:bg-green-900/50 text-center">
-                                        <GenerationCounter count={counts.aiMath} label="Problems Solved" />
+                                        <GenerationCounter count={counts?.aiMath} isLoading={loading} label="Problems Solved" />
                                     </div>
                                   </Card>
                               </Link>
@@ -111,7 +144,7 @@ export default async function Home() {
                                         </CardContent>
                                       </div>
                                       <div className="absolute bottom-0 left-0 right-0 p-2 bg-pink-100 dark:bg-pink-900/50 text-center">
-                                        <GenerationCounter count={counts.benefitPay} label="QRs Generated" />
+                                        <GenerationCounter count={counts?.benefitPay} isLoading={loading} label="QRs Generated" />
                                       </div>
                                   </Card>
                               </Link>
@@ -131,7 +164,7 @@ export default async function Home() {
                                         </CardContent>
                                     </div>
                                     <div className="absolute bottom-0 left-0 right-0 p-2 bg-orange-100 dark:bg-orange-900/50 text-center">
-                                      <GenerationCounter count={counts.ocr} label="Images Recognized" />
+                                      <GenerationCounter count={counts?.ocr} isLoading={loading} label="Images Recognized" />
                                     </div>
                                   </Card>
                               </Link>
@@ -161,7 +194,7 @@ export default async function Home() {
                                       </CardContent>
                                   </div>
                                   <div className="absolute bottom-0 left-0 right-0 p-2 bg-yellow-100 dark:bg-yellow-900/50 text-center">
-                                    <GenerationCounter count={counts.imageToWebp} label="Images Converted" />
+                                    <GenerationCounter count={counts?.imageToWebp} isLoading={loading} label="Images Converted" />
                                   </div>
                                 </Card>
                             </Link>
@@ -181,7 +214,7 @@ export default async function Home() {
                                     </CardContent>
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-rose-100 dark:bg-rose-900/50 text-center">
-                                  <GenerationCounter count={counts.imgRemoveBg} label="Backgrounds Removed" />
+                                  <GenerationCounter count={counts?.imgRemoveBg} isLoading={loading} label="Backgrounds Removed" />
                                 </div>
                               </Card>
                             </Link>
@@ -201,7 +234,7 @@ export default async function Home() {
                                     </CardContent>
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-indigo-100 dark:bg-indigo-900/50 text-center">
-                                  <GenerationCounter count={counts.imgChangeBg} label="Backgrounds Changed" />
+                                  <GenerationCounter count={counts?.imgChangeBg} isLoading={loading} label="Backgrounds Changed" />
                                 </div>
                               </Card>
                             </Link>
@@ -221,7 +254,7 @@ export default async function Home() {
                                     </CardContent>
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-cyan-100 dark:bg-cyan-900/50 text-center">
-                                  <GenerationCounter count={counts.resizeCropImage} label="Images Processed" />
+                                  <GenerationCounter count={counts?.resizeCropImage} isLoading={loading} label="Images Processed" />
                                 </div>
                               </Card>
                             </Link>
@@ -251,7 +284,7 @@ export default async function Home() {
                                       </CardContent>
                                   </div>
                                   <div className="absolute bottom-0 left-0 right-0 p-2 bg-red-100 dark:bg-red-900/50 text-center">
-                                    <GenerationCounter count={counts.mergePdf} label="PDFs Merged" />
+                                    <GenerationCounter count={counts?.mergePdf} isLoading={loading} label="PDFs Merged" />
                                   </div>
                                 </Card>
                             </Link>
@@ -271,7 +304,7 @@ export default async function Home() {
                                     </CardContent>
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-teal-100 dark:bg-teal-900/50 text-center">
-                                  <GenerationCounter count={counts.imageExcel} label="Tables Extracted" />
+                                  <GenerationCounter count={counts?.imageExcel} isLoading={loading} label="Tables Extracted" />
                                 </div>
                               </Card>
                             </Link>
