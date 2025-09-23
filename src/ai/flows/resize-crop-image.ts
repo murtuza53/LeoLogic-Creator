@@ -41,13 +41,12 @@ const resizeAndCropImageFlow = ai.defineFlow(
   },
   async ({ imageDataUri, targetSize }) => {
     const promptText = `
-      You are an expert image editor. Your task is to process an image according to the following steps, ensuring the final output is a perfect square of ${targetSize}x${targetSize} pixels.
+      You are an expert image editor. Your task is to process an image according to the following steps, ensuring the final output is a perfect ${targetSize}x${targetSize} pixel WebP image.
 
-      1.  **Convert to PNG:** Convert the provided image to PNG format to ensure transparency is supported.
-      2.  **Isolate Subject:** Remove the background from the image, making it transparent.
-      3.  **Resize to Fit:** Resize the isolated subject so that its largest dimension (either width or height) fits within a ${targetSize}x${targetSize} canvas while maintaining its original aspect ratio.
-      4.  **Place on Canvas:** Center the resized subject onto a new, transparent ${targetSize}x${targetSize} pixel canvas. Do not crop the subject. If the subject is not square, there will be transparent space on two sides (top/bottom or left/right).
-      5.  **Output:** Provide the final image as a PNG with a transparent background.
+      1.  **Isolate Subject:** Remove the background from the image.
+      2.  **Set White Background:** Replace the original background with a solid, clean white background.
+      3.  **Resize to Fit:** Resize the subject (while maintaining its original aspect ratio) to fit perfectly within a ${targetSize}x${targetSize} canvas. If the subject is not perfectly square, add white bars (letterboxing or pillarboxing) to fill the remaining space. Do not crop the main subject.
+      4.  **Convert to WebP:** Convert and output the final image in WebP format.
     `;
 
     const { media } = await ai.generate({
