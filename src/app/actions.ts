@@ -11,6 +11,7 @@ import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
 import { removeBackground } from '@/ai/flows/remove-background';
 import { changeBackground } from '@/ai/flows/change-background';
+import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
@@ -269,6 +270,34 @@ export async function changeBackgroundAction(imageDataUri: string, backgroundCol
         error instanceof Error
           ? error.message
           : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function resizeAndCropImageAction(
+  images: { dataUri: string }[],
+  targetSize: number
+) {
+  try {
+    const promises = images.map(image => 
+      resizeAndCropImage({
+        imageDataUri: image.dataUri,
+        targetSize,
+      })
+    );
+
+    const results = await Promise.all(promises);
+    
+    await incrementCount('resizeCropImage');
+    
+    return { processedImages: results.map(r => r.imageDataUri) };
+  } catch (error) {
+    console.error('Error resizing/cropping images:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred during image processing.',
     };
   }
 }

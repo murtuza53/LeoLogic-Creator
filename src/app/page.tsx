@@ -1,5 +1,5 @@
 
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -202,6 +202,26 @@ export default async function Home() {
                                 </div>
                                 <div className="absolute bottom-0 left-0 right-0 p-2 bg-indigo-100 dark:bg-indigo-900/50 text-center">
                                   <GenerationCounter count={counts.imgChangeBg} label="Backgrounds Changed" />
+                                </div>
+                              </Card>
+                            </Link>
+                             <Link href="/resize-crop-image" className="h-full block">
+                              <Card className="relative flex flex-col gap-1 rounded-lg border border-border/50 bg-card shadow-sm transition-all hover:shadow-md h-full overflow-hidden">
+                                <div className='flex flex-col h-full p-6 pb-12'>
+                                    <CardHeader className='p-0'>
+                                      <CardTitle className="flex items-center gap-2 text-lg font-bold">
+                                          <Crop className="h-5 w-5 text-primary" />
+                                          Resize & Crop Image
+                                      </CardTitle>
+                                    </CardHeader>
+                                    <CardContent className='p-0 mt-2 flex-1'>
+                                      <p className="text-sm text-muted-foreground">
+                                        Remove background, resize, and crop images to a square size.
+                                      </p>
+                                    </CardContent>
+                                </div>
+                                <div className="absolute bottom-0 left-0 right-0 p-2 bg-cyan-100 dark:bg-cyan-900/50 text-center">
+                                  <GenerationCounter count={counts.resizeCropImage} label="Images Processed" />
                                 </div>
                               </Card>
                             </Link>
