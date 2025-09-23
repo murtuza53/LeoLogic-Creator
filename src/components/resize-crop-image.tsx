@@ -147,7 +147,7 @@ export default function ResizeCropImage() {
                 </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">Up to {MAX_FILES} images (PNG, JPG, WEBP), 10MB each</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">Up to ${MAX_FILES} images (PNG, JPG, WEBP), 10MB each</p>
               <input 
                   id="file-upload" 
                   type="file" 
