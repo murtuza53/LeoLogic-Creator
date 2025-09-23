@@ -44,7 +44,7 @@ const resizeAndCropImageFlow = ai.defineFlow(
 You are an expert image editor. Your task is to process the given image to create a perfect square WebP image with the dimensions ${targetSize}x${targetSize} pixels.
 
 1. **Isolate the subject** and replace the background with solid white (#FFFFFF).
-2. **Resize and center-crop** the image to ensure the final output is *exactly* ${targetSize}x${targetSize} pixels.
+2. **Force the image to be resized** to *exactly* ${targetSize}x${targetSize} pixels. It is critical that the final dimensions are a perfect square. Do not maintain the original aspect ratio; stretch the image as needed to fit the square canvas.
 3. The final image **must** be in WebP format.
     `;
 
