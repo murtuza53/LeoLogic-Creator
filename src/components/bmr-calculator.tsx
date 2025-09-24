@@ -63,6 +63,11 @@ export default function BmrCalculator() {
       unit: 'metric',
       gender: 'male',
       age: 25,
+      height_cm: undefined,
+      height_ft: undefined,
+      height_in: undefined,
+      weight_kg: undefined,
+      weight_lb: undefined,
     },
   });
   
@@ -168,7 +173,7 @@ export default function BmrCalculator() {
                 render={({ field }) => (
                   <FormItem>
                     <FormLabel>Age</FormLabel>
-                    <FormControl><Input type="number" placeholder="e.g. 25" {...field} /></FormControl>
+                    <FormControl><Input type="number" placeholder="e.g. 25" {...field} value={field.value ?? ''} /></FormControl>
                     <FormDescription>Ages: 15 - 80</FormDescription>
                     <FormMessage />
                   </FormItem>
@@ -201,24 +206,24 @@ export default function BmrCalculator() {
               {unit === 'metric' ? (
                 <div className='grid grid-cols-2 gap-4'>
                     <FormField control={form.control} name="height_cm" render={({ field }) => (
-                        <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="180" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Height (cm)</FormLabel><FormControl><Input type="number" placeholder="180" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
                     <FormField control={form.control} name="weight_kg" render={({ field }) => (
-                        <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="75" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Weight (kg)</FormLabel><FormControl><Input type="number" placeholder="75" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
                 </div>
               ) : (
                 <div className='space-y-4'>
                     <div className="grid grid-cols-2 gap-4">
                         <FormField control={form.control} name="height_ft" render={({ field }) => (
-                            <FormItem><FormLabel>Height (ft)</FormLabel><FormControl><Input type="number" placeholder="5" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Height (ft)</FormLabel><FormControl><Input type="number" placeholder="5" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                         <FormField control={form.control} name="height_in" render={({ field }) => (
-                            <FormItem><FormLabel>Height (in)</FormLabel><FormControl><Input type="number" placeholder="10" {...field} /></FormControl><FormMessage /></FormItem>
+                            <FormItem><FormLabel>Height (in)</FormLabel><FormControl><Input type="number" placeholder="10" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                         )} />
                     </div>
                      <FormField control={form.control} name="weight_lb" render={({ field }) => (
-                        <FormItem><FormLabel>Weight (lb)</FormLabel><FormControl><Input type="number" placeholder="165" {...field} /></FormControl><FormMessage /></FormItem>
+                        <FormItem><FormLabel>Weight (lb)</FormLabel><FormControl><Input type="number" placeholder="165" {...field} value={field.value ?? ''} /></FormControl><FormMessage /></FormItem>
                     )} />
                 </div>
               )}
