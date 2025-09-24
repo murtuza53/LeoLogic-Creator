@@ -15,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { incrementFeatureCounterAction } from '@/app/actions';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
+import { cn } from '@/lib/utils';
 
 const formSchema = z.object({
   height_cm: z.coerce.number().optional(),
@@ -50,6 +51,15 @@ const activityMultipliers = [
     { level: 'Daily exercise or intense exercise 3-4 times/week', multiplier: 1.55 },
     { level: 'Intense exercise 6-7 times/week', multiplier: 1.725 },
     { level: 'Very intense exercise daily, or physical job', multiplier: 1.9 },
+];
+
+const levelColors = [
+    "bg-blue-50 hover:bg-blue-100/50",
+    "bg-green-50 hover:bg-green-100/50",
+    "bg-yellow-50 hover:bg-yellow-100/50",
+    "bg-orange-50 hover:bg-orange-100/50",
+    "bg-red-50 hover:bg-red-100/50",
+    "bg-purple-50 hover:bg-purple-100/50",
 ];
 
 export default function BmrCalculator() {
@@ -263,13 +273,13 @@ export default function BmrCalculator() {
                             </TableRow>
                         </TableHeader>
                         <TableBody>
-                            {result.activityLevels.map(activity => (
-                                <TableRow key={activity.level}>
+                            {result.activityLevels.map((activity, index) => (
+                                <TableRow key={activity.level} className={cn(levelColors[index % levelColors.length])}>
                                     <TableCell>
                                         <p className='font-medium'>{activity.level}</p>
                                         {activity.description && <p className='text-xs text-muted-foreground'>{activity.description}</p>}
                                     </TableCell>
-                                    <TableCell className='text-right font-semibold'>{activity.calories.toLocaleString()}</TableCell>
+                                    <TableCell className='text-right font-semibold text-lg'>{activity.calories.toLocaleString()}</TableCell>
                                 </TableRow>
                             ))}
                         </TableBody>
