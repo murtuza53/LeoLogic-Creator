@@ -73,7 +73,7 @@ const tools = [
         bgColor: 'bg-rose-100',
         textColor: 'text-rose-600'
     },
-    { 
+    {
         title: 'Change Background', 
         description: 'Replace an image\'s background with a solid color.', 
         href: '/change-background', 
@@ -195,7 +195,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
-                <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl">
+                <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl leading-snug sm:leading-tight md:leading-tight">
                   Boost Your Productivity with Our <span className="bg-accent text-accent-foreground px-4 py-1 rounded-lg">Free Tools</span>
                 </h1>
                 <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
