@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -15,7 +16,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
-import { incrementQrCodeCounterAction } from '@/app/actions';
+import { incrementFeatureCounterAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from './ui/textarea';
 
@@ -35,13 +36,6 @@ const formSchema = z.object({
 
 export default function QrGenerator() {
   const [qrValue, setQrValue] = useState<string | null>(null);
-  const [qrConfig, setQrConfig] = useState({
-      qrColor: "#000000",
-      bgColor: "#FFFFFF",
-      borderSize: 20,
-      qrSize: 256,
-      borderRadius: 8,
-  })
   const router = useRouter();
   const { toast } = useToast();
 
@@ -60,15 +54,8 @@ export default function QrGenerator() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setQrValue(values.text);
-    setQrConfig({
-        qrColor: values.qrColor,
-        bgColor: values.transparentBg ? 'transparent' : values.bgColor,
-        borderSize: values.borderSize,
-        qrSize: values.qrSize,
-        borderRadius: values.borderRadius,
-    });
     
-    const result = await incrementQrCodeCounterAction();
+    const result = await incrementFeatureCounterAction('qrGenerator');
     if (result?.error) {
       toast({
         variant: "destructive",

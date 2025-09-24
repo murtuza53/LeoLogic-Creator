@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -143,9 +143,19 @@ const tools = [
         bgColor: 'bg-blue-100',
         textColor: 'text-blue-600'
     },
+    { 
+        title: 'BMI Calculator', 
+        description: 'Calculate your Body Mass Index with a visual gauge.', 
+        href: '/bmi-calculator', 
+        icon: HeartPulse, 
+        category: 'Health & Fitness',
+        feature: 'bmiCalculator' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
 ];
 
-const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity'];
+const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
 
 
 export default function Home() {
@@ -175,6 +185,7 @@ export default function Home() {
             logoMaker: 0,
             pdfCompress: 0,
             benefitPay: 0,
+            bmiCalculator: 0,
         };
         setCounts(initialCounts);
       } finally {
@@ -230,7 +241,7 @@ export default function Home() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input 
                     type="search"
-                    placeholder="Search from 12+ tools..."
+                    placeholder="Search from 13+ tools..."
                     className="w-full rounded-full bg-muted py-6 pl-12 pr-4 text-base"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -296,7 +307,7 @@ export default function Home() {
                       </p>
                   </div>
               </div>
-              <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+              <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
                 {Object.keys(categoryCounts).map(category => (
                     <div key={category} className='text-center'>
                         <div className="text-4xl font-bold text-primary">
@@ -315,5 +326,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

@@ -105,11 +105,11 @@ export async function extractTextFromImageAction(imageDataUri: string) {
   }
 }
 
-export async function incrementQrCodeCounterAction(feature: 'qrGenerator' | 'benefitPay' = 'qrGenerator') {
+export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator') {
   try {
     await incrementCount(feature);
   } catch (error) {
-     console.error('Error incrementing QR code counter:', error);
+     console.error(`Error incrementing ${feature} counter:`, error);
      return {
       error:
         error instanceof Error
@@ -349,5 +349,3 @@ export async function compressPdfAction(
 export async function getFeatureCounts() {
   return await getFeatureCountsFromDb();
 }
-
-    

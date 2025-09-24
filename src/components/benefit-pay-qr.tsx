@@ -16,9 +16,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
-import { incrementQrCodeCounterAction } from '@/app/actions';
+import { incrementFeatureCounterAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
-import { Textarea } from './ui/textarea';
 
 const formSchema = z.object({
   iban: z.string().min(1, "IBAN is required.").max(34, "IBAN cannot exceed 34 characters."),
@@ -55,7 +54,7 @@ export default function BenefitPayQr() {
     };
     setQrValue(JSON.stringify(qrJson));
     
-    const result = await incrementQrCodeCounterAction('benefitPay');
+    const result = await incrementFeatureCounterAction('benefitPay');
     if (result?.error) {
       toast({
         variant: "destructive",
@@ -269,5 +268,3 @@ export default function BenefitPayQr() {
     </>
   );
 }
-
-    
