@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -153,6 +153,16 @@ const tools = [
         bgColor: 'bg-red-100',
         textColor: 'text-red-600'
     },
+    { 
+        title: 'Fitness Mentor', 
+        description: 'Ask health and fitness questions to your AI mentor.', 
+        href: '/fitness-mentor', 
+        icon: MessageCircle, 
+        category: 'Health & Fitness',
+        feature: 'fitnessMentor' as Feature,
+        bgColor: 'bg-lime-100',
+        textColor: 'text-lime-600'
+    },
 ];
 
 const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
@@ -186,6 +196,7 @@ export default function Home() {
             pdfCompress: 0,
             benefitPay: 0,
             bmiCalculator: 0,
+            fitnessMentor: 0,
         };
         setCounts(initialCounts);
       } finally {

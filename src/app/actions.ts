@@ -1,4 +1,5 @@
 
+
 'use server';
 
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
@@ -14,6 +15,7 @@ import { changeBackground } from '@/ai/flows/change-background';
 import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
 import { compressPdf } from '@/ai/flows/compress-pdf';
+import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
@@ -105,7 +107,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
   }
 }
 
-export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator') {
+export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor') {
   try {
     await incrementCount(feature);
   } catch (error) {
@@ -343,6 +345,25 @@ export async function compressPdfAction(
                     : 'An unknown error occurred during PDF compression.',
         };
     }
+}
+
+export async function fitnessMentorAction(message: string) {
+  try {
+    const result = await fitnessMentor({ message });
+    if (!result) {
+      throw new Error('AI failed to respond.');
+    }
+    await incrementCount('fitnessMentor');
+    return result;
+  } catch (error) {
+    console.error('Error with fitness mentor:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
 }
 
 
