@@ -107,7 +107,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
   }
 }
 
-export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor') {
+export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor' | 'splitPdf') {
   try {
     await incrementCount(feature);
   } catch (error) {

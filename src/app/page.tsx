@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -124,6 +124,16 @@ const tools = [
         textColor: 'text-red-600'
     },
     { 
+        title: 'Split PDF', 
+        description: 'Split a PDF into individual pages.', 
+        href: '/split-pdf', 
+        icon: SplitSquareHorizontal, 
+        category: 'PDF',
+        feature: 'splitPdf' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
+    { 
         title: 'Image to Excel', 
         description: 'Extract tabular data from images and export to Excel.', 
         href: '/table-extractor', 
@@ -197,6 +207,7 @@ export default function Home() {
             benefitPay: 0,
             bmiCalculator: 0,
             fitnessMentor: 0,
+            splitPdf: 0,
         };
         setCounts(initialCounts);
       } finally {
