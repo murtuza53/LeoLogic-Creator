@@ -2,18 +2,16 @@
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
-import { useForm, Controller } from 'react-hook-form';
-import { zodResolver } from '@hookform/resolvers/zod';
-import * as z from 'zod';
+import { useToast } from '@/hooks/use-toast';
+import { incrementFeatureCounterAction } from '@/app/actions';
+import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRightLeft } from 'lucide-react';
-import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
-import { useRouter } from 'next/navigation';
+import { getDaysInMonth } from 'date-fns';
 
 const conversionFactors = {
   length: {
@@ -38,9 +36,39 @@ const conversionFactors = {
     fahrenheit: { toBase: (f: number) => (f - 32) * 5/9, fromBase: (c: number) => c * 9/5 + 32 },
     kelvin: { toBase: (k: number) => k - 273.15, fromBase: (c: number) => c + 273.15 },
   },
+  volume: {
+    liters: 1,
+    milliliters: 0.001,
+    gallons: 3.78541,
+    quarts: 0.946353,
+    pints: 0.473176,
+    cups: 0.24,
+    fluid_ounces: 0.0295735,
+    cubic_meters: 1000,
+    cubic_feet: 28.3168,
+    cubic_inches: 0.0163871,
+  },
+  area: {
+    square_meters: 1,
+    square_kilometers: 1000000,
+    square_centimeters: 0.0001,
+    hectares: 10000,
+    square_miles: 2590000,
+    acres: 4046.86,
+    square_yards: 0.836127,
+    square_feet: 0.092903,
+    square_inches: 0.00064516,
+  },
+  time: {
+    seconds: 1,
+    minutes: 60,
+    hours: 3600,
+    days: 86400,
+    weeks: 604800,
+  }
 };
 
-const unitLabels = {
+const unitLabels: Record<string, string> = {
     meters: "Meters",
     kilometers: "Kilometers",
     centimeters: "Centimeters",
@@ -57,19 +85,34 @@ const unitLabels = {
     celsius: "Celsius",
     fahrenheit: "Fahrenheit",
     kelvin: "Kelvin",
+    liters: "Liters",
+    milliliters: "Milliliters",
+    gallons: "Gallons (US)",
+    quarts: "Quarts (US)",
+    pints: "Pints (US)",
+    cups: "Cups (US)",
+    fluid_ounces: "Fluid Ounces (US)",
+    cubic_meters: "Cubic Meters",
+    cubic_feet: "Cubic Feet",
+    cubic_inches: "Cubic Inches",
+    square_meters: "Square Meters",
+    square_kilometers: "Square Kilometers",
+    square_centimeters: "Square Centimeters",
+    hectares: "Hectares",
+    square_miles: "Square Miles",
+    acres: "Acres",
+    square_yards: "Square Yards",
+    square_feet: "Square Feet",
+    square_inches: "Square Inches",
+    seconds: "Seconds",
+    minutes: "Minutes",
+    hours: "Hours",
+    days: "Days",
+    weeks: "Weeks",
 }
 
 type UnitCategory = keyof typeof conversionFactors;
 const categories = Object.keys(conversionFactors) as UnitCategory[];
-
-const formSchema = z.object({
-    category: z.string(),
-    fromUnit: z.string(),
-    toUnit: z.string(),
-    fromValue: z.string(),
-    toValue: z.string(),
-});
-
 
 export default function UnitConverter() {
   const [activeCategory, setActiveCategory] = useState<UnitCategory>('length');
@@ -132,9 +175,10 @@ export default function UnitConverter() {
       const result = tempFactors[toKey].fromBase(baseValue);
       return result.toFixed(4);
     } else {
-      const lengthFactors = conversionFactors[category] as Record<string, number>;
-      const baseValue = value * lengthFactors[from];
-      const result = baseValue / lengthFactors[to];
+      const factors = conversionFactors[category] as Record<string, number>;
+       if (!factors[from] || !factors[to]) return '';
+      const baseValue = value * factors[from];
+      const result = baseValue / factors[to];
       return result.toFixed(4);
     }
   }, []);
@@ -170,10 +214,13 @@ export default function UnitConverter() {
     <Card className="shadow-lg">
       <CardContent className="p-4">
         <Tabs value={activeCategory} onValueChange={(val) => setActiveCategory(val as UnitCategory)} className="w-full">
-            <TabsList className="grid w-full grid-cols-3">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6">
                 <TabsTrigger value="length">Length</TabsTrigger>
                 <TabsTrigger value="mass">Mass</TabsTrigger>
-                <TabsTrigger value="temperature">Temperature</TabsTrigger>
+                <TabsTrigger value="temperature">Temp</TabsTrigger>
+                <TabsTrigger value="volume">Volume</TabsTrigger>
+                <TabsTrigger value="area">Area</TabsTrigger>
+                <TabsTrigger value="time">Time</TabsTrigger>
             </TabsList>
             {categories.map(category => (
                 <TabsContent key={category} value={category}>
@@ -183,7 +230,7 @@ export default function UnitConverter() {
                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                     {unitsForCategory.map(unit => (
-                                        <SelectItem key={unit} value={unit}>{(unitLabels as any)[unit]}</SelectItem>
+                                        <SelectItem key={unit} value={unit}>{unitLabels[unit]}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -199,7 +246,7 @@ export default function UnitConverter() {
                                 <SelectTrigger><SelectValue /></SelectTrigger>
                                 <SelectContent>
                                     {unitsForCategory.map(unit => (
-                                        <SelectItem key={unit} value={unit}>{(unitLabels as any)[unit]}</SelectItem>
+                                        <SelectItem key={unit} value={unit}>{unitLabels[unit]}</SelectItem>
                                     ))}
                                 </SelectContent>
                             </Select>
@@ -213,7 +260,3 @@ export default function UnitConverter() {
     </Card>
   );
 }
-
-    
-
-    
