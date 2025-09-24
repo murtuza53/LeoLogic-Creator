@@ -196,10 +196,10 @@ export default function Home() {
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
                 <h1 className="font-headline text-5xl font-bold tracking-tighter sm:text-6xl md:text-7xl">
-                  Free Tools to Make <span className="bg-accent text-accent-foreground px-4 py-1 rounded-lg">Your Life</span> Simple
+                  Boost Your Productivity with Our <span className="bg-accent text-accent-foreground px-4 py-1 rounded-lg">Free Tools</span>
                 </h1>
                 <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                  We offer PDF, video, image and other online tools to make your life easier
+                  Streamline your workflow with a suite of powerful, easy-to-use online utilities.
                 </p>
               </div>
               <div className="mx-auto w-full max-w-2xl">
@@ -230,7 +230,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="w-full pt-12 pb-12 bg-muted/20">
+        <section className="w-full py-12 pb-12 bg-muted/20">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredTools.map((tool) => (
