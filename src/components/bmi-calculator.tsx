@@ -100,14 +100,16 @@ export default function BmiCalculator() {
     }
   }
   
-  const radialData = result ? [
-      { name: 'Obesity', value: 45, fill: bmiCategories.obesity.color },
-      { name: 'Overweight', value: 30, fill: bmiCategories.overweight.color },
-      { name: 'Normal', value: 25, fill: bmiCategories.normal.color },
-      { name: 'Underweight', value: 18.5, fill: bmiCategories.underweight.color },
-  ] : [];
+  const radialData = [
+    { name: 'Underweight', value: 18.5, fill: bmiCategories.underweight.color },
+    { name: 'Normal', value: 25, fill: bmiCategories.normal.color },
+    { name: 'Overweight', value: 30, fill: bmiCategories.overweight.color },
+    { name: 'Obesity', value: 45, fill: bmiCategories.obesity.color },
+  ];
 
   const bmiForGauge = result ? Math.min(Math.max(result.bmi, 10), 45) : 0;
+  // Convert BMI to angle: (BMI - minBmi) / (maxBmi - minBmi) * 180 degrees
+  const angle = result ? ((bmiForGauge - 10) / (45 - 10)) * 180 : 0;
 
   return (
     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -193,7 +195,7 @@ export default function BmiCalculator() {
                 <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
                   Calculate
                 </Button>
-                <Button type="button" variant="outline" className="w-full" onClick={() => { form.reset(); setResult(null); }}>
+                <Button type="button" variant="outline" className="w-full" onClick={() => { form.reset({height: '' as any, weight: '' as any, age: 25, gender: 'male' }); setResult(null); }}>
                   Clear
                 </Button>
               </div>
@@ -208,24 +210,35 @@ export default function BmiCalculator() {
             <h3 className="text-xl font-semibold">Your BMI is <span className={cn('font-bold', getCategoryColor(result.category))}>{result.bmi.toFixed(1)} kg/m² ({result.category})</span></h3>
             <div className="w-full h-[300px] relative">
               <ResponsiveContainer width="100%" height="100%">
-                 <RadialBarChart 
-                    innerRadius="50%" 
-                    outerRadius="100%" 
-                    data={radialData} 
-                    startAngle={180} 
+                 <RadialBarChart
+                    innerRadius="50%"
+                    outerRadius="100%"
+                    data={radialData}
+                    startAngle={180}
                     endAngle={0}
                     barSize={40}
+                    cx="50%"
+                    cy="100%"
                   >
-                    <PolarAngleAxis type="number" domain={[10, 45]} angleAxisId={0} tick={false} />
-                    <RadialBar background dataKey='value' angleAxisId={0} data={[{value: 45}]} fill="transparent" />
+                    <PolarAngleAxis type="number" domain={[10, 45]} tick={false} />
+                    <RadialBar
+                      background
+                      dataKey='value'
+                    />
                 </RadialBarChart>
               </ResponsiveContainer>
-              <div 
-                  className="absolute top-0 left-0 w-full h-full flex items-center justify-center"
-                  style={{ transform: `rotate(${((bmiForGauge - 10) / 35) * 180 - 90}deg) translateY(-35%)`}}
+              <div
+                className="absolute bottom-[50%] left-1/2 -translate-x-1/2 w-0 h-0 origin-bottom"
+                style={{
+                  height: '40%', 
+                  transform: `rotate(${angle - 90}deg)`,
+                  transition: 'transform 0.5s ease-out'
+                }}
               >
-                  <div className="w-0 h-0 border-l-8 border-r-8 border-b-16 border-l-transparent border-r-transparent border-b-black transform rotate-90" style={{transform: 'rotate(180deg)'}}></div>
+                  <div className="w-0.5 h-full bg-black mx-auto"></div>
+                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 bg-black rounded-full"></div>
               </div>
+
               <div className="absolute bottom-4 left-1/2 -translate-x-1/2">
                 <p className="text-4xl font-bold">BMI = {result.bmi.toFixed(1)}</p>
               </div>
