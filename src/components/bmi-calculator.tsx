@@ -62,6 +62,8 @@ export default function BmiCalculator() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
+      height: '' as any,
+      weight: '' as any,
       gender: 'male',
       unit: 'metric',
       age: 25,
