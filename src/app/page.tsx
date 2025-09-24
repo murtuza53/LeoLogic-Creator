@@ -164,6 +164,16 @@ const tools = [
         textColor: 'text-red-600'
     },
     { 
+        title: 'BMR Calculator', 
+        description: 'Calculate your Basal Metabolic Rate and daily calorie needs.', 
+        href: '/bmr-calculator', 
+        icon: Calculator, 
+        category: 'Health & Fitness',
+        feature: 'bmrCalculator' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
+    { 
         title: 'Fitness Mentor', 
         description: 'Ask health and fitness questions to your AI mentor.', 
         href: '/fitness-mentor', 
@@ -206,6 +216,7 @@ export default function Home() {
             pdfCompress: 0,
             benefitPay: 0,
             bmiCalculator: 0,
+            bmrCalculator: 0,
             fitnessMentor: 0,
             splitPdf: 0,
         };
