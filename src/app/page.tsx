@@ -34,12 +34,12 @@ const tools = [
         textColor: 'text-green-600'
     },
     { 
-        title: 'Benefit Pay QR', 
-        description: 'Create and customize QR codes for Benefit Pay transactions.', 
-        href: '/benefit-pay-qr', 
+        title: 'QR Code Generator', 
+        description: 'Create and customize QR codes for any text or URL.', 
+        href: '/qr-generator', 
         icon: QrCode, 
         category: 'Productivity',
-        feature: 'benefitPay' as Feature,
+        feature: 'qrGenerator' as Feature,
         bgColor: 'bg-pink-100',
         textColor: 'text-pink-600'
     },
@@ -154,7 +154,7 @@ export default function Home() {
         const initialCounts: Record<Feature, number> = {
             smartProduct: 0,
             aiMath: 0,
-            benefitPay: 0,
+            qrGenerator: 0,
             ocr: 0,
             mergePdf: 0,
             imageExcel: 0,
@@ -164,6 +164,7 @@ export default function Home() {
             resizeCropImage: 0,
             logoMaker: 0,
             pdfCompress: 0,
+            benefitPay: 0,
         };
         setCounts(initialCounts);
       } finally {

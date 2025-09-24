@@ -17,26 +17,28 @@ import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
 import { incrementQrCodeCounterAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { Textarea } from './ui/textarea';
 
 const formSchema = z.object({
-  iban: z.string().min(3, {
-    message: "Please enter a valid IBAN.",
+  text: z.string().min(1, {
+    message: "Please enter text or a URL.",
+  }).max(500, {
+    message: "Text must not exceed 500 characters."
   }),
   qrColor: z.string(),
   bgColor: z.string(),
   transparentBg: z.boolean(),
   borderSize: z.number().min(0).max(50),
-  qrSize: z.number().min(50).max(500),
+  qrSize: z.number().min(50).max(1000),
   borderRadius: z.number().min(0).max(50),
 });
 
 export default function QrGenerator() {
   const [qrValue, setQrValue] = useState<string | null>(null);
   const [qrConfig, setQrConfig] = useState({
-      iban: "",
       qrColor: "#000000",
       bgColor: "#FFFFFF",
-      borderSize: 10,
+      borderSize: 20,
       qrSize: 256,
       borderRadius: 8,
   })
@@ -46,21 +48,19 @@ export default function QrGenerator() {
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
     defaultValues: {
-      iban: "",
+      text: "",
       qrColor: '#000000',
       bgColor: '#FFFFFF',
       transparentBg: false,
-      borderSize: 10,
+      borderSize: 20,
       qrSize: 256,
       borderRadius: 8,
     },
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    const qrData = JSON.stringify({ iban: values.iban, amount: "" });
-    setQrValue(qrData);
+    setQrValue(values.text);
     setQrConfig({
-        iban: values.iban,
         qrColor: values.qrColor,
         bgColor: values.transparentBg ? 'transparent' : values.bgColor,
         borderSize: values.borderSize,
@@ -85,12 +85,12 @@ export default function QrGenerator() {
     if (!qrCodeElement) return;
 
     html2canvas(qrCodeElement, {
-      backgroundColor: null,
-      scale: qrConfig.qrSize / qrCodeElement.offsetWidth,
+      backgroundColor: null, // This is key for transparent backgrounds
+      scale: form.getValues('qrSize') / qrCodeElement.offsetWidth,
     }).then(canvas => {
       const pngFile = canvas.toDataURL('image/png');
       const downloadLink = document.createElement('a');
-      downloadLink.download = 'benefit-pay-qr.png';
+      downloadLink.download = 'custom-qr-code.png';
       downloadLink.href = pngFile;
       downloadLink.click();
     });
@@ -98,26 +98,25 @@ export default function QrGenerator() {
 
   const isBgTransparent = form.watch('transparentBg');
 
-
   return (
     <>
       <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <Card className="shadow-lg">
           <CardHeader>
             <CardTitle>QR Code Customization</CardTitle>
-            <CardDescription>Enter your details and customize the design.</CardDescription>
+            <CardDescription>Enter your content and customize the design.</CardDescription>
           </CardHeader>
           <CardContent>
             <Form {...form}>
               <form onSubmit={form.handleSubmit(onSubmit)} className="space-y-6">
                 <FormField
                   control={form.control}
-                  name="iban"
+                  name="text"
                   render={({ field }) => (
                     <FormItem>
-                      <FormLabel>IBAN</FormLabel>
+                      <FormLabel>Text or URL</FormLabel>
                       <FormControl>
-                        <Input placeholder="e.g., BH62AAAA00000000000000" {...field} />
+                        <Textarea placeholder="e.g., https://google.com" {...field} />
                       </FormControl>
                       <FormMessage />
                     </FormItem>
@@ -173,11 +172,11 @@ export default function QrGenerator() {
                     name="qrSize"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>QR Size: {field.value}px</FormLabel>
+                        <FormLabel>QR Size (for download): {field.value}px</FormLabel>
                         <FormControl>
                           <Slider
                               min={50}
-                              max={500}
+                              max={1000}
                               step={1}
                               value={[field.value]}
                               onValueChange={(vals) => field.onChange(vals[0])}
@@ -192,7 +191,7 @@ export default function QrGenerator() {
                     name="borderSize"
                     render={({ field }) => (
                       <FormItem>
-                        <FormLabel>Border Size: {field.value}px</FormLabel>
+                        <FormLabel>Padding: {field.value}px</FormLabel>
                         <FormControl>
                           <Slider
                               min={0}
@@ -224,15 +223,6 @@ export default function QrGenerator() {
                       </FormItem>
                     )}
                   />
-                
-                <div className="space-y-2 text-sm text-muted-foreground rounded-lg border border-dashed p-4">
-                    <p className="font-semibold">Disclaimer:</p>
-                    <ul className="list-disc list-inside space-y-1">
-                      <li>We don&apos;t save your IBAN in our records.</li>
-                      <li>Make sure you have entered a valid IBAN.</li>
-                      <li>Test the QR code before using it in a real application.</li>
-                    </ul>
-                </div>
 
                 <Button type="submit" className="w-full bg-accent hover:bg-accent/no-underline:90 text-accent-foreground font-bold text-base py-6">
                   Generate QR Code
@@ -252,27 +242,28 @@ export default function QrGenerator() {
                       <div 
                         id="qr-code-svg-wrapper"
                         style={{ 
-                            background: isBgTransparent ? 'transparent' : form.watch('bgColor'),
+                            background: form.watch('transparentBg') ? 'transparent' : form.watch('bgColor'),
                             padding: `${form.watch('borderSize')}px`, 
                             borderRadius: `${form.watch('borderRadius')}px`,
                             maxWidth: '100%',
                             width: 'auto',
                             height: 'auto',
                         }}
+                        className={form.watch('transparentBg') ? "bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')]" : ""}
                       >
                           <QRCode
                               id="qr-code-svg"
                               value={qrValue}
-                              size={256}
+                              size={256} // This is just the base size for display, download size is handled separately
                               fgColor={form.watch('qrColor')}
                               bgColor={"transparent"}
                               level="L"
-                              className="h-auto w-full"
+                              className="h-auto w-full max-w-[300px]"
                           />
                       </div>
-                      <Button onClick={downloadQR} variant="outline">
+                      <Button onClick={downloadQR} variant="outline" className="mt-4">
                           <Download className='mr-2 h-4 w-4' />
-                          Download QR ({qrConfig.qrSize}px)
+                          Download PNG ({form.watch('qrSize')}px)
                       </Button>
                   </div>
               ) : (

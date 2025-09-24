@@ -107,7 +107,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
 
 export async function incrementQrCodeCounterAction() {
   try {
-    await incrementCount('benefitPay');
+    await incrementCount('qrGenerator');
   } catch (error) {
      console.error('Error incrementing QR code counter:', error);
      return {
