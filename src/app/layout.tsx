@@ -25,7 +25,7 @@ export default function RootLayout({
         <script async custom-element="amp-auto-ads" src="https://cdn.ampproject.org/v0/amp-auto-ads-0.1.js"></script>
       </head>
       <body className="font-body antialiased">
-      <amp-auto-ads type="adsense" data-ad-client="ca-pub-4404974079606262"></amp-auto-ads>
+        <amp-auto-ads type="adsense" data-ad-client="ca-pub-4404974079606262"></amp-auto-ads>
         {children}
         <SpeedInsights />
         <Toaster />
