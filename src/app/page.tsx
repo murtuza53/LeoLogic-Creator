@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useMemo } from 'react';
 import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -19,6 +19,7 @@ const tools = [
         href: '/creator', 
         icon: Library, 
         category: 'AI / ML',
+        feature: 'smartProduct' as Feature,
         bgColor: 'bg-purple-100',
         textColor: 'text-purple-600'
     },
@@ -28,6 +29,7 @@ const tools = [
         href: '/math-solver', 
         icon: Calculator, 
         category: 'AI / ML',
+        feature: 'aiMath' as Feature,
         bgColor: 'bg-green-100',
         textColor: 'text-green-600'
     },
@@ -37,6 +39,7 @@ const tools = [
         href: '/benefit-pay-qr', 
         icon: QrCode, 
         category: 'Productivity',
+        feature: 'benefitPay' as Feature,
         bgColor: 'bg-pink-100',
         textColor: 'text-pink-600'
     },
@@ -46,6 +49,7 @@ const tools = [
         href: '/ocr', 
         icon: ScanText, 
         category: 'AI / ML',
+        feature: 'ocr' as Feature,
         bgColor: 'bg-orange-100',
         textColor: 'text-orange-600'
     },
@@ -55,6 +59,7 @@ const tools = [
         href: '/image-to-webp', 
         icon: ImageIcon, 
         category: 'Image',
+        feature: 'imageToWebp' as Feature,
         bgColor: 'bg-yellow-100',
         textColor: 'text-yellow-600'
     },
@@ -64,6 +69,7 @@ const tools = [
         href: '/remove-background', 
         icon: Eraser, 
         category: 'Image',
+        feature: 'imgRemoveBg' as Feature,
         bgColor: 'bg-rose-100',
         textColor: 'text-rose-600'
     },
@@ -73,15 +79,16 @@ const tools = [
         href: '/change-background', 
         icon: Palette, 
         category: 'Image',
+        feature: 'imgChangeBg' as Feature,
         bgColor: 'bg-indigo-100',
         textColor: 'text-indigo-600'
     },
-    { 
-        title: 'Resize & Crop', 
+    { title: 'Resize & Crop', 
         description: 'Resize and crop images to a perfect square.', 
         href: '/resize-crop-image', 
         icon: Crop, 
         category: 'Image',
+        feature: 'resizeCropImage' as Feature,
         bgColor: 'bg-cyan-100',
         textColor: 'text-cyan-600'
     },
@@ -91,6 +98,7 @@ const tools = [
         href: '/pdf-merger', 
         icon: FileJson, 
         category: 'PDF',
+        feature: 'mergePdf' as Feature,
         bgColor: 'bg-red-100',
         textColor: 'text-red-600'
     },
@@ -100,6 +108,7 @@ const tools = [
         href: '/table-extractor', 
         icon: FileSpreadsheet, 
         category: 'PDF',
+        feature: 'imageExcel' as Feature,
         bgColor: 'bg-teal-100',
         textColor: 'text-teal-600'
     },
@@ -109,6 +118,7 @@ const tools = [
         href: '/logo-maker', 
         icon: Brush, 
         category: 'AI / ML',
+        feature: 'logoMaker' as Feature,
         bgColor: 'bg-blue-100',
         textColor: 'text-blue-600'
     },
@@ -156,6 +166,17 @@ export default function Home() {
     const matchesSearch = tool.title.toLowerCase().includes(searchTerm.toLowerCase()) || tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
+
+  const categoryCounts = useMemo(() => {
+    if (!counts) return {};
+    return categories.reduce((acc, category) => {
+        if(category === 'All') return acc;
+        const categoryTools = tools.filter(tool => tool.category === category);
+        const total = categoryTools.reduce((sum, tool) => sum + (counts[tool.feature] ?? 0), 0);
+        acc[category] = total;
+        return acc;
+    }, {} as Record<string, number>);
+  }, [counts]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -252,27 +273,15 @@ export default function Home() {
                       </p>
                   </div>
               </div>
-              <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
-                <div className='text-center'>
-                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.smartProduct ?? 0)}</div>
-                  <p className='text-muted-foreground'>Products</p>
-                </div>
-                  <div className='text-center'>
-                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.aiMath ?? 0)}</div>
-                  <p className='text-muted-foreground'>Math Problems</p>
-                </div>
-                  <div className='text-center'>
-                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.benefitPay ?? 0)}</div>
-                  <p className='text-muted-foreground'>QRs</p>
-                </div>
-                  <div className='text-center'>
-                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.ocr ?? 0)}</div>
-                  <p className='text-muted-foreground'>OCRs</p>
-                </div>
-                  <div className='text-center'>
-                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.imageExcel ?? 0)}</div>
-                  <p className='text-muted-foreground'>Tables</p>
-                </div>
+              <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-4 gap-8">
+                {Object.keys(categoryCounts).map(category => (
+                    <div key={category} className='text-center'>
+                        <div className='text-4xl font-bold text-primary'>
+                            {loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (categoryCounts[category] ?? 0)}
+                        </div>
+                        <p className='text-muted-foreground'>{category}</p>
+                    </div>
+                ))}
               </div>
             </div>
         </section>
@@ -283,5 +292,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
