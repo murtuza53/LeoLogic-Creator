@@ -46,84 +46,21 @@ const getCategory = (bmi: number): BmiResult['category'] => {
   return 'Obesity';
 };
 
-const getCategoryColor = (category: BmiResult['category']) => {
+const getCategoryStyle = (category: BmiResult['category']) => {
     switch (category) {
-        case 'Underweight': return 'text-blue-500';
-        case 'Normal': return 'text-green-500';
-        case 'Overweight': return 'text-yellow-500';
-        case 'Obesity': return 'text-red-500';
+        case 'Underweight': return { card: 'bg-blue-50 border-blue-200', text: 'text-blue-600', scale: 'bg-blue-400' };
+        case 'Normal': return { card: 'bg-green-50 border-green-200', text: 'text-green-600', scale: 'bg-green-500' };
+        case 'Overweight': return { card: 'bg-yellow-50 border-yellow-200', text: 'text-yellow-600', scale: 'bg-yellow-500' };
+        case 'Obesity': return { card: 'bg-red-50 border-red-200', text: 'text-red-600', scale: 'bg-red-500' };
     }
 }
 
-const BMI_SCALE = {
-    min: 15,
-    max: 40,
-    range: 25,
-};
+const BMI_SCALE = { min: 15, max: 40 };
 
-const getBmiRotation = (bmi: number) => {
+const getPositionOnScale = (bmi: number) => {
     const clampedBmi = Math.max(BMI_SCALE.min, Math.min(bmi, BMI_SCALE.max));
-    const percentage = (clampedBmi - BMI_SCALE.min) / BMI_SCALE.range;
-    // Map percentage (0-1) to rotation (-90 to 90 degrees)
-    const rotation = percentage * 180 - 90;
-    return rotation;
-};
-
-const Gauge = ({ bmi }: { bmi: number }) => {
-    const rotation = getBmiRotation(bmi);
-
-    const describeArc = (x: number, y: number, radius: number, startAngle: number, endAngle: number) => {
-        const start = {
-            x: x + radius * Math.cos(startAngle * Math.PI / 180),
-            y: y + radius * Math.sin(startAngle * Math.PI / 180)
-        };
-        const end = {
-            x: x + radius * Math.cos(endAngle * Math.PI / 180),
-            y: y + radius * Math.sin(endAngle * Math.PI / 180)
-        };
-        const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
-        return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
-    };
-
-    const sections = [
-        { percentage: (18.5 - 15) / BMI_SCALE.range, color: "stroke-blue-500", label: "Underweight" },
-        { percentage: (25 - 18.5) / BMI_SCALE.range, color: "stroke-green-500", label: "Normal" },
-        { percentage: (30 - 25) / BMI_SCALE.range, color: "stroke-yellow-500", label: "Overweight" },
-        { percentage: (40 - 30) / BMI_SCALE.range, color: "stroke-red-500", label: "Obesity" },
-    ];
-
-    let accumulatedPercentage = 0;
-
-    return (
-        <div className="relative w-64 h-32">
-            <svg viewBox="0 0 200 100" className="w-full h-full">
-                <g transform="translate(100, 100) rotate(-90)">
-                    {sections.map((section, index) => {
-                        const startAngle = accumulatedPercentage * 180;
-                        const endAngle = startAngle + section.percentage * 180;
-                        accumulatedPercentage += section.percentage;
-                        return (
-                            <path
-                                key={index}
-                                d={describeArc(0, 0, 80, startAngle, endAngle)}
-                                fill="none"
-                                strokeWidth="20"
-                                className={section.color}
-                            />
-                        );
-                    })}
-                </g>
-                 <g transform="translate(100, 100)">
-                    {/* Needle */}
-                    <g className="transition-transform duration-700 ease-out" style={{ transform: `rotate(${rotation}deg)`}}>
-                        <polygon points="0,0 -5,-70 5,-70" className="fill-foreground" />
-                        <circle cx="0" cy="0" r="8" className="fill-foreground" />
-                        <circle cx="0" cy="0" r="5" className="fill-background" />
-                    </g>
-                </g>
-            </svg>
-        </div>
-    );
+    const percentage = ((clampedBmi - BMI_SCALE.min) / (BMI_SCALE.max - BMI_SCALE.min)) * 100;
+    return Math.max(0, Math.min(100, percentage));
 };
 
 
@@ -189,6 +126,9 @@ export default function BmiCalculator() {
     }
   }
 
+  const categoryStyles = result ? getCategoryStyle(result.category) : null;
+  const pointerPosition = result ? getPositionOnScale(result.bmi) : 0;
+
   return (
     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
       <Card className="shadow-lg">
@@ -207,7 +147,12 @@ export default function BmiCalculator() {
                         <FormLabel>Units</FormLabel>
                         <FormControl>
                             <RadioGroup
-                            onValueChange={field.onChange}
+                            onValueChange={(e) => {
+                                field.onChange(e);
+                                form.setValue('height', '' as any);
+                                form.setValue('weight', '' as any);
+                                setResult(null);
+                            }}
                             defaultValue={field.value}
                             className="flex items-center space-x-4"
                             >
@@ -313,25 +258,46 @@ export default function BmiCalculator() {
         </CardContent>
       </Card>
       
-      <Card className="shadow-lg flex flex-col items-center justify-center p-6">
-        {result ? (
-          <div className="w-full h-full flex flex-col items-center justify-around text-center space-y-4">
-            <Gauge bmi={result.bmi} />
-            <div>
-                <p className="text-muted-foreground">Your BMI is</p>
-                <p className={cn("text-5xl font-bold", getCategoryColor(result.category))}>
-                    {result.bmi.toFixed(1)}
-                </p>
-                <p className={cn("text-lg font-semibold", getCategoryColor(result.category))}>
-                    {result.category}
-                </p>
+      <Card className="shadow-lg flex flex-col items-center justify-center p-6 transition-colors duration-500">
+        {result && categoryStyles ? (
+            <div className={cn("w-full h-full flex flex-col items-center justify-center text-center space-y-6 p-6 rounded-lg transition-colors duration-300", categoryStyles.card)}>
+                <div className="w-full max-w-sm">
+                    <div className="relative mb-2">
+                        <div className="absolute top-0 h-3 w-3 -translate-y-4 -translate-x-1/2 rounded-full transition-all duration-500 ease-out" style={{ left: `${pointerPosition}%`, backgroundColor: 'hsl(var(--foreground))' }}>
+                            <div className="absolute top-full left-1/2 h-2 w-0 -translate-x-1/2 border-l-[6px] border-r-[6px] border-t-[6px] border-l-transparent border-r-transparent" style={{borderTopColor: 'hsl(var(--foreground))'}}/>
+                        </div>
+                        <div className="flex h-3 w-full rounded-full overflow-hidden">
+                           <div className="w-[14%] bg-blue-300" />
+                           <div className="w-[26%] bg-green-400" />
+                           <div className="w-[20%] bg-yellow-400" />
+                           <div className="w-[40%] bg-red-400" />
+                        </div>
+                         <div className="flex justify-between text-xs text-muted-foreground mt-1">
+                            <span>15</span>
+                            <span>18.5</span>
+                            <span>25</span>
+                            <span>30</span>
+                            <span>40</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div className='flex flex-col items-center'>
+                    <p className="text-sm text-muted-foreground">Your BMI is</p>
+                    <p className={cn("text-6xl font-bold", categoryStyles.text)}>
+                        {result.bmi.toFixed(1)}
+                    </p>
+                    <p className={cn("text-xl font-semibold", categoryStyles.text)}>
+                        {result.category}
+                    </p>
+                </div>
+                
+                <div className="text-center bg-background/50 p-4 rounded-lg">
+                     <p className='text-sm font-medium'>Healthy weight for your height:</p>
+                     <p className='text-lg font-bold text-foreground'>{result.healthyWeightRange.min} {unit === 'metric' ? 'kg' : 'lbs'} - {result.healthyWeightRange.max} {unit === 'metric' ? 'kg' : 'lbs'}</p>
+                     <p className='text-xs text-muted-foreground mt-1'>Healthy BMI range: 18.5 - 25</p>
+                </div>
             </div>
-            
-            <div className="text-center bg-muted/50 p-3 rounded-lg">
-                 <p className='text-sm'>Healthy BMI range: 18.5 - 25 kg/m²</p>
-                 <p className='text-sm'>Healthy weight for your height: {result.healthyWeightRange.min} {unit === 'metric' ? 'kg' : 'lbs'} - {result.healthyWeightRange.max} {unit === 'metric' ? 'kg' : 'lbs'}</p>
-            </div>
-          </div>
         ) : (
           <div className="text-center text-muted-foreground p-8 border-2 border-dashed rounded-lg w-full h-full flex items-center justify-center">
             <p>Your calculated BMI will appear here.</p>
