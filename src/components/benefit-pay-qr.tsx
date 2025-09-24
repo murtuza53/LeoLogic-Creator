@@ -211,9 +211,14 @@ export default function BenefitPayQr() {
                     )}
                   />
 
-                <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
-                  Generate QR Code
-                </Button>
+                <div className="space-y-2">
+                  <Button type="submit" className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
+                    Generate QR Code
+                  </Button>
+                  <p className="text-xs text-muted-foreground text-center">
+                    Test QR Code before using it
+                  </p>
+                </div>
               </form>
             </Form>
           </CardContent>
