@@ -15,7 +15,6 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { incrementFeatureCounterAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
-import { Triangle } from 'lucide-react';
 
 const formSchema = z.object({
   height: z.coerce.number().positive("Height must be a positive number."),
@@ -59,12 +58,72 @@ const getCategoryColor = (category: BmiResult['category']) => {
 const BMI_SCALE = {
     min: 15,
     max: 40,
+    range: 25,
 };
 
-const getBmiPercentage = (bmi: number) => {
+const getBmiRotation = (bmi: number) => {
     const clampedBmi = Math.max(BMI_SCALE.min, Math.min(bmi, BMI_SCALE.max));
-    const percentage = ((clampedBmi - BMI_SCALE.min) / (BMI_SCALE.max - BMI_SCALE.min)) * 100;
-    return percentage;
+    const percentage = (clampedBmi - BMI_SCALE.min) / BMI_SCALE.range;
+    // Map percentage (0-1) to rotation (-90 to 90 degrees)
+    const rotation = percentage * 180 - 90;
+    return rotation;
+};
+
+const Gauge = ({ bmi }: { bmi: number }) => {
+    const rotation = getBmiRotation(bmi);
+
+    const describeArc = (x: number, y: number, radius: number, startAngle: number, endAngle: number) => {
+        const start = {
+            x: x + radius * Math.cos(startAngle * Math.PI / 180),
+            y: y + radius * Math.sin(startAngle * Math.PI / 180)
+        };
+        const end = {
+            x: x + radius * Math.cos(endAngle * Math.PI / 180),
+            y: y + radius * Math.sin(endAngle * Math.PI / 180)
+        };
+        const largeArcFlag = endAngle - startAngle <= 180 ? "0" : "1";
+        return `M ${start.x} ${start.y} A ${radius} ${radius} 0 ${largeArcFlag} 1 ${end.x} ${end.y}`;
+    };
+
+    const sections = [
+        { percentage: (18.5 - 15) / BMI_SCALE.range, color: "stroke-blue-500", label: "Underweight" },
+        { percentage: (25 - 18.5) / BMI_SCALE.range, color: "stroke-green-500", label: "Normal" },
+        { percentage: (30 - 25) / BMI_SCALE.range, color: "stroke-yellow-500", label: "Overweight" },
+        { percentage: (40 - 30) / BMI_SCALE.range, color: "stroke-red-500", label: "Obesity" },
+    ];
+
+    let accumulatedPercentage = 0;
+
+    return (
+        <div className="relative w-64 h-32">
+            <svg viewBox="0 0 200 100" className="w-full h-full">
+                <g transform="translate(100, 100) rotate(-90)">
+                    {sections.map((section, index) => {
+                        const startAngle = accumulatedPercentage * 180;
+                        const endAngle = startAngle + section.percentage * 180;
+                        accumulatedPercentage += section.percentage;
+                        return (
+                            <path
+                                key={index}
+                                d={describeArc(0, 0, 80, startAngle, endAngle)}
+                                fill="none"
+                                strokeWidth="20"
+                                className={section.color}
+                            />
+                        );
+                    })}
+                </g>
+                 <g transform="translate(100, 100)">
+                    {/* Needle */}
+                    <g className="transition-transform duration-700 ease-out" style={{ transform: `rotate(${rotation}deg)`}}>
+                        <polygon points="0,0 -5,-70 5,-70" className="fill-foreground" />
+                        <circle cx="0" cy="0" r="8" className="fill-foreground" />
+                        <circle cx="0" cy="0" r="5" className="fill-background" />
+                    </g>
+                </g>
+            </svg>
+        </div>
+    );
 };
 
 
@@ -178,7 +237,7 @@ export default function BmiCalculator() {
                   <FormItem>
                     <FormLabel>Height ({unit === 'metric' ? 'cm' : 'in'})</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder={unit === 'metric' ? "e.g. 180" : "e.g. 71"} {...field} />
+                      <Input type="number" placeholder={unit === 'metric' ? "e.g. 180" : "e.g. 71"} {...field} value={field.value ?? ''} />
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -191,7 +250,7 @@ export default function BmiCalculator() {
                   <FormItem>
                     <FormLabel>Weight ({unit === 'metric' ? 'kg' : 'lb'})</FormLabel>
                     <FormControl>
-                      <Input type="number" placeholder={unit === 'metric' ? "e.g. 75" : "e.g. 165"} {...field} />
+                      <Input type="number" placeholder={unit === 'metric' ? "e.g. 75" : "e.g. 165"} {...field} value={field.value ?? ''}/>
                     </FormControl>
                     <FormMessage />
                   </FormItem>
@@ -256,7 +315,8 @@ export default function BmiCalculator() {
       
       <Card className="shadow-lg flex flex-col items-center justify-center p-6">
         {result ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-center space-y-6">
+          <div className="w-full h-full flex flex-col items-center justify-around text-center space-y-4">
+            <Gauge bmi={result.bmi} />
             <div>
                 <p className="text-muted-foreground">Your BMI is</p>
                 <p className={cn("text-5xl font-bold", getCategoryColor(result.category))}>
@@ -267,27 +327,9 @@ export default function BmiCalculator() {
                 </p>
             </div>
             
-            <div className="w-full pt-8">
-                <div className="relative h-2 w-full rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-red-500">
-                     <div
-                        className="absolute -top-6 -translate-x-1/2 transition-all duration-300"
-                        style={{ left: `${getBmiPercentage(result.bmi)}%` }}
-                    >
-                        <Triangle className="h-4 w-4 fill-current text-foreground" style={{ transform: 'rotate(180deg)'}} />
-                    </div>
-                </div>
-                <div className="relative mt-2 flex justify-between text-xs text-muted-foreground">
-                    <span>15</span>
-                    <span>18.5</span>
-                    <span>25</span>
-                    <span>30</span>
-                    <span>40</span>
-                </div>
-            </div>
-
-            <div className="text-center">
-                 <p>Healthy BMI range: 18.5 kg/m² - 25 kg/m²</p>
-                 <p>Healthy weight for the height: {result.healthyWeightRange.min} {unit === 'metric' ? 'kg' : 'lbs'} - {result.healthyWeightRange.max} {unit === 'metric' ? 'kg' : 'lbs'}</p>
+            <div className="text-center bg-muted/50 p-3 rounded-lg">
+                 <p className='text-sm'>Healthy BMI range: 18.5 - 25 kg/m²</p>
+                 <p className='text-sm'>Healthy weight for your height: {result.healthyWeightRange.min} {unit === 'metric' ? 'kg' : 'lbs'} - {result.healthyWeightRange.max} {unit === 'metric' ? 'kg' : 'lbs'}</p>
             </div>
           </div>
         ) : (
@@ -299,5 +341,3 @@ export default function BmiCalculator() {
     </div>
   );
 }
-
-    
