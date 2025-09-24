@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -173,6 +173,16 @@ const tools = [
         bgColor: 'bg-red-100',
         textColor: 'text-red-600'
     },
+     { 
+        title: 'Weight Loss Calculator', 
+        description: 'Estimate daily calorie targets for weight loss.', 
+        href: '/weight-loss-calculator', 
+        icon: Flame, 
+        category: 'Health & Fitness',
+        feature: 'weightLoss' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
     { 
         title: 'Fitness Mentor', 
         description: 'Ask health and fitness questions to your AI mentor.', 
@@ -219,6 +229,7 @@ export default function Home() {
             bmrCalculator: 0,
             fitnessMentor: 0,
             splitPdf: 0,
+            weightLoss: 0,
         };
         setCounts(initialCounts);
       } finally {
