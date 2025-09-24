@@ -107,7 +107,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
   }
 }
 
-export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor' | 'splitPdf' | 'bmrCalculator' | 'weightLoss' | 'scientificCalculator') {
+export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor' | 'splitPdf' | 'bmrCalculator' | 'weightLoss' | 'scientificCalculator' | 'unitConverter') {
   try {
     await incrementCount(feature);
   } catch (error) {
@@ -370,5 +370,7 @@ export async function fitnessMentorAction(message: string) {
 export async function getFeatureCounts() {
   return await getFeatureCountsFromDb();
 }
+
+    
 
     

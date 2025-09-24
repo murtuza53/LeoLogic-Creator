@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -62,6 +62,16 @@ const tools = [
         feature: 'scientificCalculator' as Feature,
         bgColor: 'bg-gray-100',
         textColor: 'text-gray-600'
+    },
+    { 
+        title: 'Unit Converter', 
+        description: 'Convert between various units of measurement.', 
+        href: '/unit-converter', 
+        icon: Scale, 
+        category: 'Productivity',
+        feature: 'unitConverter' as Feature,
+        bgColor: 'bg-zinc-100',
+        textColor: 'text-zinc-600'
     },
     { 
         title: 'OCR', 
@@ -241,6 +251,7 @@ export default function Home() {
             splitPdf: 0,
             weightLoss: 0,
             scientificCalculator: 0,
+            unitConverter: 0,
         };
         setCounts(initialCounts);
       } finally {
@@ -381,5 +392,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
