@@ -53,6 +53,16 @@ const tools = [
         bgColor: 'bg-blue-100',
         textColor: 'text-blue-600'
     },
+     { 
+        title: 'Scientific Calculator', 
+        description: 'Perform advanced mathematical calculations with ease.', 
+        href: '/scientific-calculator', 
+        icon: Calculator, 
+        category: 'Productivity',
+        feature: 'scientificCalculator' as Feature,
+        bgColor: 'bg-gray-100',
+        textColor: 'text-gray-600'
+    },
     { 
         title: 'OCR', 
         description: 'Extract text and its original formatting from any image.', 
@@ -230,6 +240,7 @@ export default function Home() {
             fitnessMentor: 0,
             splitPdf: 0,
             weightLoss: 0,
+            scientificCalculator: 0,
         };
         setCounts(initialCounts);
       } finally {
@@ -370,3 +381,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
