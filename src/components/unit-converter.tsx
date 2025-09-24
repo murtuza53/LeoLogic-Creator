@@ -11,7 +11,8 @@ import { Input } from '@/components/ui/input';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@/components/ui/select';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRightLeft } from 'lucide-react';
-import { getDaysInMonth } from 'date-fns';
+import { cn } from '@/lib/utils';
+
 
 const conversionFactors = {
   length: {
@@ -112,7 +113,14 @@ const unitLabels: Record<string, string> = {
 }
 
 type UnitCategory = keyof typeof conversionFactors;
-const categories = Object.keys(conversionFactors) as UnitCategory[];
+const categories: { name: UnitCategory, color: string }[] = [
+    { name: 'length', color: 'bg-blue-50' },
+    { name: 'mass', color: 'bg-green-50' },
+    { name: 'temperature', color: 'bg-yellow-50' },
+    { name: 'volume', color: 'bg-purple-50' },
+    { name: 'area', color: 'bg-orange-50' },
+    { name: 'time', color: 'bg-red-50' },
+];
 
 export default function UnitConverter() {
   const [activeCategory, setActiveCategory] = useState<UnitCategory>('length');
@@ -156,10 +164,15 @@ export default function UnitConverter() {
   }, [activeCategory]);
   
   useEffect(() => {
-    setFromUnit(unitsForCategory[0]);
-    setToUnit(unitsForCategory[1] || unitsForCategory[0]);
+    if (activeCategory === 'temperature' && (fromUnit !== 'celsius' && fromUnit !== 'fahrenheit' && fromUnit !== 'kelvin')) {
+        setFromUnit('celsius');
+        setToUnit('fahrenheit');
+    } else if (activeCategory !== 'temperature') {
+        setFromUnit(unitsForCategory[0]);
+        setToUnit(unitsForCategory[1] || unitsForCategory[0]);
+    }
     setFromValue('1');
-  }, [unitsForCategory]);
+  }, [activeCategory, unitsForCategory]);
 
   const convert = useCallback((value: number, from: string, to: string, category: UnitCategory) => {
     if (isNaN(value)) return '';
@@ -214,7 +227,7 @@ export default function UnitConverter() {
     <Card className="shadow-lg">
       <CardContent className="p-4">
         <Tabs value={activeCategory} onValueChange={(val) => setActiveCategory(val as UnitCategory)} className="w-full">
-            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6">
+            <TabsList className="grid w-full grid-cols-3 sm:grid-cols-6 h-auto">
                 <TabsTrigger value="length">Length</TabsTrigger>
                 <TabsTrigger value="mass">Mass</TabsTrigger>
                 <TabsTrigger value="temperature">Temp</TabsTrigger>
@@ -223,8 +236,8 @@ export default function UnitConverter() {
                 <TabsTrigger value="time">Time</TabsTrigger>
             </TabsList>
             {categories.map(category => (
-                <TabsContent key={category} value={category}>
-                    <div className='flex items-center gap-4 mt-6'>
+                <TabsContent key={category.name} value={category.name}>
+                    <div className={cn("flex items-center gap-4 mt-4 p-6 rounded-lg", category.color)}>
                         <div className="flex-1 space-y-2">
                              <Select value={fromUnit} onValueChange={setFromUnit}>
                                 <SelectTrigger><SelectValue /></SelectTrigger>
@@ -237,7 +250,7 @@ export default function UnitConverter() {
                             <Input type="number" value={fromValue} onChange={handleFromValueChange} className="text-2xl h-14" />
                         </div>
 
-                        <Button variant="ghost" size="icon" onClick={swapUnits} className="mt-8">
+                        <Button variant="ghost" size="icon" onClick={swapUnits} className="mt-8 bg-background/50 hover:bg-background">
                             <ArrowRightLeft className="h-6 w-6 text-muted-foreground" />
                         </Button>
 
