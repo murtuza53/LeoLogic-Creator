@@ -209,7 +209,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="w-full pt-12 pb-24 bg-muted/20">
+        <section className="w-full pt-12 pb-12 bg-muted/20">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredTools.map((tool) => (
