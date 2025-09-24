@@ -126,6 +126,8 @@ export default function UnitConverter() {
       const fromKey = from as keyof typeof tempFactors;
       const toKey = to as keyof typeof tempFactors;
       
+      if (!tempFactors[fromKey] || !tempFactors[toKey]) return '';
+
       const baseValue = tempFactors[fromKey].toBase(value);
       const result = tempFactors[toKey].fromBase(baseValue);
       return result.toFixed(4);
@@ -211,5 +213,7 @@ export default function UnitConverter() {
     </Card>
   );
 }
+
+    
 
     
