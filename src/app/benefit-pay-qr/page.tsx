@@ -1,3 +1,4 @@
+
 import BenefitPayQr from '@/components/benefit-pay-qr';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -34,7 +35,7 @@ export default function BenefitPayQrPage() {
               Benefit Pay QR Code
             </h1>
             <p className="mt-3 text-lg text-muted-foreground md:text-xl">
-              Generate a QR code for a Benefit Pay transaction.
+              Generate a custom QR code for a Benefit Pay transaction using an IBAN.
             </p>
           </div>
           <BenefitPayQr />
@@ -43,5 +44,3 @@ export default function BenefitPayQrPage() {
     </div>
   );
 }
-
-    
