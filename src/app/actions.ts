@@ -13,6 +13,7 @@ import { removeBackground } from '@/ai/flows/remove-background';
 import { changeBackground } from '@/ai/flows/change-background';
 import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
+import { compressPdf } from '@/ai/flows/compress-pdf';
 import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
@@ -320,6 +321,28 @@ export async function generateLogoAction(concept: string) {
           : 'An unknown error occurred.',
     };
   }
+}
+
+export async function compressPdfAction(
+    pdfDataUri: string,
+    compressionLevel: 'low' | 'medium' | 'high'
+) {
+    try {
+        const result = await compressPdf({ pdfDataUri, compressionLevel });
+        if (!result) {
+            throw new Error('AI failed to compress the PDF.');
+        }
+        await incrementCount('pdfCompress');
+        return result;
+    } catch (error) {
+        console.error('Error compressing PDF:', error);
+        return {
+            error:
+                error instanceof Error
+                    ? error.message
+                    : 'An unknown error occurred during PDF compression.',
+        };
+    }
 }
 
 

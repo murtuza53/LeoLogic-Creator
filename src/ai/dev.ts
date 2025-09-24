@@ -13,3 +13,4 @@ import '@/ai/flows/remove-background.ts';
 import '@/ai/flows/change-background.ts';
 import '@/ai/flows/resize-crop-image.ts';
 import '@/ai/flows/generate-logo.ts';
+import '@/ai/flows/compress-pdf.ts';

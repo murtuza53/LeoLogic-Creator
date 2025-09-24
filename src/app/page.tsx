@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -83,7 +83,8 @@ const tools = [
         bgColor: 'bg-indigo-100',
         textColor: 'text-indigo-600'
     },
-    { title: 'Resize & Crop', 
+    { 
+        title: 'Resize & Crop', 
         description: 'Resize and crop images to a perfect square.', 
         href: '/resize-crop-image', 
         icon: Crop, 
@@ -99,6 +100,16 @@ const tools = [
         icon: FileJson, 
         category: 'PDF',
         feature: 'mergePdf' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
+    { 
+        title: 'PDF Compress', 
+        description: 'Reduce the file size of your PDF files.', 
+        href: '/pdf-compress', 
+        icon: FileArchive, 
+        category: 'PDF',
+        feature: 'pdfCompress' as Feature,
         bgColor: 'bg-red-100',
         textColor: 'text-red-600'
     },
@@ -152,6 +163,7 @@ export default function Home() {
             imgChangeBg: 0,
             resizeCropImage: 0,
             logoMaker: 0,
+            pdfCompress: 0,
         };
         setCounts(initialCounts);
       } finally {
@@ -207,7 +219,7 @@ export default function Home() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input 
                     type="search"
-                    placeholder="Search from 11+ tools..."
+                    placeholder="Search from 12+ tools..."
                     className="w-full rounded-full bg-muted py-6 pl-12 pr-4 text-base"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
