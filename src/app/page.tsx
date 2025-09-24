@@ -44,6 +44,16 @@ const tools = [
         textColor: 'text-pink-600'
     },
     { 
+        title: 'Benefit Pay QR', 
+        description: 'Generate QR codes for Benefit Pay transactions.', 
+        href: '/benefit-pay-qr', 
+        icon: QrCode, 
+        category: 'Productivity',
+        feature: 'benefitPay' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600'
+    },
+    { 
         title: 'OCR', 
         description: 'Extract text and its original formatting from any image.', 
         href: '/ocr', 
@@ -289,7 +299,7 @@ export default function Home() {
               <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-4 gap-8">
                 {Object.keys(categoryCounts).map(category => (
                     <div key={category} className='text-center'>
-                        <div className='text-4xl font-bold text-primary'>
+                        <div className="text-4xl font-bold text-primary">
                             {loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (categoryCounts[category] ?? 0)}
                         </div>
                         <p className='text-muted-foreground'>{category}</p>
@@ -305,3 +315,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
