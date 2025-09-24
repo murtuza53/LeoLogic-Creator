@@ -2,18 +2,117 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent } from '@/components/ui/card';
 import { getFeatureCounts } from './actions';
 import { Feature } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
+import { Input } from '@/components/ui/input';
+
+const tools = [
+    { 
+        title: 'Smart Product Content', 
+        description: 'Generate unique, SEO-friendly product descriptions and specs.', 
+        href: '/creator', 
+        icon: Library, 
+        category: 'AI / ML',
+        bgColor: 'bg-purple-100',
+        textColor: 'text-purple-600'
+    },
+    { 
+        title: 'AI Math Solver', 
+        description: 'Get step-by-step solutions to complex math problems.', 
+        href: '/math-solver', 
+        icon: Calculator, 
+        category: 'AI / ML',
+        bgColor: 'bg-green-100',
+        textColor: 'text-green-600'
+    },
+    { 
+        title: 'Benefit Pay QR', 
+        description: 'Create and customize QR codes for Benefit Pay transactions.', 
+        href: '/benefit-pay-qr', 
+        icon: QrCode, 
+        category: 'Productivity',
+        bgColor: 'bg-pink-100',
+        textColor: 'text-pink-600'
+    },
+    { 
+        title: 'OCR', 
+        description: 'Extract text and its original formatting from any image.', 
+        href: '/ocr', 
+        icon: ScanText, 
+        category: 'AI / ML',
+        bgColor: 'bg-orange-100',
+        textColor: 'text-orange-600'
+    },
+    { 
+        title: 'Image to WebP', 
+        description: 'Convert images to the efficient WebP format.', 
+        href: '/image-to-webp', 
+        icon: ImageIcon, 
+        category: 'Image',
+        bgColor: 'bg-yellow-100',
+        textColor: 'text-yellow-600'
+    },
+    { 
+        title: 'Remove Background', 
+        description: 'Automatically remove an image\'s background.', 
+        href: '/remove-background', 
+        icon: Eraser, 
+        category: 'Image',
+        bgColor: 'bg-rose-100',
+        textColor: 'text-rose-600'
+    },
+    { 
+        title: 'Change Background', 
+        description: 'Replace an image\'s background with a solid color.', 
+        href: '/change-background', 
+        icon: Palette, 
+        category: 'Image',
+        bgColor: 'bg-indigo-100',
+        textColor: 'text-indigo-600'
+    },
+    { 
+        title: 'Resize & Crop', 
+        description: 'Resize and crop images to a perfect square.', 
+        href: '/resize-crop-image', 
+        icon: Crop, 
+        category: 'Image',
+        bgColor: 'bg-cyan-100',
+        textColor: 'text-cyan-600'
+    },
+    { 
+        title: 'Merge PDFs', 
+        description: 'Combine multiple PDF documents into a single file.', 
+        href: '/pdf-merger', 
+        icon: FileJson, 
+        category: 'PDF',
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
+    { 
+        title: 'Image to Excel', 
+        description: 'Extract tabular data from images and export to Excel.', 
+        href: '/table-extractor', 
+        icon: FileSpreadsheet, 
+        category: 'PDF',
+        bgColor: 'bg-teal-100',
+        textColor: 'text-teal-600'
+    },
+];
+
+const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity'];
+
 
 export default function Home() {
   const [counts, setCounts] = useState<Record<Feature, number> | null>(null);
   const [loading, setLoading] = useState(true);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [activeCategory, setActiveCategory] = useState('All');
 
   useEffect(() => {
     async function fetchCounts() {
@@ -42,273 +141,129 @@ export default function Home() {
     fetchCounts();
   }, []);
 
+  const filteredTools = tools.filter(tool => {
+    const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;
+    const matchesSearch = tool.title.toLowerCase().includes(searchTerm.toLowerCase()) || tool.description.toLowerCase().includes(searchTerm.toLowerCase());
+    return matchesCategory && matchesSearch;
+  });
+
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
         <div className="flex items-center gap-2">
-          <Logo className="h-6 w-6 text-primary" />
-          <span className="font-semibold">Leo Creator</span>
+          <Logo className="h-8 w-8 text-primary" />
+          <span className="font-bold text-xl">Leo Creator</span>
         </div>
-        <Button asChild>
-          <a href="/creator">
-            Get Started <ArrowRight className="ml-2 h-4 w-4" />
-          </a>
-        </Button>
+        <div className='flex items-center gap-2'>
+          <Button variant="ghost">Sign In</Button>
+          <Button>Sign Up</Button>
+        </div>
       </header>
       <main className="flex-1">
         <section className="w-full py-12 md:py-20">
           <div className="container mx-auto px-4 md:px-6">
-            <div className="grid gap-6 lg:grid-cols-1 lg:gap-12 xl:grid-cols-1">
-              <div className="flex flex-col justify-center space-y-4 text-center">
-                <div className="space-y-2">
-                  <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl lg:text-7xl">
-                    Free Tools to Make <span className='bg-accent text-accent-foreground px-4 rounded-md'>Your Life</span> Simple
-                  </h1>
-                   <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                        We offer PDF, video, image and other online tools to make your life easier
-                    </p>
+            <div className="flex flex-col justify-center space-y-6 text-center">
+              <div className="space-y-2">
+                <h1 className="font-headline text-4xl font-bold tracking-tighter sm:text-5xl md:text-6xl">
+                  Explore All Tools
+                </h1>
+                <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                  Discover a suite of PDF, Image, and other powerful online tools.
+                </p>
+              </div>
+              <div className="mx-auto w-full max-w-2xl">
+                <div className="relative">
+                  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
+                  <Input 
+                    type="search"
+                    placeholder="Search from 10+ tools..."
+                    className="w-full rounded-full bg-muted py-6 pl-12 pr-4 text-base"
+                    value={searchTerm}
+                    onChange={(e) => setSearchTerm(e.target.value)}
+                  />
                 </div>
+              </div>
+              <div className="flex justify-center flex-wrap gap-2">
+                {categories.map(category => (
+                    <Button 
+                        key={category} 
+                        variant={activeCategory === category ? 'default' : 'outline'}
+                        onClick={() => setActiveCategory(category)}
+                        className='rounded-full'
+                    >
+                        {category} Tools
+                    </Button>
+                ))}
               </div>
             </div>
           </div>
         </section>
 
-        <section className="w-full bg-muted/40 py-12 md:py-24">
+        <section className="w-full py-12 md:py-24 bg-muted/20">
             <div className="container mx-auto px-4 md:px-6">
-                <div className="mx-auto grid max-w-5xl items-start gap-8 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4">
-                  <Link href="/creator" className="h-full block group">
-                      <Card className="relative flex flex-col gap-1 rounded-lg border bg-purple-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                          <div className='flex flex-col h-full p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <Library className="h-8 w-8" />
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-4 flex-1'>
-                              <p className="font-bold text-lg">Smart Product Content</p>
-                              <p className="text-sm text-purple-200 mt-1">
-                                  Generate unique, SEO-friendly product descriptions and specs.
+                <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
+                  {filteredTools.map((tool) => (
+                    <Link key={tool.title} href={tool.href} className="h-full block group">
+                        <Card className="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm transition-all hover:shadow-lg h-full">
+                          <CardContent className='p-6 flex items-start gap-4'>
+                            <div className={`p-2 rounded-lg ${tool.bgColor}`}>
+                                <tool.icon className={`h-6 w-6 ${tool.textColor}`} />
+                            </div>
+                            <div className="flex-1">
+                              <p className="font-bold text-lg">{tool.title}</p>
+                              <p className="text-sm text-muted-foreground mt-1">
+                                  {tool.description}
                               </p>
-                            </CardContent>
-                          </div>
-                        <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                      </Card>
-                  </Link>
-                  <Link href="/math-solver" className="h-full block group">
-                      <Card className="relative flex flex-col gap-1 rounded-lg border bg-green-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                          <div className='flex flex-col h-full p-6 pb-12'>
-                              <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <Calculator className="h-8 w-8" />
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-4 flex-1'>
-                              <p className="font-bold text-lg">AI Math Solver</p>
-                              <p className="text-sm text-green-200 mt-1">
-                                Get step-by-step solutions to complex math problems.
-                              </p>
-                            </CardContent>
-                          </div>
-                        <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                      </Card>
-                  </Link>
-                  <Link href="/benefit-pay-qr" className="h-full block group">
-                      <Card className="relative flex flex-col gap-1 rounded-lg border bg-pink-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                          <div className='flex flex-col h-full p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <QrCode className="h-8 w-8" />
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-4 flex-1'>
-                              <p className="font-bold text-lg">Benefit Pay QR</p>
-                              <p className="text-sm text-pink-200 mt-1">
-                                Create and customize QR codes for Benefit Pay transactions.
-                              </p>
-                            </CardContent>
-                          </div>
-                          <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                      </Card>
-                  </Link>
-                  <Link href="/ocr" className="h-full block group">
-                      <Card className="relative flex flex-col gap-1 rounded-lg border bg-orange-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                        <div className='flex flex-col h-full p-6 pb-12'>
-                            <CardHeader className='p-0'>
-                              <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                  <ScanText className="h-8 w-8" />
-                              </CardTitle>
-                            </CardHeader>
-                            <CardContent className='p-0 mt-4 flex-1'>
-                              <p className="font-bold text-lg">OCR</p>
-                              <p className="text-sm text-orange-200 mt-1">
-                                Extract text and its original formatting from any image.
-                              </p>
-                            </CardContent>
-                        </div>
-                        <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                      </Card>
-                  </Link>
-                  <Link href="/image-to-webp" className="h-full block group">
-                    <Card className="relative flex flex-col gap-1 rounded-lg border bg-yellow-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                      <div className='flex flex-col h-full p-6 pb-12'>
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <ImageIcon className="h-8 w-8" />
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-4 flex-1'>
-                            <p className="font-bold text-lg">Image to WebP</p>
-                            <p className="text-sm text-yellow-200 mt-1">
-                              Convert images to the efficient WebP format.
-                            </p>
+                              <div className='mt-4 flex items-center text-primary font-semibold text-sm group-hover:underline'>
+                                Try Now <ArrowRight className="ml-1 h-4 w-4 transition-transform group-hover:translate-x-1" />
+                              </div>
+                            </div>
                           </CardContent>
-                      </div>
-                      <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                    </Card>
-                  </Link>
-                  <Link href="/remove-background" className="h-full block group">
-                  <Card className="relative flex flex-col gap-1 rounded-lg border bg-rose-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                    <div className='flex flex-col h-full p-6 pb-12'>
-                        <CardHeader className='p-0'>
-                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                              <Eraser className="h-8 w-8" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className='p-0 mt-4 flex-1'>
-                          <p className="font-bold text-lg">Remove Background</p>
-                          <p className="text-sm text-rose-200 mt-1">
-                            Automatically remove an image's background.
-                          </p>
-                        </CardContent>
-                    </div>
-                    <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                  </Card>
-                </Link>
-                <Link href="/change-background" className="h-full block group">
-                  <Card className="relative flex flex-col gap-1 rounded-lg border bg-indigo-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                    <div className='flex flex-col h-full p-6 pb-12'>
-                        <CardHeader className='p-0'>
-                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                              <Palette className="h-8 w-8" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className='p-0 mt-4 flex-1'>
-                          <p className="font-bold text-lg">Change Background</p>
-                          <p className="text-sm text-indigo-200 mt-1">
-                            Replace an image's background with a solid color.
-                          </p>
-                        </CardContent>
-                    </div>
-                    <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                  </Card>
-                </Link>
-                 <Link href="/resize-crop-image" className="h-full block group">
-                  <Card className="relative flex flex-col gap-1 rounded-lg border bg-cyan-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                    <div className='flex flex-col h-full p-6 pb-12'>
-                        <CardHeader className='p-0'>
-                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                              <Crop className="h-8 w-8" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className='p-0 mt-4 flex-1'>
-                          <p className="font-bold text-lg">Resize &amp; Crop</p>
-                          <p className="text-sm text-cyan-200 mt-1">
-                            Resize and crop images to a perfect square.
-                          </p>
-                        </CardContent>
-                    </div>
-                    <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                  </Card>
-                </Link>
-                <Link href="/pdf-merger" className="h-full block group">
-                    <Card className="relative flex flex-col gap-1 rounded-lg border bg-red-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                      <div className='flex flex-col h-full p-6 pb-12'>
-                          <CardHeader className='p-0'>
-                            <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                                <FileJson className="h-8 w-8" />
-                            </CardTitle>
-                          </CardHeader>
-                          <CardContent className='p-0 mt-4 flex-1'>
-                            <p className="font-bold text-lg">Merge PDFs</p>
-                            <p className="text-sm text-red-200 mt-1">
-                              Combine multiple PDF documents into a single file.
-                            </p>
-                          </CardContent>
-                      </div>
-                      <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                    </Card>
-                </Link>
-                <Link href="/table-extractor" className="h-full block group">
-                  <Card className="relative flex flex-col gap-1 rounded-lg border bg-teal-500 text-white shadow-lg transition-all hover:scale-105 h-full overflow-hidden">
-                    <div className='flex flex-col h-full p-6 pb-12'>
-                        <CardHeader className='p-0'>
-                          <CardTitle className="flex items-center gap-2 text-lg font-bold">
-                              <FileSpreadsheet className="h-8 w-8" />
-                          </CardTitle>
-                        </CardHeader>
-                        <CardContent className='p-0 mt-4 flex-1'>
-                          <p className="font-bold text-lg">Image to Excel</p>
-                          <p className="text-sm text-teal-200 mt-1">
-                            Extract tabular data from images and export to Excel.
-                          </p>
-                        </CardContent>
-                    </div>
-                    <div className="absolute bottom-4 right-4 p-2 text-sm">
-                          <ArrowRight className='transition-transform group-hover:translate-x-1'/>
-                        </div>
-                  </Card>
-                </Link>
+                        </Card>
+                    </Link>
+                  ))}
                 </div>
-                
-                <div className="mt-16 flex flex-col items-center justify-center space-y-4 text-center">
-                    <div className="space-y-2">
-                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Usage Statistics</h2>
-                        <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                           See how many creations have been made by the community.
-                        </p>
+                {filteredTools.length === 0 && (
+                    <div className='text-center py-16 text-muted-foreground'>
+                        <h3 className='text-2xl font-bold'>No tools found</h3>
+                        <p>Try adjusting your search or category filter.</p>
                     </div>
-                </div>
-                <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
-                  <div className='text-center'>
-                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.smartProduct ?? 0)}</div>
-                    <p className='text-muted-foreground'>Products</p>
-                  </div>
-                   <div className='text-center'>
-                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.aiMath ?? 0)}</div>
-                    <p className='text-muted-foreground'>Math Problems</p>
-                  </div>
-                   <div className='text-center'>
-                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.benefitPay ?? 0)}</div>
-                    <p className='text-muted-foreground'>QRs</p>
-                  </div>
-                   <div className='text-center'>
-                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.ocr ?? 0)}</div>
-                    <p className='text-muted-foreground'>OCRs</p>
-                  </div>
-                   <div className='text-center'>
-                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.imageExcel ?? 0)}</div>
-                    <p className='text-muted-foreground'>Tables</p>
-                  </div>
-                </div>
+                )}
+            </div>
+        </section>
 
+        <section className="w-full py-12 md:py-24">
+           <div className="container mx-auto px-4 md:px-6">
+              <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                  <div className="space-y-2">
+                      <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Usage Statistics</h2>
+                      <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                          See how many creations have been made by the community.
+                      </p>
+                  </div>
+              </div>
+              <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
+                <div className='text-center'>
+                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.smartProduct ?? 0)}</div>
+                  <p className='text-muted-foreground'>Products</p>
+                </div>
+                  <div className='text-center'>
+                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.aiMath ?? 0)}</div>
+                  <p className='text-muted-foreground'>Math Problems</p>
+                </div>
+                  <div className='text-center'>
+                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.benefitPay ?? 0)}</div>
+                  <p className='text-muted-foreground'>QRs</p>
+                </div>
+                  <div className='text-center'>
+                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.ocr ?? 0)}</div>
+                  <p className='text-muted-foreground'>OCRs</p>
+                </div>
+                  <div className='text-center'>
+                  <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.imageExcel ?? 0)}</div>
+                  <p className='text-muted-foreground'>Tables</p>
+                </div>
+              </div>
             </div>
         </section>
       </main>
