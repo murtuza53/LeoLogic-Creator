@@ -291,7 +291,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="w-full pt-20 pb-12 md:pt-32 md:pb-16">
+        <section className="w-full pt-12 pb-12 md:pt-16 md:pb-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
@@ -392,6 +392,8 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
 
