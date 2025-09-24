@@ -16,6 +16,8 @@ import { useToast } from '@/hooks/use-toast';
 import { incrementFeatureCounterAction } from '@/app/actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { cn } from '@/lib/utils';
+import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { TriangleAlert } from 'lucide-react';
 
 const activityLevels = [
     { name: 'Basal Metabolic Rate (BMR)', value: 1.0 },
@@ -141,20 +143,20 @@ export default function WeightLossCalculator() {
     setResult(null);
   }
   
-  const ResultRow = ({ label, subLabel, calories, percentage, unit, color }: { label: string, subLabel: string, calories: number, percentage: number, unit: 'metric' | 'imperial', color: string }) => {
+  const ResultRow = ({ label, subLabel, calories, unit, color }: { label: string, subLabel: string, calories: number, unit: 'metric' | 'imperial', color: string }) => {
     const weightUnit = unit === 'metric' ? 'kg' : 'lb';
     return (
-        <div className="flex items-center">
-            <div className="flex-1 p-4 bg-muted/50 text-right">
-                <p className="font-semibold text-lg">{label}</p>
+        <div className="flex items-center overflow-hidden rounded-lg border">
+            <div className="flex-1 p-3 bg-muted/50 text-right">
+                <p className="font-semibold">{label}</p>
                 <p className="text-sm text-muted-foreground">{subLabel.replace('kg', weightUnit)}</p>
             </div>
-            <div className="relative h-full">
-                <div className="absolute inset-y-0 left-0 w-4 bg-muted/50 -translate-x-full" style={{ clipPath: 'polygon(100% 0, 0 50%, 100% 100%)' }} />
+             <div className="relative h-full">
+                <div className="absolute inset-y-0 left-0 w-3 bg-muted/50 -translate-x-full" style={{ clipPath: 'polygon(100% 0, 0 50%, 100% 100%)' }} />
             </div>
-            <div className={cn("p-4", color)}>
+            <div className={cn("p-3 text-center", color)}>
                 <p className="font-bold text-2xl">{calories.toLocaleString()}</p>
-                <p className="text-sm">Calories/day</p>
+                <p className="text-xs font-medium">Calories/day</p>
             </div>
         </div>
     )
@@ -222,11 +224,21 @@ export default function WeightLossCalculator() {
         </CardHeader>
         <CardContent className="space-y-4">
             {result ? (
-                <div className="space-y-2">
-                    <ResultRow label="Maintain weight" subLabel="" calories={result.maintenance} percentage={100} unit={unit} color="bg-green-100 text-green-800" />
-                    <ResultRow label="Mild weight loss" subLabel="0.25 kg/week" calories={result.mildLoss} percentage={Math.round(result.mildLoss / result.maintenance * 100)} unit={unit} color="bg-yellow-100 text-yellow-800" />
-                    <ResultRow label="Weight loss" subLabel="0.5 kg/week" calories={result.weightLoss} percentage={Math.round(result.weightLoss / result.maintenance * 100)} unit={unit} color="bg-orange-100 text-orange-800" />
-                    <ResultRow label="Extreme weight loss" subLabel="1 kg/week" calories={result.extremeLoss} percentage={Math.round(result.extremeLoss / result.maintenance * 100)} unit={unit} color="bg-red-100 text-red-800" />
+                <div className="space-y-3">
+                    <ResultRow label="Maintain weight" subLabel="" calories={result.maintenance} unit={unit} color="bg-green-100 text-green-800" />
+                    <ResultRow label="Mild weight loss" subLabel="0.25 kg/week" calories={result.mildLoss} unit={unit} color="bg-yellow-100 text-yellow-800" />
+                    <ResultRow label="Weight loss" subLabel="0.5 kg/week" calories={result.weightLoss} unit={unit} color="bg-orange-100 text-orange-800" />
+                    <ResultRow label="Extreme weight loss" subLabel="1 kg/week" calories={result.extremeLoss} unit={unit} color="bg-red-100 text-red-800" />
+
+                    {result.extremeLoss < 1500 && (
+                        <Alert variant="destructive" className="mt-6">
+                            <TriangleAlert className="h-4 w-4" />
+                            <AlertTitle>Health Warning</AlertTitle>
+                            <AlertDescription>
+                                Please consult with a doctor when losing 1 kg or more per week since it requires that you consume less than the minimum recommendation of 1,500 calories a day.
+                            </AlertDescription>
+                        </Alert>
+                    )}
                 </div>
             ) : (
                 <div className="text-center text-muted-foreground p-8 border-2 border-dashed rounded-lg h-64 flex items-center justify-center">
@@ -238,3 +250,5 @@ export default function WeightLossCalculator() {
     </div>
   );
 }
+
+    
