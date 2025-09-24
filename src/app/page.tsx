@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -103,6 +103,15 @@ const tools = [
         bgColor: 'bg-teal-100',
         textColor: 'text-teal-600'
     },
+    { 
+        title: 'Logo Maker', 
+        description: 'Generate unique logo concepts with AI.', 
+        href: '/logo-maker', 
+        icon: Brush, 
+        category: 'AI / ML',
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600'
+    },
 ];
 
 const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity'];
@@ -132,6 +141,7 @@ export default function Home() {
             imgRemoveBg: 0,
             imgChangeBg: 0,
             resizeCropImage: 0,
+            logoMaker: 0,
         };
         setCounts(initialCounts);
       } finally {
@@ -176,7 +186,7 @@ export default function Home() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input 
                     type="search"
-                    placeholder="Search from 10+ tools..."
+                    placeholder="Search from 11+ tools..."
                     className="w-full rounded-full bg-muted py-6 pl-12 pr-4 text-base"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
