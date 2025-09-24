@@ -28,7 +28,7 @@ export default function UnitConverterPage() {
           </Button>
         </div>
       </header>
-      <main className="flex-1 p-4 md:p-8 lg:p-10 flex items-center justify-center">
+      <main className="flex-1 p-4 md:p-8 lg:p-10">
         <div className="mx-auto w-full max-w-2xl">
           <div className="text-center mb-8">
             <h1 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
@@ -44,5 +44,3 @@ export default function UnitConverterPage() {
     </div>
   );
 }
-
-    
