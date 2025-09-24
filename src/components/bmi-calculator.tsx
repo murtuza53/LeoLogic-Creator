@@ -1,12 +1,11 @@
 
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { zodResolver } from '@hookform/resolvers/zod';
 import * as z from 'zod';
 import { useRouter } from 'next/navigation';
-import { RadialBarChart, RadialBar, PolarAngleAxis, ResponsiveContainer } from 'recharts';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormDescription, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
@@ -16,6 +15,7 @@ import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
 import { incrementFeatureCounterAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import { Triangle } from 'lucide-react';
 
 const formSchema = z.object({
   height: z.coerce.number().positive("Height must be a positive number."),
@@ -27,10 +27,10 @@ const formSchema = z.object({
     if (data.unit === 'metric') {
         return data.height >= 50 && data.height <= 250 && data.weight >= 10 && data.weight <= 300;
     }
-    return true; // Imperial checks can be added if needed, but basic positive check is often enough.
+    return true;
 }, {
     message: "Please enter realistic values for height and weight.",
-    path: ["height"], // You can decide where to show the error
+    path: ["height"],
 });
 
 
@@ -38,13 +38,6 @@ type BmiResult = {
   bmi: number;
   category: 'Underweight' | 'Normal' | 'Overweight' | 'Obesity';
   healthyWeightRange: { min: number, max: number };
-};
-
-const bmiCategories = {
-  underweight: { range: [0, 18.5], color: '#ef4444' }, // red
-  normal: { range: [18.5, 25], color: '#22c55e' },    // green
-  overweight: { range: [25, 30], color: '#eab308' },  // yellow
-  obesity: { range: [30, Infinity], color: '#ef4444' }, // red
 };
 
 const getCategory = (bmi: number): BmiResult['category'] => {
@@ -56,12 +49,24 @@ const getCategory = (bmi: number): BmiResult['category'] => {
 
 const getCategoryColor = (category: BmiResult['category']) => {
     switch (category) {
-        case 'Underweight': return 'text-red-500';
+        case 'Underweight': return 'text-blue-500';
         case 'Normal': return 'text-green-500';
         case 'Overweight': return 'text-yellow-500';
         case 'Obesity': return 'text-red-500';
     }
 }
+
+const BMI_SCALE = {
+    min: 15,
+    max: 40,
+};
+
+const getBmiPercentage = (bmi: number) => {
+    const clampedBmi = Math.max(BMI_SCALE.min, Math.min(bmi, BMI_SCALE.max));
+    const percentage = ((clampedBmi - BMI_SCALE.min) / (BMI_SCALE.max - BMI_SCALE.min)) * 100;
+    return percentage;
+};
+
 
 export default function BmiCalculator() {
   const [result, setResult] = useState<BmiResult | null>(null);
@@ -84,12 +89,10 @@ export default function BmiCalculator() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     let heightInMeters: number;
     let weightInKg: number;
-    let weightUnit = 'kg';
 
     if (values.unit === 'imperial') {
       heightInMeters = values.height * 0.0254;
       weightInKg = values.weight * 0.453592;
-      weightUnit = 'lbs';
     } else {
       heightInMeters = values.height / 100;
       weightInKg = values.weight;
@@ -126,17 +129,6 @@ export default function BmiCalculator() {
       });
     }
   }
-  
-  const radialData = [
-    { name: 'Underweight', value: 18.5, fill: bmiCategories.underweight.color },
-    { name: 'Normal', value: 25, fill: bmiCategories.normal.color },
-    { name: 'Overweight', value: 30, fill: bmiCategories.obesity.color },
-    { name: 'Obesity', value: 45, fill: bmiCategories.obesity.color },
-  ];
-
-  const bmiForGauge = result ? Math.min(Math.max(result.bmi, 10), 45) : 0;
-  // Convert BMI to angle: (BMI - minBmi) / (maxBmi - minBmi) * 180 degrees
-  const angle = result ? ((bmiForGauge - 10) / (35)) * 180 : 0;
 
   return (
     <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -262,50 +254,41 @@ export default function BmiCalculator() {
         </CardContent>
       </Card>
       
-      <Card className="shadow-lg flex flex-col items-center justify-center p-4">
+      <Card className="shadow-lg flex flex-col items-center justify-center p-6">
         {result ? (
-          <div className="w-full h-full flex flex-col items-center justify-center text-center">
-            <h3 className="text-xl font-semibold">Your BMI is <span className={cn('font-bold', getCategoryColor(result.category))}>{result.bmi.toFixed(1)} kg/m² ({result.category})</span></h3>
-            <div className="w-full h-[300px] relative">
-              <ResponsiveContainer width="100%" height="100%">
-                 <RadialBarChart
-                    innerRadius="50%"
-                    outerRadius="100%"
-                    data={radialData}
-                    startAngle={180}
-                    endAngle={0}
-                    barSize={40}
-                    cx="50%"
-                    cy="100%"
-                  >
-                    <PolarAngleAxis type="number" domain={[10, 45]} tick={false} />
-                    <RadialBar
-                      background
-                      dataKey='value'
-                      style={{ transition: 'all 0.5s ease-in-out' }}
-                    />
-                </RadialBarChart>
-              </ResponsiveContainer>
-              <div
-                className="absolute bottom-1/2 left-1/2 -translate-x-1/2 w-0.5 origin-bottom"
-                style={{
-                  height: '40%', 
-                  transform: `rotate(${angle - 90}deg)`,
-                  transition: 'transform 0.5s ease-out',
-                  backgroundColor: 'hsl(var(--foreground))'
-                }}
-              >
-                  <div className="absolute bottom-0 left-1/2 -translate-x-1/2 w-4 h-4 rounded-full" style={{backgroundColor: 'hsl(var(--foreground))'}}></div>
-              </div>
-
-              <div className="absolute" style={{bottom: '10%', left: '50%', transform: 'translateX(-50%)'}}>
-                <p className="text-4xl font-bold">BMI = {result.bmi.toFixed(1)}</p>
-              </div>
+          <div className="w-full h-full flex flex-col items-center justify-center text-center space-y-6">
+            <div>
+                <p className="text-muted-foreground">Your BMI is</p>
+                <p className={cn("text-5xl font-bold", getCategoryColor(result.category))}>
+                    {result.bmi.toFixed(1)}
+                </p>
+                <p className={cn("text-lg font-semibold", getCategoryColor(result.category))}>
+                    {result.category}
+                </p>
             </div>
-             <ul className="mt-4 text-left list-disc list-inside">
-                <li>Healthy BMI range: 18.5 kg/m² - 25 kg/m²</li>
-                <li>Healthy weight for the height: {result.healthyWeightRange.min} {unit === 'metric' ? 'kg' : 'lbs'} - {result.healthyWeightRange.max} {unit === 'metric' ? 'kg' : 'lbs'}</li>
-            </ul>
+            
+            <div className="w-full pt-8">
+                <div className="relative h-2 w-full rounded-full bg-gradient-to-r from-blue-400 via-green-400 to-red-500">
+                     <div
+                        className="absolute -top-6 -translate-x-1/2 transition-all duration-300"
+                        style={{ left: `${getBmiPercentage(result.bmi)}%` }}
+                    >
+                        <Triangle className="h-4 w-4 fill-current text-foreground" style={{ transform: 'rotate(180deg)'}} />
+                    </div>
+                </div>
+                <div className="relative mt-2 flex justify-between text-xs text-muted-foreground">
+                    <span>15</span>
+                    <span>18.5</span>
+                    <span>25</span>
+                    <span>30</span>
+                    <span>40</span>
+                </div>
+            </div>
+
+            <div className="text-center">
+                 <p>Healthy BMI range: 18.5 kg/m² - 25 kg/m²</p>
+                 <p>Healthy weight for the height: {result.healthyWeightRange.min} {unit === 'metric' ? 'kg' : 'lbs'} - {result.healthyWeightRange.max} {unit === 'metric' ? 'kg' : 'lbs'}</p>
+            </div>
           </div>
         ) : (
           <div className="text-center text-muted-foreground p-8 border-2 border-dashed rounded-lg w-full h-full flex items-center justify-center">
