@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useEffect, useState } from 'react';
@@ -6,7 +7,6 @@ import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import GenerationCounter from '@/components/generation-counter';
 import { getFeatureCounts } from './actions';
 import { Feature } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
@@ -22,7 +22,6 @@ export default function Home() {
         setCounts(featureCounts);
       } catch (error) {
         console.error("Failed to fetch feature counts:", error);
-        // Set to default zeros on error
         const initialCounts: Record<Feature, number> = {
             smartProduct: 0,
             aiMath: 0,
@@ -226,7 +225,7 @@ export default function Home() {
                           </CardTitle>
                         </CardHeader>
                         <CardContent className='p-0 mt-4 flex-1'>
-                          <p className="font-bold text-lg">Resize & Crop</p>
+                          <p className="font-bold text-lg">Resize &amp; Crop</p>
                           <p className="text-sm text-cyan-200 mt-1">
                             Resize and crop images to a perfect square.
                           </p>
@@ -289,23 +288,23 @@ export default function Home() {
                 </div>
                 <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
                   <div className='text-center'>
-                    <p className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.smartProduct ?? 0)}</p>
+                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.smartProduct ?? 0)}</div>
                     <p className='text-muted-foreground'>Products</p>
                   </div>
                    <div className='text-center'>
-                    <p className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.aiMath ?? 0)}</p>
+                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.aiMath ?? 0)}</div>
                     <p className='text-muted-foreground'>Math Problems</p>
                   </div>
                    <div className='text-center'>
-                    <p className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.benefitPay ?? 0)}</p>
+                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.benefitPay ?? 0)}</div>
                     <p className='text-muted-foreground'>QRs</p>
                   </div>
                    <div className='text-center'>
-                    <p className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.ocr ?? 0)}</p>
+                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.ocr ?? 0)}</div>
                     <p className='text-muted-foreground'>OCRs</p>
                   </div>
                    <div className='text-center'>
-                    <p className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.imageExcel ?? 0)}</p>
+                    <div className='text-4xl font-bold text-primary'>{loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (counts?.imageExcel ?? 0)}</div>
                     <p className='text-muted-foreground'>Tables</p>
                   </div>
                 </div>
