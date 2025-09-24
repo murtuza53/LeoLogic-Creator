@@ -160,7 +160,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="w-full py-20 md:py-32">
+        <section className="w-full pt-20 pb-12 md:pt-32 md:pb-16">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
@@ -199,7 +199,7 @@ export default function Home() {
           </div>
         </section>
 
-        <section className="w-full py-12 md:py-24 bg-muted/20">
+        <section className="w-full pt-12 pb-24 bg-muted/20">
             <div className="container mx-auto px-4 md:px-6">
                 <div className="grid gap-6 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
                   {filteredTools.map((tool) => (
@@ -273,3 +273,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
