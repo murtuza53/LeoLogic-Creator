@@ -398,7 +398,10 @@ export default function Home() {
         </section>
       </main>
       <footer className="flex flex-col items-center p-6 border-t gap-6">
-        <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground">Contact Us</Link>
+        <div className="flex items-center gap-4">
+          <Link href="/contact" className="text-sm font-medium text-muted-foreground hover:text-foreground">Contact Us</Link>
+          <Link href="/privacy-policy" className="text-sm font-medium text-muted-foreground hover:text-foreground">Privacy Policy</Link>
+        </div>
         <div className="flex items-center gap-2">
           <Image src="/sek-logo.png" alt="Souq e Kamil Trading & Solutions" width={40} height={40} />
           <div className="text-center">
@@ -411,3 +414,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
