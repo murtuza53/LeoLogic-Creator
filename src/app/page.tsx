@@ -398,17 +398,17 @@ export default function Home() {
         </section>
       </main>
       <footer className="border-t bg-background">
-        <div className="container mx-auto px-4 md:px-6 py-6 flex flex-col md:flex-row items-center justify-between gap-4">
-          <div className="flex items-center gap-2">
+        <div className="container mx-auto px-4 md:px-6 py-8 flex flex-col items-center gap-4">
+          <div className="flex gap-6">
+             <Link href="/contact" className="text-sm font-medium hover:text-foreground">Contact Us</Link>
+             <Link href="/privacy-policy" className="text-sm font-medium hover:text-foreground">Privacy Policy</Link>
+          </div>
+          <div className="flex flex-col items-center gap-2">
             <Image src="/sek-logo.png" alt="Souq e Kamil Trading & Solutions" width={40} height={40} />
-            <div className='text-left'>
+            <div className='text-center'>
               <p className="text-sm font-bold">Souq e Kamil Trading & Solutions</p>
               <p className="text-xs text-muted-foreground">Innovation at the Core</p>
             </div>
-          </div>
-          <div className="flex gap-4 items-center text-sm text-muted-foreground">
-             <Link href="/contact" className="hover:text-foreground">Contact Us</Link>
-             <Link href="/privacy-policy" className="hover:text-foreground">Privacy Policy</Link>
           </div>
           <p className="text-xs text-muted-foreground">&copy; 2025 Leo Creator. All rights reserved.</p>
         </div>
