@@ -16,7 +16,7 @@ import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
 import { compressPdf } from '@/ai/flows/compress-pdf';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { incrementCount, getFeatureCountsFromDb, saveContactMessage, ContactMessage } from '@/lib/firebase';
+import { incrementCount, getFeatureCountsFromDb, saveContactMessage, ContactMessage, Feature } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
 
@@ -107,9 +107,10 @@ export async function extractTextFromImageAction(imageDataUri: string) {
   }
 }
 
-export async function incrementFeatureCounterAction(feature: 'qrGenerator' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor' | 'splitPdf' | 'bmrCalculator' | 'weightLoss' | 'scientificCalculator' | 'unitConverter') {
+export async function incrementFeatureCounterAction(feature: Feature) {
   try {
     await incrementCount(feature);
+    return { success: true };
   } catch (error) {
      console.error(`Error incrementing ${feature} counter:`, error);
      return {
