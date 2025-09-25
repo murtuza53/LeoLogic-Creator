@@ -282,10 +282,13 @@ export default function Home() {
   const categoryCounts = useMemo(() => {
     if (!counts) return {};
     return categories.reduce((acc, category) => {
-        if (category === 'All') return acc;
-        const categoryTools = tools.filter(tool => tool.category === category && tool.feature);
-        const total = categoryTools.reduce((sum, tool) => sum + (counts[tool.feature!] || 0), 0);
-        acc[category] = total;
+        if (category === 'All') {
+            acc['All'] = Object.values(counts).reduce((sum, count) => sum + count, 0);
+        } else {
+            const categoryTools = tools.filter(tool => tool.category === category && tool.feature);
+            const total = categoryTools.reduce((sum, tool) => sum + (counts[tool.feature!] || 0), 0);
+            acc[category] = total;
+        }
         return acc;
     }, {} as Record<string, number>);
   }, [counts]);
@@ -307,7 +310,7 @@ export default function Home() {
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
-                <h1 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl leading-snug sm:leading-tight md:leading-tight">
+                <h1 className="font-headline text-2xl font-bold tracking-tighter sm:text-3xl md:text-4xl leading-snug sm:leading-tight md:leading-tight">
                   Boost Your Productivity with Our <span className="bg-accent text-accent-foreground px-4 py-1 rounded-lg">Free Tools</span>
                 </h1>
                 <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
