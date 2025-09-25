@@ -20,7 +20,6 @@ const tools = [
         title: 'Smart Product Content', 
         description: 'Generate unique, SEO-friendly product descriptions and specs.', 
         href: '/creator', 
-        icon: Library, 
         category: 'AI / ML',
         feature: 'smartProduct' as Feature,
         bgColor: 'bg-purple-100',
@@ -30,7 +29,6 @@ const tools = [
         title: 'AI Math Solver', 
         description: 'Get step-by-step solutions to complex math problems.', 
         href: '/math-solver', 
-        icon: Calculator, 
         category: 'AI / ML',
         feature: 'aiMath' as Feature,
         bgColor: 'bg-green-100',
@@ -40,7 +38,6 @@ const tools = [
         title: 'QR Code Generator', 
         description: 'Create and customize QR codes for any text or URL.', 
         href: '/qr-generator', 
-        icon: QrCode, 
         category: 'Productivity',
         feature: 'qrGenerator' as Feature,
         bgColor: 'bg-pink-100',
@@ -50,7 +47,6 @@ const tools = [
         title: 'Benefit Pay QR', 
         description: 'Generate QR codes for Benefit Pay transactions.', 
         href: '/benefit-pay-qr', 
-        icon: QrCode, 
         category: 'Productivity',
         feature: 'benefitPay' as Feature,
         bgColor: 'bg-blue-100',
@@ -60,7 +56,6 @@ const tools = [
         title: 'Weight Loss Calculator', 
         description: 'Estimate daily calorie targets for weight loss.', 
         href: '/weight-loss-calculator', 
-        icon: Flame, 
         category: 'Health & Fitness',
         feature: 'weightLoss' as Feature,
         bgColor: 'bg-red-100',
@@ -70,7 +65,6 @@ const tools = [
         title: 'Fitness Mentor', 
         description: 'Ask health and fitness questions to your AI mentor.', 
         href: '/fitness-mentor', 
-        icon: MessageCircle, 
         category: 'Health & Fitness',
         feature: 'fitnessMentor' as Feature,
         bgColor: 'bg-lime-100',
@@ -80,7 +74,6 @@ const tools = [
         title: 'Scientific Calculator', 
         description: 'Perform advanced mathematical calculations with ease.', 
         href: '/scientific-calculator', 
-        icon: Calculator, 
         category: 'Productivity',
         feature: 'scientificCalculator' as Feature,
         bgColor: 'bg-gray-100',
@@ -90,7 +83,6 @@ const tools = [
         title: 'Unit Converter', 
         description: 'Convert between various units of measurement.', 
         href: '/unit-converter', 
-        icon: Scale, 
         category: 'Productivity',
         feature: 'unitConverter' as Feature,
         bgColor: 'bg-zinc-100',
@@ -100,7 +92,6 @@ const tools = [
         title: 'OCR', 
         description: 'Extract text and its original formatting from any image.', 
         href: '/ocr', 
-        icon: ScanText, 
         category: 'AI / ML',
         feature: 'ocr' as Feature,
         bgColor: 'bg-orange-100',
@@ -110,7 +101,6 @@ const tools = [
         title: 'Image to WebP', 
         description: 'Convert images to the efficient WebP format.', 
         href: '/image-to-webp', 
-        icon: ImageIcon, 
         category: 'Image',
         feature: 'imageToWebp' as Feature,
         bgColor: 'bg-yellow-100',
@@ -120,7 +110,6 @@ const tools = [
         title: 'Remove Background', 
         description: 'Automatically remove an image\'s background.', 
         href: '/remove-background', 
-        icon: Eraser, 
         category: 'Image',
         feature: 'imgRemoveBg' as Feature,
         bgColor: 'bg-rose-100',
@@ -130,7 +119,6 @@ const tools = [
         title: 'Change Background', 
         description: 'Replace an image\'s background with a solid color.', 
         href: '/change-background', 
-        icon: Palette, 
         category: 'Image',
         feature: 'imgChangeBg' as Feature,
         bgColor: 'bg-indigo-100',
@@ -140,7 +128,6 @@ const tools = [
         title: 'Resize & Crop', 
         description: 'Resize and crop images to a perfect square.', 
         href: '/resize-crop-image', 
-        icon: Crop, 
         category: 'Image',
         feature: 'resizeCropImage' as Feature,
         bgColor: 'bg-cyan-100',
@@ -150,7 +137,6 @@ const tools = [
         title: 'Merge PDFs', 
         description: 'Combine multiple PDF documents into a single file.', 
         href: '/pdf-merger', 
-        icon: FileJson, 
         category: 'PDF',
         feature: 'mergePdf' as Feature,
         bgColor: 'bg-red-100',
@@ -160,7 +146,6 @@ const tools = [
         title: 'PDF Compress', 
         description: 'Reduce the file size of your PDF files.', 
         href: '/pdf-compress', 
-        icon: FileArchive, 
         category: 'PDF',
         feature: 'pdfCompress' as Feature,
         bgColor: 'bg-red-100',
@@ -170,7 +155,6 @@ const tools = [
         title: 'Split PDF', 
         description: 'Split a PDF into individual pages.', 
         href: '/split-pdf', 
-        icon: SplitSquareHorizontal, 
         category: 'PDF',
         feature: 'splitPdf' as Feature,
         bgColor: 'bg-red-100',
@@ -180,7 +164,6 @@ const tools = [
         title: 'Image to Excel', 
         description: 'Extract tabular data from images and export to Excel.', 
         href: '/table-extractor', 
-        icon: FileSpreadsheet, 
         category: 'PDF',
         feature: 'imageExcel' as Feature,
         bgColor: 'bg-teal-100',
@@ -190,7 +173,6 @@ const tools = [
         title: 'Logo Maker', 
         description: 'Generate unique logo concepts with AI.', 
         href: '/logo-maker', 
-        icon: Brush, 
         category: 'AI / ML',
         feature: 'logoMaker' as Feature,
         bgColor: 'bg-blue-100',
@@ -200,7 +182,6 @@ const tools = [
         title: 'BMI Calculator', 
         description: 'Calculate your Body Mass Index with a visual gauge.', 
         href: '/bmi-calculator', 
-        icon: HeartPulse, 
         category: 'Health & Fitness',
         feature: 'bmiCalculator' as Feature,
         bgColor: 'bg-red-100',
@@ -210,7 +191,6 @@ const tools = [
         title: 'BMR Calculator', 
         description: 'Calculate your Basal Metabolic Rate and daily calorie needs.', 
         href: '/bmr-calculator', 
-        icon: Calculator, 
         category: 'Health & Fitness',
         feature: 'bmrCalculator' as Feature,
         bgColor: 'bg-red-100',
@@ -232,7 +212,7 @@ export default function Home() {
 
 
   useEffect(() => {
-    async function fetchCounts() {
+    const fetchCounts = async () => {
       try {
         setLoading(true);
         const featureCounts = await getFeatureCounts();
@@ -242,7 +222,7 @@ export default function Home() {
       } finally {
         setLoading(false);
       }
-    }
+    };
     fetchCounts();
   }, []);
 
@@ -394,3 +374,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
