@@ -1,58 +1,167 @@
-
 {
   "entities": {
-    "ContactMessage": {
-      "title": "Contact Message",
-      "description": "A message submitted through the contact form.",
+    "User": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "User",
       "type": "object",
+      "description": "Represents a user of the LeoLogic Analytic application.",
       "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the user entity."
+        },
         "name": {
           "type": "string",
-          "description": "The sender's name."
+          "description": "The user's full name."
         },
         "email": {
           "type": "string",
-          "format": "email",
-          "description": "The sender's email address."
-        },
-        "subject": {
-          "type": "string",
-          "description": "The subject of the message."
-        },
-        "message": {
-          "type": "string",
-          "description": "The content of the message."
-        },
-        "createdAt": {
-          "type": "string",
-          "format": "date-time",
-          "description": "The timestamp when the message was created."
+          "description": "The user's email address.",
+          "format": "email"
         }
       },
-      "required": ["name", "email", "message", "createdAt"]
+      "required": [
+        "id",
+        "name",
+        "email"
+      ]
     },
-    "GenerationCounter": {
-      "title": "Generation Counter",
-      "description": "Tracks usage counts for various app features.",
+    "Product": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Product",
       "type": "object",
-      "properties": {}
+      "description": "Represents a product analyzed by LeoLogic Analytic.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the product entity."
+        },
+        "userId": {
+          "type": "string",
+          "description": "Reference to User. (Relationship: User 1:N Product)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the product."
+        },
+        "imageUrl": {
+          "type": "string",
+          "description": "URL of the product image.",
+          "format": "uri"
+        },
+        "description": {
+          "type": "string",
+          "description": "AI-generated description of the product."
+        }
+      },
+      "required": [
+        "id",
+        "userId",
+        "name",
+        "imageUrl",
+        "description"
+      ]
+    },
+    "Specification": {
+      "$schema": "http://json-schema.org/draft-07/schema#",
+      "title": "Specification",
+      "type": "object",
+      "description": "Represents a specification for a product.",
+      "properties": {
+        "id": {
+          "type": "string",
+          "description": "Unique identifier for the specification entity."
+        },
+        "productId": {
+          "type": "string",
+          "description": "Reference to Product. (Relationship: Product 1:N Specification)"
+        },
+        "name": {
+          "type": "string",
+          "description": "The name of the specification (e.g., 'Weight', 'Dimensions')."
+        },
+        "value": {
+          "type": "string",
+          "description": "The value of the specification (e.g., '10kg', '10x20x5 cm')."
+        }
+      },
+      "required": [
+        "id",
+        "productId",
+        "name",
+        "value"
+      ]
     }
   },
   "auth": {
-    "providers": []
+    "providers": [
+      "password",
+      "anonymous"
+    ]
   },
   "firestore": {
-    "/contacts/{contactId}": {
-      "schema": {
-        "$ref": "#/entities/ContactMessage"
+    "structure": [
+      {
+        "path": "/users/{userId}",
+        "definition": {
+          "entityName": "User",
+          "schema": {
+            "$ref": "#/backend/entities/User"
+          },
+          "description": "Stores user profiles. Accessible only to the authenticated user.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            }
+          ]
+        }
       },
-      "description": "Stores contact form submissions from users."
-    },
-    "/generationCounters/{counterId}": {
-      "schema": {
-        "$ref": "#/entities/GenerationCounter"
+      {
+        "path": "/users/{userId}/products/{productId}",
+        "definition": {
+          "entityName": "Product",
+          "schema": {
+            "$ref": "#/backend/entities/Product"
+          },
+          "description": "Stores products created by the user. Enforces ownership via path. The 'userId' field in the product entity is redundant given the path-based ownership, but maintained for data clarity.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "productId",
+              "description": "The unique identifier of the product."
+            }
+          ]
+        }
       },
-      "description": "Stores counters for feature usage."
-    }
+      {
+        "path": "/users/{userId}/products/{productId}/specifications/{specificationId}",
+        "definition": {
+          "entityName": "Specification",
+          "schema": {
+            "$ref": "#/backend/entities/Specification"
+          },
+          "description": "Stores specifications for a given product. Enforces ownership via path. The 'productId' and 'userId' fields in the specification entity are redundant given the path-based ownership, but maintained for data clarity.",
+          "params": [
+            {
+              "name": "userId",
+              "description": "The unique identifier of the user."
+            },
+            {
+              "name": "productId",
+              "description": "The unique identifier of the product."
+            },
+            {
+              "name": "specificationId",
+              "description": "The unique identifier of the specification."
+            }
+          ]
+        }
+      }
+    ],
+    "reasoning": "The Firestore structure is designed to ensure authorization independence, clarity, and scalability. User data is stored in a private path (`/users/{userId}`) accessible only to the authenticated user. Products and Specifications are stored as subcollections under the user document to maintain a clear ownership hierarchy. This structure enables simple and robust security rules based on path-based ownership.\n\nAuthorization Independence is achieved by relying on path-based authorization; security rules check `request.auth.uid` against the `userId` path parameter, eliminating the need for `get()` calls to parent documents. This structure avoids hierarchical authorization dependencies.\n\nThe structure supports the required QAPs by segregating data based on ownership. Listing products or specifications is secure because the rules ensure that only the owner can access their own data. There's no mixing of data with different access requirements in the same collection, which simplifies security rules and allows for efficient queries."
   }
 }

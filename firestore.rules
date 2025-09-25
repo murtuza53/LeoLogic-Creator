@@ -1,18 +1,132 @@
-
+/**
+ * @fileoverview Firestore Security Rules for LeoLogic Analytic.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model for all data. Each user has a private data tree,
+ * and only the authenticated user can access their own data.  Data is organized hierarchically under
+ * /users/{userId}, with products and specifications nested as subcollections.
+ *
+ * Data Structure:
+ * - /users/{userId}: Stores user profiles.
+ * - /users/{userId}/products/{productId}: Stores products owned by the user.
+ * - /users/{userId}/products/{productId}/specifications/{specificationId}: Stores specifications for a product.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own data.
+ * - Data ownership is enforced via path-based authorization. The authenticated user's UID must match the
+ *   {userId} path segment.
+ * - The rules do not enforce strong schema validation in this prototyping phase, but they do validate
+ *   the userId on create to prevent inconsistent data.
+ * - List operations are restricted to the owner for user-scoped subcollections.
+ */
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow public write access to the contacts collection for form submissions,
-    // but deny read, update, and delete to protect user data.
-    match /contacts/{contactId} {
-      allow read, update, delete: if false;
-      allow create: if true;
+
+    /**
+     * @description Controls access to user profile documents.
+     * @path /users/{userId}
+     * @allow (create) - User with UID 'user_abc' can create their own profile at /users/user_abc.
+     * @allow (get) - User with UID 'user_abc' can read their own profile at /users/user_abc.
+     * @allow (update) - User with UID 'user_abc' can update their own profile at /users/user_abc.
+     * @allow (delete) - User with UID 'user_abc' can delete their own profile at /users/user_abc.
+     * @deny (create) - User with UID 'user_xyz' cannot create a profile at /users/user_abc.
+     * @deny (get) - User with UID 'user_xyz' cannot read the profile at /users/user_abc.
+     * @deny (update) - User with UID 'user_xyz' cannot update the profile at /users/user_abc.
+     * @deny (delete) - User with UID 'user_xyz' cannot delete the profile at /users/user_abc.
+     * @principle Enforces document ownership for all operations.
+     */
+    match /users/{userId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if false; // User listing is not permitted
+
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
-    // Deny all access to the counters collection from the client.
-    match /generationCounters/{counterId} {
-      allow read, write: if false;
+    /**
+     * @description Controls access to product documents owned by a user.
+     * @path /users/{userId}/products/{productId}
+     * @allow (create) - User with UID 'user_abc' can create a product under /users/user_abc/products/product_123.
+     * @allow (get) - User with UID 'user_abc' can read the product at /users/user_abc/products/product_123.
+     * @allow (list) - User with UID 'user_abc' can list products under /users/user_abc/products.
+     * @allow (update) - User with UID 'user_abc' can update their product at /users/user_abc/products/product_123.
+     * @allow (delete) - User with UID 'user_abc' can delete their product at /users/user_abc/products/product_123.
+     * @deny (create) - User with UID 'user_xyz' cannot create a product under /users/user_abc/products/product_123.
+     * @deny (get) - User with UID 'user_xyz' cannot read the product at /users/user_abc/products/product_123.
+     * @deny (list) - User with UID 'user_xyz' cannot list products under /users/user_abc/products.
+     * @deny (update) - User with UID 'user_xyz' cannot update the product at /users/user_abc/products/product_123.
+     * @deny (delete) - User with UID 'user_xyz' cannot delete their product at /users/user_abc/products/product_123.
+     * @principle Enforces document ownership for writes; allows owner-only listing.
+     */
+    match /users/{userId}/products/{productId} {
+       function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if request.auth.uid == userId;
+
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to specification documents owned by a user's product.
+     * @path /users/{userId}/products/{productId}/specifications/{specificationId}
+     * @allow (create) - User with UID 'user_abc' can create a specification under /users/user_abc/products/product_123/specifications/spec_456.
+     * @allow (get) - User with UID 'user_abc' can read the specification at /users/user_abc/products/product_123/specifications/spec_456.
+     * @allow (list) - User with UID 'user_abc' can list specifications under /users/user_abc/products/product_123/specifications.
+     * @allow (update) - User with UID 'user_abc' can update their specification at /users/user_abc/products/product_123/specifications/spec_456.
+     * @allow (delete) - User with UID 'user_abc' can delete their specification at /users/user_abc/products/product_123/specifications/spec_456.
+     * @deny (create) - User with UID 'user_xyz' cannot create a specification under /users/user_abc/products/product_123/specifications/spec_456.
+     * @deny (get) - User with UID 'user_xyz' cannot read the specification at /users/user_abc/products/product_123/specifications/spec_456.
+     * @deny (list) - User with UID 'user_xyz' cannot list specifications under /users/user_abc/products/product_123/specifications.
+     * @deny (update) - User with UID 'user_xyz' cannot update the specification at /users/user_abc/products/product_123/specifications/spec_456.
+     * @deny (delete) - User with UID 'user_xyz' cannot delete their specification at /users/user_abc/products/product_123/specifications/spec_456.
+     * @principle Enforces document ownership for writes; allows owner-only listing.
+     */
+    match /users/{userId}/products/{productId}/specifications/{specificationId} {
+       function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isSignedIn() && request.auth.uid == userId && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if request.auth.uid == userId;
+
+      allow create: if isSignedIn() && request.auth.uid == userId;
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
   }
 }
