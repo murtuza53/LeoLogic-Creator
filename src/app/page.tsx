@@ -215,16 +215,6 @@ const tools = [
         bgColor: 'bg-lime-100',
         textColor: 'text-lime-600'
     },
-    { 
-        title: 'Contact Us', 
-        description: 'Get in touch with us for any questions or feedback.', 
-        href: '/contact', 
-        icon: Contact, 
-        category: 'Productivity',
-        feature: null,
-        bgColor: 'bg-gray-100',
-        textColor: 'text-gray-600'
-    },
 ];
 
 const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
@@ -402,12 +392,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-
-
-    
-
-
-    
