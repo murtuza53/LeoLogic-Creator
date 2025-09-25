@@ -228,6 +228,7 @@ const tools = [
 ];
 
 const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
+const statsCategories = ['PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
 
 
 export default function Home() {
@@ -281,15 +282,11 @@ export default function Home() {
 
   const categoryCounts = useMemo(() => {
     if (!counts) return {};
-    return categories.reduce((acc, category) => {
-        if (category === 'All') {
-            acc['All'] = Object.values(counts).reduce((sum, count) => sum + count, 0);
-        } else {
-            const categoryTools = tools.filter(tool => tool.category === category && tool.feature);
-            const total = categoryTools.reduce((sum, tool) => sum + (counts[tool.feature!] || 0), 0);
-            acc[category] = total;
-        }
-        return acc;
+    return statsCategories.reduce((acc, category) => {
+      const categoryTools = tools.filter(tool => tool.category === category && tool.feature);
+      const total = categoryTools.reduce((sum, tool) => sum + (counts[tool.feature!] || 0), 0);
+      acc[category] = total;
+      return acc;
     }, {} as Record<string, number>);
   }, [counts]);
 
@@ -408,6 +405,9 @@ export default function Home() {
 
     
 
+
+
+    
 
 
     
