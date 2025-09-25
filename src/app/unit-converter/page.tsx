@@ -1,5 +1,6 @@
 
 import UnitConverter from '@/components/unit-converter';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -41,6 +42,7 @@ export default function UnitConverterPage() {
           <UnitConverter />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

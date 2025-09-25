@@ -1,5 +1,6 @@
 
 import WeightLossCalculator from '@/components/weight-loss-calculator';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -41,6 +42,7 @@ export default function WeightLossCalculatorPage() {
           <WeightLossCalculator />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

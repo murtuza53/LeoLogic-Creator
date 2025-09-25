@@ -1,5 +1,6 @@
 
 import BmiCalculator from '@/components/bmi-calculator';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -41,6 +42,7 @@ export default function BmiCalculatorPage() {
           <BmiCalculator />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

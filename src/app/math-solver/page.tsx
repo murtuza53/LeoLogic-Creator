@@ -1,8 +1,10 @@
+
 import MathSolver from '@/components/math-solver';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+import Footer from '@/components/footer';
 
 export default function MathSolverPage() {
   return (
@@ -40,6 +42,7 @@ export default function MathSolverPage() {
           <MathSolver />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

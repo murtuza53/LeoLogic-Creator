@@ -1,4 +1,6 @@
+
 import ImageToWebpConverter from '@/components/image-to-webp-converter';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -40,6 +42,7 @@ export default function ImageToWebpPage() {
           <ImageToWebpConverter />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

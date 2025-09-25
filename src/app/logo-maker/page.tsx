@@ -1,4 +1,6 @@
+
 import LogoMaker from '@/components/logo-maker';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -40,6 +42,7 @@ export default function LogoMakerPage() {
           <LogoMaker />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

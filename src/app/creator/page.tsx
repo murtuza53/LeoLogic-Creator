@@ -1,8 +1,10 @@
+
 import { Logo } from '@/components/icons';
 import ProductGenerator from '@/components/product-generator';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+import Footer from '@/components/footer';
 
 export default function CreatorPage() {
   return (
@@ -41,6 +43,7 @@ export default function CreatorPage() {
           <ProductGenerator />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

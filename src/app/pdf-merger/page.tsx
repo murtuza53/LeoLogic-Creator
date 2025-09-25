@@ -1,4 +1,6 @@
+
 import PdfMerger from '@/components/pdf-merger';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -40,6 +42,7 @@ export default function PdfMergerPage() {
           <PdfMerger />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

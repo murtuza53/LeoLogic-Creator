@@ -1,4 +1,6 @@
+
 import TableExtractor from '@/components/table-extractor';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -40,6 +42,7 @@ export default function TableExtractorPage() {
           <TableExtractor />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
