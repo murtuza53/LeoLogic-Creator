@@ -1,5 +1,4 @@
 
-
 'use server';
 
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
@@ -16,7 +15,7 @@ import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
 import { compressPdf } from '@/ai/flows/compress-pdf';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { incrementCount, getFeatureCountsFromDb, saveContactMessage, ContactMessage, Feature } from '@/lib/firebase';
+import { incrementCount, getFeatureCountsFromDb, saveContactMessage, ContactMessage, Feature, createUserProfile } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
 
@@ -382,6 +381,21 @@ export async function saveContactMessageAction(message: ContactMessage) {
   }
 }
 
+export async function createUserProfileAction(userId: string, data: { name: string, email: string }) {
+  try {
+    await createUserProfile(userId, data);
+    return { success: true };
+  } catch (error) {
+    console.error('Error creating user profile:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
 
 export async function getFeatureCounts() {
   return await getFeatureCountsFromDb();
@@ -390,3 +404,5 @@ export async function getFeatureCounts() {
     
 
     
+
+

@@ -2,18 +2,15 @@
 'use server';
 import { initializeApp, getApps, getApp, App } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import { firebaseConfig } from '@/firebase/config';
 
 // Note: This file is now using the Firebase Admin SDK as it's a server-side file.
 // Client-side Firebase logic is handled in src/firebase/index.ts
 
 let app: App;
 if (!getApps().length) {
-  // Explicitly initialize with the config for server-side environments.
-  // This is more robust than relying on auto-detection.
-  app = initializeApp({
-    projectId: firebaseConfig.projectId,
-  });
+  // This is the correct way for hosted environments like Vercel or App Hosting
+  // to automatically discover credentials.
+  app = initializeApp();
 } else {
   app = getApp();
 }
@@ -58,12 +55,11 @@ export async function saveContactMessage(message: ContactMessage): Promise<void>
 export async function incrementCount(feature: Feature): Promise<void> {
     const counterRef = db.collection(COUNTERS_COLLECTION).doc(COUNTERS_DOC_ID);
     
-    const payload: { [key: string]: any } = {};
-    payload[feature] = FieldValue.increment(1);
-
-    // Use set with merge:true to create the document if it doesn't exist,
-    // or update it if it does. This is the most robust way to handle counters.
-    await counterRef.set(payload, { merge: true });
+    // This is a robust way to handle increments.
+    // It creates the document if it doesn't exist and increments the field.
+    await counterRef.set({
+        [feature]: FieldValue.increment(1)
+    }, { merge: true });
 }
 
 export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>> {
@@ -96,12 +92,8 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
 
         if (docSnap.exists) {
             const data = docSnap.data();
-            // Ensure all features from initialCounts are present in the final object
-            const counts = Object.keys(initialCounts).reduce((acc, key) => {
-                acc[key as Feature] = data?.[key] || 0;
-                return acc;
-            }, {} as Record<Feature, number>);
-            return counts;
+            const counts = { ...initialCounts, ...data };
+            return counts as Record<Feature, number>;
         } else {
             // If the document doesn't exist, create it with initial values
             await counterRef.set(initialCounts);
@@ -109,7 +101,6 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
         }
     } catch (error) {
         console.error("Error fetching feature counts:", error);
-        // On error, return the initial zeroed counts to avoid breaking the UI
         return initialCounts;
     }
 }
