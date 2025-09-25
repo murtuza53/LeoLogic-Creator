@@ -1,15 +1,12 @@
+
 {
   "entities": {
-    "User": {
+    "UserProfile": {
       "$schema": "http://json-schema.org/draft-07/schema#",
-      "title": "User",
+      "title": "User Profile",
       "type": "object",
-      "description": "Represents a user of the LeoLogic Analytic application.",
+      "description": "Represents a user's profile in the LeoLogic Analytic application.",
       "properties": {
-        "id": {
-          "type": "string",
-          "description": "Unique identifier for the user entity."
-        },
         "name": {
           "type": "string",
           "description": "The user's full name."
@@ -21,7 +18,6 @@
         }
       },
       "required": [
-        "id",
         "name",
         "email"
       ]
@@ -38,7 +34,7 @@
         },
         "userId": {
           "type": "string",
-          "description": "Reference to User. (Relationship: User 1:N Product)"
+          "description": "Reference to UserProfile. (Relationship: UserProfile 1:N Product)"
         },
         "name": {
           "type": "string",
@@ -104,9 +100,9 @@
       {
         "path": "/users/{userId}",
         "definition": {
-          "entityName": "User",
+          "entityName": "UserProfile",
           "schema": {
-            "$ref": "#/backend/entities/User"
+            "$ref": "#/backend/entities/UserProfile"
           },
           "description": "Stores user profiles. Accessible only to the authenticated user.",
           "params": [

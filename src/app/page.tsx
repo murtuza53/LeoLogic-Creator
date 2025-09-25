@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Contact } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -289,7 +289,9 @@ export default function Home() {
         </div>
         <div className='flex items-center gap-2'>
           <Button variant="ghost">Sign In</Button>
-          <Button>Sign Up</Button>
+          <Button asChild>
+            <Link href="/signup">Sign Up</Link>
+          </Button>
         </div>
       </header>
       <main className="flex-1">
@@ -376,7 +378,7 @@ export default function Home() {
                   </div>
               </div>
               <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
-                {Object.keys(categoryCounts).map(category => (
+                {statsCategories.map(category => (
                     <div key={category} className='text-center'>
                         <div className="text-4xl font-bold text-primary">
                             {loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (categoryCounts[category] ?? 0)}

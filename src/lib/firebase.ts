@@ -25,6 +25,7 @@ const db = getFirestore(app);
 const COUNTERS_COLLECTION = 'generationCounters';
 const COUNTERS_DOC_ID = 'featureCounts';
 const CONTACTS_COLLECTION = 'contacts';
+const USERS_COLLECTION = 'users';
 
 
 export type Feature = 'smartProduct' | 'aiMath' | 'qrGenerator' | 'ocr' | 'mergePdf' | 'imageExcel' | 'imageToWebp' | 'imgRemoveBg' | 'imgChangeBg' | 'resizeCropImage' | 'logoMaker' | 'pdfCompress' | 'benefitPay' | 'bmiCalculator' | 'fitnessMentor' | 'splitPdf' | 'bmrCalculator' | 'weightLoss' | 'scientificCalculator' | 'unitConverter';
@@ -35,6 +36,24 @@ export type ContactMessage = {
   subject?: string;
   message: string;
 };
+
+export type UserProfile = {
+  name: string;
+  email: string;
+};
+
+export async function createUserProfile(userId: string, data: UserProfile): Promise<void> {
+  try {
+    const userRef = doc(db, USERS_COLLECTION, userId);
+    await setDoc(userRef, {
+      ...data,
+      createdAt: serverTimestamp(),
+    });
+  } catch (error) {
+    console.error('Failed to create user profile:', error);
+    throw new Error('Failed to create user profile.');
+  }
+}
 
 export async function saveContactMessage(message: ContactMessage): Promise<void> {
   try {
@@ -106,7 +125,3 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
         return initialCounts;
     }
 }
-
-    
-
-    
