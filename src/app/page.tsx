@@ -21,7 +21,7 @@ const SouqEKamilLogo = () => (
     xmlns="http://www.w3.org/2000/svg"
   >
     <path
-      d="M83.12,27.03L83.12,27.03c-2.81,0-5.09,2.28-5.09,5.09v12.41c0,2.81-2.28,5.09-5.09,5.09H34.11c-2.81,0-5.09-2.28-5.09-5.09V14.89c0-2.81-2.28-5.09-5.09-5.09h-4.3c-2.81,0-5.09,2.28-5.09,5.09v0c0,2.81,2.28,5.09,5.09,5.09h1.16v29.54c0,8.44,6.85,15.28,15.28,15.28h33.82c8.44,0,15.28-6.85,15.28-15.28v-9.28c2.81,0,5.09-2.28,5.09-5.09v-4.3C88.21,29.31,85.93,27.03,83.12,27.03z M71.88,44.54H34.11c-2.81,0-5.09-2.28-5.09-5.09V14.89c0-2.81-2.28-5.09-5.09-5.09h-4.3c-2.81,0-5.09,2.28-5.09,5.09v0c0,2.81,2.28,5.09,5.09,5.09h1.16v29.54c0,8.44,6.85,15.28,15.28,15.28h33.82c5.63,0,10.55-3.06,13.1-7.58l-13.1-13.06Z"
+      d="M83.12,27.03L83.12,27.03c-2.81,0-5.09,2.28-5.09,5.09v12.41c0,2.81-2.28,5.09-5.09,5.09H34.11c-2.81,0-5.09-2.28-5.09-5.09V14.89c0-2.81-2.28,5.09-5.09-5.09h-4.3c-2.81,0-5.09,2.28-5.09,5.09v0c0,2.81,2.28,5.09,5.09,5.09h1.16v29.54c0,8.44,6.85,15.28,15.28,15.28h33.82c8.44,0,15.28-6.85,15.28-15.28v-9.28c2.81,0,5.09-2.28,5.09-5.09v-4.3C88.21,29.31,85.93,27.03,83.12,27.03z M71.88,44.54H34.11c-2.81,0-5.09-2.28-5.09-5.09V14.89c0-2.81-2.28-5.09-5.09-5.09h-4.3c-2.81,0-5.09,2.28-5.09,5.09v0c0,2.81,2.28,5.09,5.09,5.09h1.16v29.54c0,8.44,6.85,15.28,15.28,15.28h33.82c5.63,0,10.55-3.06,13.1-7.58l-13.1-13.06Z"
       fill="#FF0000"
     />
     <path
@@ -417,7 +417,7 @@ export default function Home() {
             </div>
         </section>
       </main>
-      <footer className="flex flex-col sm:flex-row items-center justify-between p-6 border-t gap-4">
+      <footer className="flex flex-wrap items-center justify-between p-6 border-t gap-4">
         <div className="flex items-center gap-2">
           <SouqEKamilLogo />
           <div className="text-left">
@@ -425,8 +425,10 @@ export default function Home() {
             <p className="text-xs text-muted-foreground">Innovation at the Core</p>
           </div>
         </div>
-        <div className="flex flex-col sm:flex-row items-center gap-2 sm:gap-4 text-center sm:text-right">
+        <div className="flex-grow text-center">
           <Link href="/contact" className="text-xs text-muted-foreground hover:text-foreground">Contact Us</Link>
+        </div>
+        <div className="text-right">
           <p className="text-xs text-muted-foreground">&copy; 2025 Leo Creator. All rights reserved.</p>
         </div>
       </footer>
