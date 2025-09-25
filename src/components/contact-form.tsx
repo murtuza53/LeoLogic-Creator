@@ -39,28 +39,24 @@ export default function ContactForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    try {
-        const result = await saveContactMessageAction(values);
+    const result = await saveContactMessageAction(values);
 
-        if (result.error) {
-            throw new Error(result.error);
-        }
-
-        toast({
-            title: "Message Sent!",
-            description: "Thank you for contacting us. We'll get back to you shortly.",
-        });
-        form.reset();
-    } catch(error) {
-        console.error("Failed to send message:", error);
+    if (result.error) {
+        console.error("Failed to send message:", result.error);
         toast({
             variant: "destructive",
             title: "Submission Failed",
             description: "There was a problem sending your message. Please try again later.",
         });
-    } finally {
-        setIsLoading(false);
+    } else {
+        toast({
+            title: "Message Sent!",
+            description: "Thank you for contacting us. We'll get back to you shortly.",
+        });
+        form.reset();
     }
+    
+    setIsLoading(false);
   }
 
   return (
@@ -136,5 +132,3 @@ export default function ContactForm() {
     </Card>
   );
 }
-
-    
