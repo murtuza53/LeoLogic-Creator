@@ -3,13 +3,17 @@
 'use server';
 import { initializeApp, getApps, getApp, App } from 'firebase-admin/app';
 import { getFirestore, increment } from 'firebase-admin/firestore';
+import { firebaseConfig } from '@/firebase/config';
 
 // Note: This file is now using the Firebase Admin SDK as it's a server-side file.
 // Client-side Firebase logic is handled in src/firebase/index.ts
 
 let app: App;
 if (!getApps().length) {
-  app = initializeApp();
+  // Explicitly initialize with project ID for server-side reliability
+  app = initializeApp({
+    projectId: firebaseConfig.projectId,
+  });
 } else {
   app = getApp();
 }
@@ -106,10 +110,11 @@ export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>>
 
         if (docSnap.exists) {
             const data = docSnap.data();
-            const counts: Record<Feature, number> = {
-                ...initialCounts,
-                ...data
-            };
+            // Ensure all features from initialCounts are present in the final object
+            const counts = Object.keys(initialCounts).reduce((acc, key) => {
+                acc[key as Feature] = data?.[key] || 0;
+                return acc;
+            }, {} as Record<Feature, number>);
             return counts;
         } else {
             // If the document doesn't exist, create it with initial values
