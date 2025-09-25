@@ -1,4 +1,6 @@
 
+
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -65,6 +67,7 @@ export default function TermsOfUsePage() {
             <p>If you have any questions about these Terms, please <Link href="/contact">contact us</Link>.</p>
         </div>
       </main>
+      <Footer />
     </div>
   );
 }

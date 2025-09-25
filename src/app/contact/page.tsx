@@ -1,5 +1,7 @@
 
+
 import ContactForm from '@/components/contact-form';
+import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
@@ -41,6 +43,7 @@ export default function ContactPage() {
           <ContactForm />
         </div>
       </main>
+      <Footer />
     </div>
   );
 }
