@@ -61,6 +61,8 @@ export async function incrementCount(feature: Feature): Promise<void> {
     const payload: { [key: string]: any } = {};
     payload[feature] = FieldValue.increment(1);
 
+    // Use set with merge:true to create the document if it doesn't exist,
+    // or update it if it does. This is the most robust way to handle counters.
     await counterRef.set(payload, { merge: true });
 }
 
