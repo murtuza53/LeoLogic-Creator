@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -42,7 +41,6 @@ export default function ContactForm() {
     const result = await saveContactMessageAction(values);
 
     if (result.error) {
-        console.error("Failed to send message:", result.error);
         toast({
             variant: "destructive",
             title: "Submission Failed",
