@@ -55,6 +55,26 @@ const tools = [
         bgColor: 'bg-blue-100',
         textColor: 'text-blue-600'
     },
+    { 
+        title: 'Weight Loss Calculator', 
+        description: 'Estimate daily calorie targets for weight loss.', 
+        href: '/weight-loss-calculator', 
+        icon: Flame, 
+        category: 'Health & Fitness',
+        feature: 'weightLoss' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600'
+    },
+    { 
+        title: 'Fitness Mentor', 
+        description: 'Ask health and fitness questions to your AI mentor.', 
+        href: '/fitness-mentor', 
+        icon: MessageCircle, 
+        category: 'Health & Fitness',
+        feature: 'fitnessMentor' as Feature,
+        bgColor: 'bg-lime-100',
+        textColor: 'text-lime-600'
+    },
      { 
         title: 'Scientific Calculator', 
         description: 'Perform advanced mathematical calculations with ease.', 
@@ -194,26 +214,6 @@ const tools = [
         feature: 'bmrCalculator' as Feature,
         bgColor: 'bg-red-100',
         textColor: 'text-red-600'
-    },
-     { 
-        title: 'Weight Loss Calculator', 
-        description: 'Estimate daily calorie targets for weight loss.', 
-        href: '/weight-loss-calculator', 
-        icon: Flame, 
-        category: 'Health & Fitness',
-        feature: 'weightLoss' as Feature,
-        bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
-    },
-    { 
-        title: 'Fitness Mentor', 
-        description: 'Ask health and fitness questions to your AI mentor.', 
-        href: '/fitness-mentor', 
-        icon: MessageCircle, 
-        category: 'Health & Fitness',
-        feature: 'fitnessMentor' as Feature,
-        bgColor: 'bg-lime-100',
-        textColor: 'text-lime-600'
     },
 ];
 
