@@ -13,6 +13,7 @@ import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { Card, CardContent } from '@/components/ui/card';
+import { saveContactMessageAction } from '@/app/actions';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -37,20 +38,29 @@ export default function ContactForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    // Here you would typically send the data to your backend
-    console.log('Contact Form Submitted:', values);
-
-    // Simulate network delay
-    await new Promise(resolve => setTimeout(resolve, 1000));
     
-    setIsLoading(false);
+    try {
+        const result = await saveContactMessageAction(values);
 
-    toast({
-      title: "Message Sent!",
-      description: "Thank you for contacting us. We'll get back to you shortly.",
-    });
+        if (result.error) {
+            throw new Error(result.error);
+        }
 
-    form.reset();
+        toast({
+            title: "Message Sent!",
+            description: "Thank you for contacting us. We'll get back to you shortly.",
+        });
+        form.reset();
+    } catch(error) {
+        console.error("Failed to send message:", error);
+        toast({
+            variant: "destructive",
+            title: "Submission Failed",
+            description: "There was a problem sending your message. Please try again later.",
+        });
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   return (

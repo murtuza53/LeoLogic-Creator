@@ -16,7 +16,7 @@ import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
 import { compressPdf } from '@/ai/flows/compress-pdf';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { incrementCount, getFeatureCountsFromDb } from '@/lib/firebase';
+import { incrementCount, getFeatureCountsFromDb, saveContactMessage, ContactMessage } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
 
@@ -357,6 +357,21 @@ export async function fitnessMentorAction(message: string) {
     return result;
   } catch (error) {
     console.error('Error with fitness mentor:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function saveContactMessageAction(message: ContactMessage) {
+  try {
+    await saveContactMessage(message);
+    return { success: true };
+  } catch (error) {
+    console.error('Error saving contact message:', error);
     return {
       error:
         error instanceof Error
