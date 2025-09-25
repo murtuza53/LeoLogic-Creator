@@ -1,119 +1,132 @@
 /**
- * @file Firebase Security Rules for LeoLogic Analytic
+ * @fileoverview Firestore Security Rules for LeoLogic Analytic.
  *
- * @description This ruleset enforces a strict user-ownership model for all data.
- * All data is nested under /users/{userId}, ensuring that only the authenticated user can access their own data.
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model, where each user has full control over their profile, products, and specifications.
  *
- * @dataStructure
- * - /users/{userId}: Stores user profiles. Accessible only to the authenticated user.
- * - /users/{userId}/products/{productId}: Stores products created by the user. Enforces ownership via path.
- * - /users/{userId}/products/{productId}/specifications/{specificationId}: Stores specifications for a given product. Enforces ownership via path.
+ * Data Structure:
+ * - User profiles are stored under `/users/{userId}`.
+ * - Products are stored as subcollections under user profiles: `/users/{userId}/products/{productId}`.
+ * - Specifications are stored as subcollections under products: `/users/{userId}/products/{productId}/specifications/{specificationId}`.
  *
- * @keySecurityDecisions
- * - User listing is disallowed.
- * - The rules enforce that the authenticated user ID must match the `userId` path parameter for all write operations.
- * - Read-only collections are not applicable in this data model.
+ * Key Security Decisions:
+ * - Users can only access their own data.
+ * - Listing other users' data is disallowed.
+ * - Schema validation is relaxed during prototyping to allow rapid iteration.
  *
- * @denormalizationForAuthorization
- * The data model denormalizes the userId at each level in the hierarchy to ensure
- * efficient authorization. This avoids the need for expensive `get()` operations
- * to verify ownership at parent levels.
- *
- * @structuralSegregation
- * The data model utilizes private user subcollections to store user-specific data,
- * ensuring that data with different access requirements is not mixed in the same
- * collection.
+ * Denormalization for Authorization:
+ * - The `userId` is already present in the document path for Products and Specifications, but it is also included in the document itself for clarity. The rules will ensure the path and document `userId` values match.
  */
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
 
     /**
-     * @description Secure root access. No direct access to the root is allowed.
-     * @path /
-     * @allow (get, list) if false;
-     * @deny (create, update, delete) all operations.
-     * @principle Prevents accidental access to the root of the database.
-     */
-    match /{document=**} {
-      allow read, write: if false;
-    }
-
-    /**
-     * @description Allows authenticated users to read and write their own profile data.
+     * @description Enforces access control for user profiles.
      * @path /users/{userId}
-     * @allow (get) User 'A' can read their own profile: `request.auth.uid == 'A'`
-     * @allow (list) if false; listing of users is not permitted
-     * @allow (create) User 'A' can create their own profile: `request.auth.uid == 'A'`
-     * @allow (update) User 'A' can update their own profile: `request.auth.uid == 'A'`
-     * @allow (delete) User 'A' can delete their own profile: `request.auth.uid == 'A'`
-     * @deny (get) User 'B' cannot read User 'A's profile: `request.auth.uid == 'B', userId == 'A'`
-     * @deny (create) User 'B' cannot create User 'A's profile: `request.auth.uid == 'B', userId == 'A'`
-     * @principle Enforces document ownership for reads and writes, restricts access to a user's own data tree, and validates relational integrity between documents.
+     * @allow (create) - Authenticated user creates their profile with a matching userId.
+     * @allow (get, update, delete) - Authenticated user accesses their own profile.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's profile.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId} {
-      allow get: if isSignedIn() && isOwner(userId);
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
       allow list: if false;
-      allow create: if isSignedIn() && isSelfCreate(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isExistingOwner(userId);
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows authenticated users to manage their own products.
+     * @description Enforces access control for products.
      * @path /users/{userId}/products/{productId}
-     * @allow (get) User 'A' can read their own product: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (list) User 'A' can list their own products: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (create) User 'A' can create a product: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (update) User 'A' can update their own product: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (delete) User 'A' can delete their own product: `request.auth.uid == 'A', userId == 'A'`
-     * @deny (get) User 'B' cannot read User 'A's product: `request.auth.uid == 'B', userId == 'A'`
-     * @deny (create) User 'B' cannot create a product for User 'A': `request.auth.uid == 'B', userId == 'A'`
-     * @principle Enforces document ownership for reads and writes, restricts access to a user's own data tree, and validates relational integrity between documents.
+     * @allow (create) - Authenticated user creates a product under their profile.
+     * @allow (get, update, delete) - Authenticated user accesses their own product.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's product.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId}/products/{productId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
+      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
+      allow delete: if isExistingOwner(userId);
     }
 
     /**
-     * @description Allows authenticated users to manage specifications for their products.
+     * @description Enforces access control for specifications.
      * @path /users/{userId}/products/{productId}/specifications/{specificationId}
-     * @allow (get) User 'A' can read their own specification: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (list) User 'A' can list their own specifications: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (create) User 'A' can create a specification: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (update) User 'A' can update their own specification: `request.auth.uid == 'A', userId == 'A'`
-     * @allow (delete) User 'A' can delete their own specification: `request.auth.uid == 'A', userId == 'A'`
-     * @deny (get) User 'B' cannot read User 'A's specification: `request.auth.uid == 'B', userId == 'A'`
-     * @deny (create) User 'B' cannot create a specification for User 'A': `request.auth.uid == 'B', userId == 'A'`
-     * @principle Enforces document ownership for reads and writes, restricts access to a user's own data tree, and validates relational integrity between documents.
+     * @allow (create) - Authenticated user creates a specification under their product.
+     * @allow (get, update, delete) - Authenticated user accesses their own specification.
+     * @deny (get, update, delete) - Authenticated user tries to access another user's specification.
+     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
      */
     match /users/{userId}/products/{productId}/specifications/{specificationId} {
-      allow get: if isSignedIn() && isOwner(userId);
-      allow list: if isSignedIn() && isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isSignedIn() && isExistingOwner(userId);
-      allow delete: if isSignedIn() && isExistingOwner(userId);
-    }
+      function isSignedIn() {
+        return request.auth != null;
+      }
 
-    // Helper functions
-    function isSignedIn() {
-      return request.auth != null;
-    }
-
-    function isOwner(userId) {
-      return request.auth.uid == userId;
-    }
-
-    function isExistingOwner(userId) {
-      return isOwner(userId) && resource != null;
-    }
-
-    function isSelfCreate(userId) {
+      function isOwner(userId) {
         return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isOwner(userId);
+      allow list: if isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.productId == productId;
+      allow update: if isExistingOwner(userId) && request.resource.data.productId == resource.data.productId;
+      allow delete: if isExistingOwner(userId);
+    }
+
+        /**
+     * @description Allows public read access to the contact_us collection, but restricts all writes.
+     * @path /contact_us/{documentId}
+     * @allow get, list: if true;
+     * @deny create, update, delete: if true;
+     * @principle Allows public read access with no write access
+     */
+    match /contact_us/{documentId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
+    }
+
+        /**
+     * @description Allows public read access to the counters collection, but restricts all writes.
+     * @path /counters/{documentId}
+     * @allow get, list: if true;
+     * @deny create, update, delete: if true;
+     * @principle Allows public read access with no write access
+     */
+    match /counters/{documentId} {
+      allow get, list: if true;
+      allow create, update, delete: if false;
     }
   }
 }
