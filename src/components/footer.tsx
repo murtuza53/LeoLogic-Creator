@@ -7,6 +7,7 @@ export default function Footer() {
     <footer className="border-t bg-background">
       <div className="container mx-auto px-4 md:px-6 py-8 flex flex-col items-center gap-4">
         <div className="flex flex-wrap justify-center gap-x-6 gap-y-2">
+          <Link href="/about" className="text-sm font-medium hover:text-foreground text-muted-foreground">About Us</Link>
           <Link href="/contact" className="text-sm font-medium hover:text-foreground text-muted-foreground">Contact Us</Link>
           <Link href="/privacy-policy" className="text-sm font-medium hover:text-foreground text-muted-foreground">Privacy Policy</Link>
           <Link href="/terms-of-use" className="text-sm font-medium hover:text-foreground text-muted-foreground">Terms of Use</Link>
