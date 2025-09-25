@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -13,6 +13,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Footer from '@/components/footer';
+import { useAuth, useUser, signOutUser } from '@/firebase';
 
 const tools = [
     { 
@@ -226,6 +227,9 @@ export default function Home() {
   const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
+  const { user, isUserLoading } = useUser();
+  const auth = useAuth();
+
 
   useEffect(() => {
     async function fetchCounts() {
@@ -287,13 +291,27 @@ export default function Home() {
           <Logo className="h-8 w-8 text-primary" />
           <span className="font-bold text-xl">Leo Creator</span>
         </div>
-        <div className='flex items-center gap-2'>
-          <Button variant="ghost" asChild>
-            <Link href="/signin">Sign In</Link>
-          </Button>
-          <Button asChild>
-            <Link href="/signup">Sign Up</Link>
-          </Button>
+        <div className='flex items-center gap-4'>
+           {isUserLoading ? (
+            <Skeleton className="h-8 w-24" />
+          ) : user ? (
+            <>
+              <span className="text-sm font-medium">Welcome, {user.displayName || user.email}</span>
+              <Button variant="ghost" onClick={() => signOutUser(auth)}>
+                <LogOut className="mr-2 h-4 w-4" />
+                Sign Out
+              </Button>
+            </>
+          ) : (
+            <>
+              <Button variant="ghost" asChild>
+                <Link href="/signin">Sign In</Link>
+              </Button>
+              <Button asChild>
+                <Link href="/signup">Sign Up</Link>
+              </Button>
+            </>
+          )}
         </div>
       </header>
       <main className="flex-1">
