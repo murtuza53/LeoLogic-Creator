@@ -1,0 +1,18 @@
+
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+    // Allow public write access to the contacts collection for form submissions,
+    // but deny read, update, and delete to protect user data.
+    match /contacts/{contactId} {
+      allow read, update, delete: if false;
+      allow create: if true;
+    }
+
+    // Deny all access to the counters collection from the client.
+    match /generationCounters/{counterId} {
+      allow read, write: if false;
+    }
+  }
+}
