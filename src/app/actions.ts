@@ -50,7 +50,7 @@ export async function generateProductDetails(
       throw new Error('AI failed to generate complete details.');
     }
     
-    await incrementCount('smartProduct');
+    await incrementFeatureCounterAction('smartProduct');
 
     return {
       description: descriptionResult.description,
@@ -75,7 +75,7 @@ export async function solveMathProblemAction(problem: string) {
     if (!result) {
       throw new Error('AI failed to solve the problem.');
     }
-    await incrementCount('aiMath');
+    await incrementFeatureCounterAction('aiMath');
     return result;
   } catch (error) {
     console.error('Error solving math problem:', error);
@@ -94,7 +94,7 @@ export async function extractTextFromImageAction(imageDataUri: string) {
     if (!result) {
       throw new Error('AI failed to extract text from the image.');
     }
-    await incrementCount('ocr');
+    await incrementFeatureCounterAction('ocr');
     return result;
   } catch (error) {
     console.error('Error extracting text from image:', error);
@@ -139,7 +139,7 @@ export async function mergePdfsAction(pdfDataUris: string[]) {
       mergedPdfBytes
     ).toString('base64')}`;
     
-    await incrementCount('mergePdf');
+    await incrementFeatureCounterAction('mergePdf');
 
     return { mergedPdf: mergedPdfDataUri };
   } catch (error) {
@@ -199,7 +199,7 @@ export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
     const buffer = await workbook.xlsx.writeBuffer();
     const excelDataUri = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${Buffer.from(buffer).toString('base64')}`;
 
-    await incrementCount('imageExcel');
+    await incrementFeatureCounterAction('imageExcel');
 
     return { excelDataUri };
   } catch (error) {
@@ -225,7 +225,7 @@ export async function convertImagesToWebpAction(
 
     const results = await Promise.all(conversionPromises);
     
-    await incrementCount('imageToWebp');
+    await incrementFeatureCounterAction('imageToWebp');
     
     return { convertedImages: results.map(r => r.webpDataUri) };
   } catch (error) {
@@ -246,7 +246,7 @@ export async function removeBackgroundAction(imageDataUri: string) {
     if (!result) {
       throw new Error('AI failed to remove background from the image.');
     }
-    await incrementCount('imgRemoveBg');
+    await incrementFeatureCounterAction('imgRemoveBg');
     return result;
   } catch (error) {
     console.error('Error removing background from image:', error);
@@ -265,7 +265,7 @@ export async function changeBackgroundAction(imageDataUri: string, backgroundCol
     if (!result) {
       throw new Error('AI failed to change background of the image.');
     }
-    await incrementCount('imgChangeBg');
+    await incrementFeatureCounterAction('imgChangeBg');
     return result;
   } catch (error) {
     console.error('Error changing background of image:', error);
@@ -292,7 +292,7 @@ export async function resizeAndCropImageAction(
 
     const results = await Promise.all(promises);
     
-    await incrementCount('resizeCropImage');
+    await incrementFeatureCounterAction('resizeCropImage');
     
     return { processedImages: results.map(r => r.imageDataUri) };
   } catch (error) {
@@ -312,7 +312,7 @@ export async function generateLogoAction(concept: string) {
     if (!result?.imageUrls || result.imageUrls.length === 0) {
       throw new Error('AI failed to generate logos.');
     }
-    await incrementCount('logoMaker');
+    await incrementFeatureCounterAction('logoMaker');
     return result;
   } catch (error) {
     console.error('Error generating logos:', error);
@@ -334,7 +334,7 @@ export async function compressPdfAction(
         if (!result) {
             throw new Error('AI failed to compress the PDF.');
         }
-        await incrementCount('pdfCompress');
+        await incrementFeatureCounterAction('pdfCompress');
         return result;
     } catch (error) {
         console.error('Error compressing PDF:', error);
@@ -353,7 +353,7 @@ export async function fitnessMentorAction(message: string) {
     if (!result) {
       throw new Error('AI failed to respond.');
     }
-    await incrementCount('fitnessMentor');
+    await incrementFeatureCounterAction('fitnessMentor');
     return result;
   } catch (error) {
     console.error('Error with fitness mentor:', error);

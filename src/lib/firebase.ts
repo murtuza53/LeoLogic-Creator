@@ -41,43 +41,27 @@ export type UserProfile = {
 };
 
 export async function createUserProfile(userId: string, data: UserProfile): Promise<void> {
-  try {
-    const userRef = db.collection(USERS_COLLECTION).doc(userId);
-    await userRef.set({
-      ...data,
-      createdAt: new Date(),
-    });
-  } catch (error) {
-    console.error('Failed to create user profile:', error);
-    throw new Error('Failed to create user profile.');
-  }
+  const userRef = db.collection(USERS_COLLECTION).doc(userId);
+  await userRef.set({
+    ...data,
+    createdAt: FieldValue.serverTimestamp(),
+  });
 }
 
 export async function saveContactMessage(message: ContactMessage): Promise<void> {
-  try {
     await db.collection(CONTACTS_COLLECTION).add({
       ...message,
-      createdAt: new Date(),
+      createdAt: FieldValue.serverTimestamp(),
     });
-  } catch (error) {
-    console.error('Failed to save contact message:', error);
-    throw new Error('Failed to save contact message.');
-  }
 }
 
 export async function incrementCount(feature: Feature): Promise<void> {
-  try {
     const counterRef = db.collection(COUNTERS_COLLECTION).doc(COUNTERS_DOC_ID);
     
     const payload: { [key: string]: any } = {};
     payload[feature] = FieldValue.increment(1);
 
     await counterRef.set(payload, { merge: true });
-
-  } catch (error) {
-    console.error(`Failed to increment count for ${feature}:`, error);
-    throw new Error(`Failed to increment count for ${feature}.`);
-  }
 }
 
 export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>> {
