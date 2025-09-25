@@ -5,12 +5,13 @@ import { useEffect, useState, useMemo } from 'react';
 import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Contact } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
-import { Logo, SouqEKamilLogo } from '@/components/icons';
+import { Logo } from '@/components/icons';
 import { Card, CardContent } from '@/components/ui/card';
 import { getFeatureCounts } from './actions';
 import { Feature } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
+import Image from 'next/image';
 
 const tools = [
     { 
@@ -301,7 +302,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="w-full py-12">
+        <section className="w-full pt-6 pb-12">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
@@ -398,7 +399,7 @@ export default function Home() {
       </main>
       <footer className="flex flex-wrap items-center justify-between p-6 border-t gap-4">
         <div className="flex items-center gap-2">
-          <SouqEKamilLogo />
+          <Image src="/logo.png" alt="Souq e Kamil Trading & Solutions" width={60} height={60} />
           <div className="text-left">
             <p className="text-sm font-bold">Souq e Kamil Trading & Solutions</p>
             <p className="text-xs text-muted-foreground">Innovation at the Core</p>
