@@ -1,132 +1,17 @@
-/**
- * @fileoverview Firestore Security Rules for LeoLogic Analytic.
- *
- * Core Philosophy:
- * This ruleset enforces a strict user-ownership model, where each user has full control over their profile, products, and specifications.
- *
- * Data Structure:
- * - User profiles are stored under `/users/{userId}`.
- * - Products are stored as subcollections under user profiles: `/users/{userId}/products/{productId}`.
- * - Specifications are stored as subcollections under products: `/users/{userId}/products/{productId}/specifications/{specificationId}`.
- *
- * Key Security Decisions:
- * - Users can only access their own data.
- * - Listing other users' data is disallowed.
- * - Schema validation is relaxed during prototyping to allow rapid iteration.
- *
- * Denormalization for Authorization:
- * - The `userId` is already present in the document path for Products and Specifications, but it is also included in the document itself for clarity. The rules will ensure the path and document `userId` values match.
- */
 rules_version = '2';
+
 service cloud.firestore {
   match /databases/{database}/documents {
-
-    /**
-     * @description Enforces access control for user profiles.
-     * @path /users/{userId}
-     * @allow (create) - Authenticated user creates their profile with a matching userId.
-     * @allow (get, update, delete) - Authenticated user accesses their own profile.
-     * @deny (get, update, delete) - Authenticated user tries to access another user's profile.
-     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
-     */
-    match /users/{userId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if false;
-      allow create: if isSignedIn() && isOwner(userId);
-      allow update: if isExistingOwner(userId);
-      allow delete: if isExistingOwner(userId);
+    // Allow public write access to the contacts collection for form submissions,
+    // but deny read, update, and delete to protect user data.
+    match /contacts/{contactId} {
+      allow read, update, delete: if false;
+      allow create: if true;
     }
 
-    /**
-     * @description Enforces access control for products.
-     * @path /users/{userId}/products/{productId}
-     * @allow (create) - Authenticated user creates a product under their profile.
-     * @allow (get, update, delete) - Authenticated user accesses their own product.
-     * @deny (get, update, delete) - Authenticated user tries to access another user's product.
-     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
-     */
-    match /users/{userId}/products/{productId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.userId == userId;
-      allow update: if isExistingOwner(userId) && request.resource.data.userId == resource.data.userId;
-      allow delete: if isExistingOwner(userId);
-    }
-
-    /**
-     * @description Enforces access control for specifications.
-     * @path /users/{userId}/products/{productId}/specifications/{specificationId}
-     * @allow (create) - Authenticated user creates a specification under their product.
-     * @allow (get, update, delete) - Authenticated user accesses their own specification.
-     * @deny (get, update, delete) - Authenticated user tries to access another user's specification.
-     * @principle Enforces document ownership for writes and restricts access to a user's own data tree.
-     */
-    match /users/{userId}/products/{productId}/specifications/{specificationId} {
-      function isSignedIn() {
-        return request.auth != null;
-      }
-
-      function isOwner(userId) {
-        return request.auth.uid == userId;
-      }
-
-      function isExistingOwner(userId) {
-        return isOwner(userId) && resource != null;
-      }
-
-      allow get: if isOwner(userId);
-      allow list: if isOwner(userId);
-      allow create: if isSignedIn() && isOwner(userId) && request.resource.data.productId == productId;
-      allow update: if isExistingOwner(userId) && request.resource.data.productId == resource.data.productId;
-      allow delete: if isExistingOwner(userId);
-    }
-
-        /**
-     * @description Allows public read access to the contact_us collection, but restricts all writes.
-     * @path /contact_us/{documentId}
-     * @allow get, list: if true;
-     * @deny create, update, delete: if true;
-     * @principle Allows public read access with no write access
-     */
-    match /contact_us/{documentId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
-    }
-
-        /**
-     * @description Allows public read access to the counters collection, but restricts all writes.
-     * @path /counters/{documentId}
-     * @allow get, list: if true;
-     * @deny create, update, delete: if true;
-     * @principle Allows public read access with no write access
-     */
-    match /counters/{documentId} {
-      allow get, list: if true;
-      allow create, update, delete: if false;
+    // Deny all access to the counters collection from the client.
+    match /generationCounters/{counterId} {
+      allow read, write: if false;
     }
   }
 }
