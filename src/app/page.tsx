@@ -278,7 +278,9 @@ export default function Home() {
     if (!counts) return {};
     return statsCategories.reduce((acc, category) => {
       const categoryTools = tools.filter(tool => tool.category === category && tool.feature);
-      const total = categoryTools.reduce((sum, tool) => sum + (counts[tool.feature!] || 0), 0);
+      const total = categoryTools.reduce((sum, tool) => {
+        return sum + (counts[tool.feature as Feature] || 0);
+      }, 0);
       acc[category] = total;
       return acc;
     }, {} as Record<string, number>);
