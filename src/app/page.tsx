@@ -106,7 +106,7 @@ const tools = [
         bgColor: 'bg-orange-100',
         textColor: 'text-orange-600'
     },
-    { _project_path: '/app/image-to-webp/page.tsx',
+    { 
         title: 'Image to WebP', 
         description: 'Convert images to the efficient WebP format.', 
         href: '/image-to-webp', 
@@ -234,33 +234,11 @@ export default function Home() {
   useEffect(() => {
     async function fetchCounts() {
       try {
+        setLoading(true);
         const featureCounts = await getFeatureCounts();
         setCounts(featureCounts);
       } catch (error) {
         console.error("Failed to fetch feature counts:", error);
-        const initialCounts: Record<string, number> = {
-            smartProduct: 0,
-            aiMath: 0,
-            qrGenerator: 0,
-            ocr: 0,
-            mergePdf: 0,
-            imageExcel: 0,
-            imageToWebp: 0,
-            imgRemoveBg: 0,
-            imgChangeBg: 0,
-            resizeCropImage: 0,
-            logoMaker: 0,
-            pdfCompress: 0,
-            benefitPay: 0,
-            bmiCalculator: 0,
-            bmrCalculator: 0,
-            fitnessMentor: 0,
-            splitPdf: 0,
-            weightLoss: 0,
-            scientificCalculator: 0,
-            unitConverter: 0,
-        };
-        setCounts(initialCounts);
       } finally {
         setLoading(false);
       }
