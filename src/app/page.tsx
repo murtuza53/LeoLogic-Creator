@@ -84,7 +84,7 @@ const tools = [
         bgColor: 'bg-orange-100',
         textColor: 'text-orange-600'
     },
-    { 
+    { _project_path: '/app/image-to-webp/page.tsx',
         title: 'Image to WebP', 
         description: 'Convert images to the efficient WebP format.', 
         href: '/image-to-webp', 
@@ -399,7 +399,7 @@ export default function Home() {
       </main>
       <footer className="flex flex-wrap items-center justify-between p-6 border-t gap-4">
         <div className="flex items-center gap-2">
-          <Image src="/sek-logo.png" alt="Souq e Kamil Trading & Solutions" width={60} height={60} />
+          <Image src="/sek-logo.png" alt="Souq e Kamil Trading & Solutions" width={40} height={40} />
           <div className="text-left">
             <p className="text-sm font-bold">Souq e Kamil Trading & Solutions</p>
             <p className="text-xs text-muted-foreground">Innovation at the Core</p>
