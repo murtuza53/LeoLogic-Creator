@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -23,7 +23,8 @@ const tools = [
         category: 'AI / ML',
         feature: 'smartProduct' as Feature,
         bgColor: 'bg-purple-100',
-        textColor: 'text-purple-600'
+        textColor: 'text-purple-600',
+        icon: BrainCircuit,
     },
     { 
         title: 'AI Math Solver', 
@@ -32,7 +33,8 @@ const tools = [
         category: 'AI / ML',
         feature: 'aiMath' as Feature,
         bgColor: 'bg-green-100',
-        textColor: 'text-green-600'
+        textColor: 'text-green-600',
+        icon: Sigma,
     },
     { 
         title: 'QR Code Generator', 
@@ -41,7 +43,8 @@ const tools = [
         category: 'Productivity',
         feature: 'qrGenerator' as Feature,
         bgColor: 'bg-pink-100',
-        textColor: 'text-pink-600'
+        textColor: 'text-pink-600',
+        icon: QrCode,
     },
     { 
         title: 'Benefit Pay QR', 
@@ -50,16 +53,18 @@ const tools = [
         category: 'Productivity',
         feature: 'benefitPay' as Feature,
         bgColor: 'bg-blue-100',
-        textColor: 'text-blue-600'
+        textColor: 'text-blue-600',
+        icon: Share2,
     },
-    { 
+     { 
         title: 'Weight Loss Calculator', 
         description: 'Estimate daily calorie targets for weight loss.', 
         href: '/weight-loss-calculator', 
         category: 'Health & Fitness',
         feature: 'weightLoss' as Feature,
         bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
+        textColor: 'text-red-600',
+        icon: Minus,
     },
     { 
         title: 'Fitness Mentor', 
@@ -68,7 +73,8 @@ const tools = [
         category: 'Health & Fitness',
         feature: 'fitnessMentor' as Feature,
         bgColor: 'bg-lime-100',
-        textColor: 'text-lime-600'
+        textColor: 'text-lime-600',
+        icon: Bot,
     },
      { 
         title: 'Scientific Calculator', 
@@ -77,7 +83,8 @@ const tools = [
         category: 'Productivity',
         feature: 'scientificCalculator' as Feature,
         bgColor: 'bg-gray-100',
-        textColor: 'text-gray-600'
+        textColor: 'text-gray-600',
+        icon: Calculator,
     },
     { 
         title: 'Unit Converter', 
@@ -86,7 +93,8 @@ const tools = [
         category: 'Productivity',
         feature: 'unitConverter' as Feature,
         bgColor: 'bg-zinc-100',
-        textColor: 'text-zinc-600'
+        textColor: 'text-zinc-600',
+        icon: UnfoldHorizontal,
     },
     { 
         title: 'OCR', 
@@ -95,7 +103,8 @@ const tools = [
         category: 'AI / ML',
         feature: 'ocr' as Feature,
         bgColor: 'bg-orange-100',
-        textColor: 'text-orange-600'
+        textColor: 'text-orange-600',
+        icon: Type,
     },
     { 
         title: 'Image to WebP', 
@@ -104,7 +113,8 @@ const tools = [
         category: 'Image',
         feature: 'imageToWebp' as Feature,
         bgColor: 'bg-yellow-100',
-        textColor: 'text-yellow-600'
+        textColor: 'text-yellow-600',
+        icon: ImageIcon,
     },
     { 
         title: 'Remove Background', 
@@ -113,7 +123,8 @@ const tools = [
         category: 'Image',
         feature: 'imgRemoveBg' as Feature,
         bgColor: 'bg-rose-100',
-        textColor: 'text-rose-600'
+        textColor: 'text-rose-600',
+        icon: Eraser,
     },
     {
         title: 'Change Background', 
@@ -122,7 +133,8 @@ const tools = [
         category: 'Image',
         feature: 'imgChangeBg' as Feature,
         bgColor: 'bg-indigo-100',
-        textColor: 'text-indigo-600'
+        textColor: 'text-indigo-600',
+        icon: Blend,
     },
     { 
         title: 'Resize & Crop', 
@@ -131,7 +143,8 @@ const tools = [
         category: 'Image',
         feature: 'resizeCropImage' as Feature,
         bgColor: 'bg-cyan-100',
-        textColor: 'text-cyan-600'
+        textColor: 'text-cyan-600',
+        icon: Crop,
     },
     { 
         title: 'Merge PDFs', 
@@ -140,7 +153,8 @@ const tools = [
         category: 'PDF',
         feature: 'mergePdf' as Feature,
         bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
+        textColor: 'text-red-600',
+        icon: Merge,
     },
     { 
         title: 'PDF Compress', 
@@ -149,7 +163,8 @@ const tools = [
         category: 'PDF',
         feature: 'pdfCompress' as Feature,
         bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
+        textColor: 'text-red-600',
+        icon: FileArchive,
     },
     { 
         title: 'Split PDF', 
@@ -158,7 +173,8 @@ const tools = [
         category: 'PDF',
         feature: 'splitPdf' as Feature,
         bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
+        textColor: 'text-red-600',
+        icon: Scissors,
     },
     { 
         title: 'Image to Excel', 
@@ -167,7 +183,8 @@ const tools = [
         category: 'PDF',
         feature: 'imageExcel' as Feature,
         bgColor: 'bg-teal-100',
-        textColor: 'text-teal-600'
+        textColor: 'text-teal-600',
+        icon: FileSpreadsheet,
     },
     { 
         title: 'Logo Maker', 
@@ -176,7 +193,8 @@ const tools = [
         category: 'AI / ML',
         feature: 'logoMaker' as Feature,
         bgColor: 'bg-blue-100',
-        textColor: 'text-blue-600'
+        textColor: 'text-blue-600',
+        icon: Component,
     },
     { 
         title: 'BMI Calculator', 
@@ -185,7 +203,8 @@ const tools = [
         category: 'Health & Fitness',
         feature: 'bmiCalculator' as Feature,
         bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
+        textColor: 'text-red-600',
+        icon: HeartPulse,
     },
     { 
         title: 'BMR Calculator', 
@@ -194,7 +213,8 @@ const tools = [
         category: 'Health & Fitness',
         feature: 'bmrCalculator' as Feature,
         bgColor: 'bg-red-100',
-        textColor: 'text-red-600'
+        textColor: 'text-red-600',
+        icon: Flame,
     },
 ];
 
@@ -374,5 +394,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
