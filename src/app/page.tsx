@@ -397,7 +397,7 @@ export default function Home() {
             </div>
         </section>
       </main>
-      <footer className="flex flex-wrap items-center justify-between p-6 border-t gap-4">
+      <footer className="flex flex-col md:flex-row items-center justify-between p-6 border-t gap-4">
         <div className="flex items-center gap-2">
           <Image src="/sek-logo.png" alt="Souq e Kamil Trading & Solutions" width={40} height={40} />
           <div className="text-left">
@@ -408,7 +408,7 @@ export default function Home() {
         <div className="flex-grow text-center">
           <Link href="/contact" className="text-sm text-muted-foreground hover:text-foreground">Contact Us</Link>
         </div>
-        <div className="text-right">
+        <div className="text-center md:text-right">
           <p className="text-xs text-muted-foreground">&copy; 2025 Leo Creator. All rights reserved.</p>
         </div>
       </footer>
