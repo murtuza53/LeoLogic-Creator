@@ -9,10 +9,11 @@ import { firebaseConfig } from '@/firebase/config';
 
 let app: App;
 if (!getApps().length) {
-  // Call initializeApp() with no arguments.
-  // It will automatically use the project's service account credentials
-  // from the App Hosting environment.
-  app = initializeApp();
+  // Explicitly initialize with the config for server-side environments.
+  // This is more robust than relying on auto-detection.
+  app = initializeApp({
+    projectId: firebaseConfig.projectId,
+  });
 } else {
   app = getApp();
 }
