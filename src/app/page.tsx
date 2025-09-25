@@ -2,7 +2,7 @@
 "use client";
 
 import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale } from 'lucide-react';
+import { ArrowRight, Calculator, Library, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Contact } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -291,7 +291,7 @@ export default function Home() {
         </div>
       </header>
       <main className="flex-1">
-        <section className="w-full pt-12 pb-12 md:pt-16 md:pb-16">
+        <section className="w-full py-12">
           <div className="container mx-auto px-4 md:px-6">
             <div className="flex flex-col justify-center space-y-6 text-center">
               <div className="space-y-4">
@@ -386,12 +386,17 @@ export default function Home() {
             </div>
         </section>
       </main>
-      <footer className="flex items-center justify-center p-6 border-t">
+      <footer className="flex flex-col items-center justify-center p-6 border-t gap-2">
+         <div className="flex gap-4">
+            <Link href="/contact" className="text-xs text-muted-foreground hover:text-foreground">Contact Us</Link>
+         </div>
          <p className="text-xs text-muted-foreground">&copy; 2025 Leo Creator. All rights reserved.</p>
       </footer>
     </div>
   );
 }
+
+    
 
     
 
