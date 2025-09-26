@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
@@ -10,7 +11,7 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Footer from '@/components/footer';
-import { useAuth, useUser, signOutUser, handleRedirectResult } from '@/firebase';
+import { useAuth, useUser, signOutUser } from '@/firebase';
 import { type Feature } from '@/lib/firebase';
 import { useToast } from '@/hooks/use-toast';
 
@@ -270,21 +271,6 @@ export default function Home() {
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
   const { toast } = useToast();
-
-  useEffect(() => {
-    async function checkRedirect() {
-        if (auth && !isUserLoading && !user) {
-            const signedInUser = await handleRedirectResult(auth);
-            if (signedInUser) {
-                toast({
-                    title: 'Signed In!',
-                    description: `Welcome back, ${signedInUser.displayName || signedInUser.email}!`,
-                });
-            }
-        }
-    }
-    checkRedirect();
-  }, [auth, isUserLoading, user, toast]);
 
   const filteredTools = tools.filter(tool => {
     const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;

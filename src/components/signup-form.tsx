@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useForm } from 'react-hook-form';
@@ -13,9 +14,8 @@ import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { useAuth, initiateGoogleSignIn } from '@/firebase';
+import { useAuth } from '@/firebase';
 import { createUserProfile } from '@/lib/firebase';
-import { Separator } from './ui/separator';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -26,7 +26,6 @@ const formSchema = z.object({
 export default function SignupForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
-  const [isGoogleLoading, setIsGoogleLoading] = useState(false);
   const auth = useAuth();
   const router = useRouter();
 
@@ -56,27 +55,6 @@ export default function SignupForm() {
         setIsLoading(false);
     }
   }
-
-  async function handleGoogleSignIn() {
-    setIsGoogleLoading(true);
-    try {
-        initiateGoogleSignIn(auth);
-        // The user will be redirected. The result is handled on the landing page.
-    } catch(error: any) {
-       toast({
-          variant: "destructive",
-          title: "Google Sign-in Failed",
-          description: error.message || "An unknown error occurred. Please try again.",
-       });
-       setIsGoogleLoading(false);
-    }
-  }
-  
-  const GoogleIcon = () => (
-    <svg className="mr-2 h-4 w-4" role="img" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 488 512">
-        <path fill="currentColor" d="M488 261.8C488 403.3 381.5 512 244 512 110.1 512 0 401.9 0 265.9 0 129.9 110.1 20 244 20c69.1 0 128.8 28.2 173.4 72.9l-65.7 64.2C335.5 119.5 293.6 96 244 96c-82.6 0-149.7 67.4-149.7 150S161.4 396 244 396c94.9 0 132.3-72.8 136.2-109.3H244v-85.1h236.1c2.4 12.8 3.9 26.6 3.9 41z"></path>
-    </svg>
-  );
 
   return (
     <Card className="shadow-lg">
@@ -122,24 +100,12 @@ export default function SignupForm() {
                 </FormItem>
               )}
             />
-            <Button type="submit" className="w-full" disabled={isLoading || isGoogleLoading}>
+            <Button type="submit" className="w-full" disabled={isLoading}>
               {isLoading && <LoaderCircle className="mr-2 h-4 w-4 animate-spin" />}
               {isLoading ? 'Creating Account...' : 'Sign Up'}
             </Button>
           </form>
         </Form>
-        <div className="relative my-4">
-          <div className="absolute inset-0 flex items-center">
-            <span className="w-full border-t" />
-          </div>
-          <div className="relative flex justify-center text-xs uppercase">
-            <span className="bg-background px-2 text-muted-foreground">Or continue with</span>
-          </div>
-        </div>
-        <Button variant="outline" className="w-full" onClick={handleGoogleSignIn} disabled={isLoading || isGoogleLoading}>
-            {isGoogleLoading ? <LoaderCircle className="mr-2 h-4 w-4 animate-spin" /> : <GoogleIcon />}
-            Sign up with Google
-        </Button>
       </CardContent>
     </Card>
   );
