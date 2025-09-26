@@ -219,43 +219,43 @@ const tools = [
 const features = [
     {
       icon: Users,
-      title: 'Privacy First - Files Never Leave Your Device',
-      description: 'Unlike other tools, your files are processed locally in your browser. Zero uploads, zero storage, zero privacy risks. Your sensitive data stays yours.',
+      title: 'Complete Privacy',
+      description: 'Your files are processed locally in your browser. No uploads, no storage, no privacy risks. Your data stays completely private.',
       bgColor: 'bg-purple-100 dark:bg-purple-900/50',
       textColor: 'text-purple-600 dark:text-purple-300',
     },
     {
       icon: Star,
-      title: 'Replace 30+ Apps with One Complete Platform',
-      description: 'Consolidate your workflow by replacing numerous single-purpose applications. Access a comprehensive suite of professional-grade tools in one convenient, free platform.',
+      title: 'All-In-One Platform',
+      description: 'Consolidate your workflow with a comprehensive suite of professional-grade tools, replacing dozens of single-purpose apps.',
       bgColor: 'bg-orange-100 dark:bg-orange-900/50',
       textColor: 'text-orange-600 dark:text-orange-300',
     },
     {
       icon: Zap,
-      title: 'Lightning-Fast Results - No Waiting',
-      description: 'Compress a 50MB PDF in 3 seconds. Convert images instantly. No downloading software, no loading screens, no frustration.',
+      title: 'Blazing-Fast Speed',
+      description: 'Get results in seconds, not minutes. Convert images instantly and compress large files without frustrating wait times.',
       bgColor: 'bg-green-100 dark:bg-green-900/50',
       textColor: 'text-green-600 dark:text-green-300',
     },
     {
       icon: Clock,
-      title: 'Works on Any Device, Anywhere',
-      description: 'Access your complete file toolkit from any browser, any device. Perfect for remote work, client meetings, or quick mobile edits.',
+      title: 'Works Everywhere',
+      description: 'Access your complete toolkit from any browser, on any device. Perfect for quick edits on the go, whether on mobile or desktop.',
       bgColor: 'bg-blue-100 dark:bg-blue-900/50',
       textColor: 'text-blue-600 dark:text-blue-300',
     },
     {
       icon: Wand2,
-      title: 'Professional Quality, Zero Learning Curve',
-      description: 'Get enterprise-grade results without technical skills. Intuitive tools that work perfectly every time.',
+      title: 'Effortless & Intuitive',
+      description: 'Achieve professional-quality results without a learning curve. Our tools are designed to be simple, intuitive, and work perfectly every time.',
       bgColor: 'bg-pink-100 dark:bg-pink-900/50',
       textColor: 'text-pink-600 dark:text-pink-300',
     },
     {
       icon: SmilePlus,
-      title: 'New Tools Added Weekly',
-      description: 'Join our growing community of 100,000+ users. Fresh tools and features added every week based on user feedback.',
+      title: 'Constantly Evolving',
+      description: 'Join a growing community of satisfied users. We add fresh tools and features weekly based on valuable user feedback.',
       bgColor: 'bg-teal-100 dark:bg-teal-900/50',
       textColor: 'text-teal-600 dark:text-teal-300',
     },
@@ -410,3 +410,4 @@ export default function Home() {
   );
 }
 
+    
