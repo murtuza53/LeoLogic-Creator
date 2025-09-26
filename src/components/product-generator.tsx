@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -6,6 +7,7 @@ import ProductDisplay from '@/components/product-display';
 import { generateProductDetails } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter';
 
 export type ProductData = {
   description: string;
@@ -21,8 +23,19 @@ export default function ProductGenerator() {
   const [imagePreview, setImagePreview] = useState<string | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('smartProduct');
+
 
   const handleGenerate = async (name: string, imageFile: File, generateAdditionalImages: boolean, additionalInfo?: string) => {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+
+    if (!checkLimit()) {
+      return; // Stop if limit is reached
+    }
+
     setIsLoading(true);
     setProductData(null);
     setProductName(name);
@@ -44,6 +57,7 @@ export default function ProductGenerator() {
           throw new Error(result.error);
         }
         setProductData(result as ProductData);
+        incrementUsage(); // Increment usage only on success
         router.refresh();
       } catch (error) {
         console.error(error);
