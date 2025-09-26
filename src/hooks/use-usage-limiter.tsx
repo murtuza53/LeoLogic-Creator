@@ -1,20 +1,25 @@
+
 "use client";
 
-import { useState, useCallback } from 'react';
+import { useState, useCallback, useEffect } from 'react';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
 import { type Feature } from '@/lib/firebase';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 
-const USAGE_LIMIT = 2;
+const USAGE_LIMIT = 5;
 const STORAGE_KEY = 'anonymousUsage';
 
 type UsageData = Partial<Record<Feature, number>>;
+type StoredData = {
+  date: string; // YYYY-MM-DD
+  usage: UsageData;
+};
 
 /**
  * Hook to manage and enforce usage limits for non-authenticated users.
- * Tracks usage counts in localStorage.
+ * Tracks usage counts in localStorage with a daily reset.
  *
  * @param feature The specific feature being tracked (e.g., 'smartProduct').
  * @returns An object with functions to check limits and increment counts.
@@ -22,18 +27,36 @@ type UsageData = Partial<Record<Feature, number>>;
 export function useUsageLimiter(feature: Feature) {
   const { user, isUserLoading } = useUser();
   const { toast } = useToast();
+  
+  const getTodaysDateString = () => new Date().toISOString().split('T')[0];
 
   const getUsage = (): UsageData => {
     try {
-      const storedUsage = window.localStorage.getItem(STORAGE_KEY);
-      return storedUsage ? JSON.parse(storedUsage) : {};
+      const storedItem = window.localStorage.getItem(STORAGE_KEY);
+      if (!storedItem) return {};
+      
+      const data: StoredData = JSON.parse(storedItem);
+      const today = getTodaysDateString();
+
+      if (data.date === today) {
+        return data.usage;
+      } else {
+        // Date is old, so reset usage
+        window.localStorage.removeItem(STORAGE_KEY);
+        return {};
+      }
     } catch (error) {
       console.error("Error reading from localStorage:", error);
       return {};
     }
   };
 
-  const [usage, setUsage] = useState<UsageData>(getUsage);
+  const [usage, setUsage] = useState<UsageData>({});
+
+  useEffect(() => {
+    // We need to get usage data on the client side
+    setUsage(getUsage());
+  }, []);
 
   const checkLimit = useCallback((): boolean => {
     if (isUserLoading) return false; // Wait until user state is known
@@ -42,8 +65,8 @@ export function useUsageLimiter(feature: Feature) {
     const currentCount = usage[feature] || 0;
     if (currentCount >= USAGE_LIMIT) {
       toast({
-        title: 'Usage Limit Reached',
-        description: 'You have used this feature twice. Please sign up for unlimited access.',
+        title: 'Daily Limit Reached',
+        description: 'Your daily quota is completed. You can continue tomorrow or sign up for unlimited access.',
         action: (
           <Button asChild>
             <Link href="/signup">Sign Up</Link>
@@ -60,16 +83,21 @@ export function useUsageLimiter(feature: Feature) {
     if (user) return; // Don't track for signed-in users
 
     try {
-        const newUsage = { ...usage };
-        const currentCount = newUsage[feature] || 0;
-        newUsage[feature] = currentCount + 1;
+        const currentUsage = getUsage(); // Get the most recent usage
+        const currentCount = currentUsage[feature] || 0;
+        const newUsage: UsageData = { ...currentUsage, [feature]: currentCount + 1 };
         
-        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newUsage));
-        setUsage(newUsage);
+        const newData: StoredData = {
+          date: getTodaysDateString(),
+          usage: newUsage,
+        };
+
+        window.localStorage.setItem(STORAGE_KEY, JSON.stringify(newData));
+        setUsage(newUsage); // Update state to reflect the change
     } catch (error) {
         console.error("Error writing to localStorage:", error);
     }
-  }, [user, usage, feature]);
+  }, [user, feature]);
 
   return { checkLimit, incrementUsage, isUserLoading };
 }
