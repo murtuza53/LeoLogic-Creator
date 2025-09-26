@@ -7,14 +7,13 @@ import { useToast } from '@/hooks/use-toast';
 import { useState } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
-import { updateProfile } from 'firebase/auth';
-import { get, getDatabase, ref } from 'firebase/database';
+import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { useAuth, initiateEmailSignUp, initiateGoogleSignIn } from '@/firebase';
+import { useAuth, initiateGoogleSignIn } from '@/firebase';
 import { createUserProfile } from '@/lib/firebase';
 import { Separator } from './ui/separator';
 
@@ -43,51 +42,34 @@ export default function SignupForm() {
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
     
-    initiateEmailSignUp(auth, values.email, values.password);
-
-    setTimeout(async () => {
-      const user = auth.currentUser;
-      if (user) {
-        try {
-          await updateProfile(user, { displayName: values.name });
-          await createUserProfile(user.uid, { name: values.name, email: values.email });
-          toast({ title: "Account Created!", description: "You have been successfully signed up." });
-          router.push('/');
-        } catch (error) {
-          console.error("Error creating profile: ", error);
-          toast({ variant: "destructive", title: "Signup Failed", description: "Could not save your profile information." });
-        }
-      } else {
-         toast({ variant: "destructive", title: "Signup Failed", description: "An unknown error occurred. Please try again." });
-      }
-      setIsLoading(false);
-    }, 2000);
+    try {
+        const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
+        const user = userCredential.user;
+        await updateProfile(user, { displayName: values.name });
+        await createUserProfile(user.uid, { name: values.name, email: values.email });
+        
+        toast({ title: "Account Created!", description: "You have been successfully signed up." });
+        router.push('/');
+    } catch (error: any) {
+        toast({ variant: "destructive", title: "Signup Failed", description: error.message || "An unknown error occurred. Please try again." });
+    } finally {
+        setIsLoading(false);
+    }
   }
 
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
-    initiateGoogleSignIn(auth);
-
-    setTimeout(async () => {
-       const user = auth.currentUser;
-        if (user && user.displayName && user.email) {
-          try {
-              await createUserProfile(user.uid, { name: user.displayName, email: user.email });
-              toast({ title: "Account Created!", description: "Welcome!" });
-              router.push('/');
-          } catch(e) {
-              // This can happen if the profile already exists, which is fine on sign in
-              router.push('/');
-          }
-        } else {
-             toast({
-                variant: "destructive",
-                title: "Google Sign-in Failed",
-                description: "An unknown error occurred. Please try again.",
-             });
-        }
-        setIsGoogleLoading(false);
-    }, 2500);
+    try {
+        initiateGoogleSignIn(auth);
+        // The user will be redirected. The result is handled on the landing page.
+    } catch(error: any) {
+       toast({
+          variant: "destructive",
+          title: "Google Sign-in Failed",
+          description: error.message || "An unknown error occurred. Please try again.",
+       });
+       setIsGoogleLoading(false);
+    }
   }
   
   const GoogleIcon = () => (

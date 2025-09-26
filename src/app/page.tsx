@@ -1,7 +1,6 @@
-
 "use client";
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect } from 'react';
 import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
@@ -11,8 +10,9 @@ import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Footer from '@/components/footer';
-import { useAuth, useUser, signOutUser } from '@/firebase';
+import { useAuth, useUser, signOutUser, handleRedirectResult } from '@/firebase';
 import { type Feature } from '@/lib/firebase';
+import { useToast } from '@/hooks/use-toast';
 
 const tools = [
     { 
@@ -269,6 +269,22 @@ export default function Home() {
   const [activeCategory, setActiveCategory] = useState('All');
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
+  const { toast } = useToast();
+
+  useEffect(() => {
+    async function checkRedirect() {
+        if (auth && !isUserLoading && !user) {
+            const signedInUser = await handleRedirectResult(auth);
+            if (signedInUser) {
+                toast({
+                    title: 'Signed In!',
+                    description: `Welcome back, ${signedInUser.displayName || signedInUser.email}!`,
+                });
+            }
+        }
+    }
+    checkRedirect();
+  }, [auth, isUserLoading, user, toast]);
 
   const filteredTools = tools.filter(tool => {
     const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;
@@ -409,9 +425,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
-
-    

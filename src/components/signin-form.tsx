@@ -37,43 +37,34 @@ export default function SigninForm() {
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
     setIsLoading(true);
-    
-    initiateEmailSignIn(auth, values.email, values.password);
-
-    // This simplified approach uses a timeout to wait for auth state propagation.
-    // A more robust solution would use an onAuthStateChanged listener.
-    setTimeout(() => {
-        if (auth.currentUser) {
-            toast({ title: "Signed In!", description: "Welcome back!" });
-            router.push('/');
-        } else {
-            toast({
-                variant: "destructive",
-                title: "Sign-in Failed",
-                description: "Please check your email and password.",
-            });
-        }
+    try {
+      await initiateEmailSignIn(auth, values.email, values.password);
+      toast({ title: "Signed In!", description: "Welcome back!" });
+      router.push('/');
+    } catch (error: any) {
+        toast({
+            variant: "destructive",
+            title: "Sign-in Failed",
+            description: error.message || "Please check your email and password.",
+        });
+    } finally {
         setIsLoading(false);
-    }, 2000);
+    }
   }
 
   async function handleGoogleSignIn() {
     setIsGoogleLoading(true);
-    initiateGoogleSignIn(auth);
-
-    setTimeout(() => {
-       if (auth.currentUser) {
-            toast({ title: "Signed In!", description: "Welcome back!" });
-            router.push('/');
-        } else {
-             toast({
-                variant: "destructive",
-                title: "Google Sign-in Failed",
-                description: "An unknown error occurred. Please try again.",
-             });
-        }
-        setIsGoogleLoading(false);
-    }, 2500);
+    try {
+      initiateGoogleSignIn(auth);
+      // The user will be redirected. The result is handled on the landing page.
+    } catch(error: any) {
+       toast({
+          variant: "destructive",
+          title: "Google Sign-in Failed",
+          description: error.message || "An unknown error occurred. Please try again.",
+       });
+       setIsGoogleLoading(false);
+    }
   }
   
   const GoogleIcon = () => (
