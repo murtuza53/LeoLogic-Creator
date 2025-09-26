@@ -137,8 +137,7 @@ const tools = [
     },
     { 
         title: 'Resize & Crop', 
-        description: 'Resize and crop images to a perfect square.', 
-        href: '/resize-crop-image', 
+        description: 'Resize and crop images to a perfect square.', href: '/resize-crop-image', 
         category: 'Image',
         feature: 'resizeCropImage' as Feature,
         bgColor: 'bg-cyan-100',
@@ -222,43 +221,43 @@ const features = [
       icon: Users,
       title: 'Privacy First - Files Never Leave Your Device',
       description: 'Unlike other tools, your files are processed locally in your browser. Zero uploads, zero storage, zero privacy risks. Your sensitive data stays yours.',
-      bgColor: 'bg-purple-100',
-      textColor: 'text-purple-700',
+      bgColor: 'bg-purple-100 dark:bg-purple-900/50',
+      textColor: 'text-purple-600 dark:text-purple-300',
     },
     {
       icon: Star,
       title: 'Replace 30+ Apps with One Complete Platform',
-      description: 'Stop paying for Adobe Acrobat ($20/month), Canva Pro ($15/month), and 8 other tools. Our 50+ professional tools cost $0 forever.',
-      bgColor: 'bg-orange-100',
-      textColor: 'text-orange-700',
+      description: 'Consolidate your workflow by replacing numerous single-purpose applications. Access a comprehensive suite of professional-grade tools in one convenient, free platform.',
+      bgColor: 'bg-orange-100 dark:bg-orange-900/50',
+      textColor: 'text-orange-600 dark:text-orange-300',
     },
     {
       icon: Zap,
       title: 'Lightning-Fast Results - No Waiting',
       description: 'Compress a 50MB PDF in 3 seconds. Convert images instantly. No downloading software, no loading screens, no frustration.',
-      bgColor: 'bg-green-100',
-      textColor: 'text-green-700',
+      bgColor: 'bg-green-100 dark:bg-green-900/50',
+      textColor: 'text-green-600 dark:text-green-300',
     },
     {
       icon: Clock,
       title: 'Works on Any Device, Anywhere',
       description: 'Access your complete file toolkit from any browser, any device. Perfect for remote work, client meetings, or quick mobile edits.',
-      bgColor: 'bg-blue-100',
-      textColor: 'text-blue-700',
+      bgColor: 'bg-blue-100 dark:bg-blue-900/50',
+      textColor: 'text-blue-600 dark:text-blue-300',
     },
     {
       icon: Wand2,
       title: 'Professional Quality, Zero Learning Curve',
       description: 'Get enterprise-grade results without technical skills. Intuitive tools that work perfectly every time.',
-      bgColor: 'bg-pink-100',
-      textColor: 'text-pink-700',
+      bgColor: 'bg-pink-100 dark:bg-pink-900/50',
+      textColor: 'text-pink-600 dark:text-pink-300',
     },
     {
       icon: SmilePlus,
       title: 'New Tools Added Weekly',
       description: 'Join our growing community of 100,000+ users. Fresh tools and features added every week based on user feedback.',
-      bgColor: 'bg-purple-100',
-      textColor: 'text-purple-700',
+      bgColor: 'bg-teal-100 dark:bg-teal-900/50',
+      textColor: 'text-teal-600 dark:text-teal-300',
     },
 ];
 
@@ -390,14 +389,16 @@ export default function Home() {
                         </p>
                     </div>
                 </div>
-                <div className="mx-auto grid justify-center gap-8 pt-12 sm:grid-cols-2 md:grid-cols-3 lg:max-w-5xl">
+                <div className="mx-auto grid gap-8 pt-12 sm:grid-cols-1 md:grid-cols-2 lg:max-w-5xl">
                     {features.map((feature, index) => (
-                        <div key={index} className="flex flex-col items-center text-center">
-                            <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-lg ${feature.bgColor}`}>
-                                <feature.icon className={`h-8 w-8 ${feature.textColor}`} />
+                        <div key={index} className="flex items-start gap-4">
+                            <div className={`flex h-12 w-12 items-center justify-center rounded-lg ${feature.bgColor} shrink-0`}>
+                                <feature.icon className={`h-6 w-6 ${feature.textColor}`} />
                             </div>
-                            <h3 className="mb-2 text-xl font-bold">{feature.title}</h3>
-                            <p className="text-muted-foreground">{feature.description}</p>
+                            <div>
+                                <h3 className="mb-1 text-lg font-bold">{feature.title}</h3>
+                                <p className="text-muted-foreground">{feature.description}</p>
+                            </div>
                         </div>
                     ))}
                 </div>
