@@ -13,6 +13,7 @@ import { LoaderCircle, WandSparkles, Download } from 'lucide-react';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Textarea } from '@/components/ui/textarea';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   concept: z.string().min(10, {
@@ -31,6 +32,7 @@ export default function LogoMaker() {
   const [generatedLogos, setGeneratedLogos] = useState<GeneratedLogo[]>([]);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('logoMaker');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -40,6 +42,12 @@ export default function LogoMaker() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     setIsLoading(true);
     setGeneratedLogos([]);
     try {
@@ -50,6 +58,7 @@ export default function LogoMaker() {
       if (result.imageUrls) {
         setGeneratedLogos(result.imageUrls.map(url => ({ url })));
         toast({ title: "Logos Generated!", description: "Your new logo concepts are ready." });
+        incrementUsage();
         router.refresh();
       }
     } catch (error) {

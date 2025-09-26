@@ -8,6 +8,7 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Trash2, Download, WandSparkles } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILES = 3;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
@@ -30,6 +31,7 @@ export default function ImageToWebpConverter() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('imageToWebp');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
@@ -72,6 +74,11 @@ export default function ImageToWebpConverter() {
       toast({ variant: "destructive", title: "No files", description: "Please upload at least one image to convert." });
       return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
 
     setIsLoading(true);
     setConvertedImages([]);
@@ -105,6 +112,7 @@ export default function ImageToWebpConverter() {
         }));
         setConvertedImages(namedConvertedImages);
         toast({ title: "Conversion Successful", description: "Your images have been converted to WebP." });
+        incrementUsage();
         router.refresh();
       }
     } catch (error) {

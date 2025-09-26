@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -16,9 +15,9 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { Textarea } from './ui/textarea';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   text: z.string().min(1, {
@@ -38,6 +37,7 @@ export default function QrGenerator() {
   const [qrValue, setQrValue] = useState<string | null>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('qrGenerator');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,18 +53,14 @@ export default function QrGenerator() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
-    setQrValue(values.text);
-    
-    const result = await incrementFeatureCounterAction('qrGenerator');
-    if (result?.error) {
-      toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    } else {
-      router.refresh();
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
     }
+    if (!checkLimit()) return;
+    
+    setQrValue(values.text);
+    incrementUsage();
   }
 
   const downloadQR = () => {

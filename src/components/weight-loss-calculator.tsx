@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -13,11 +12,11 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from './ui/select';
 import { cn } from '@/lib/utils';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 import { TriangleAlert } from 'lucide-react';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const activityLevels = [
     { name: 'Basal Metabolic Rate (BMR)', value: 1.0 },
@@ -69,6 +68,7 @@ export default function WeightLossCalculator() {
   const [result, setResult] = useState<CalorieResult | null>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('weightLoss');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -88,6 +88,12 @@ export default function WeightLossCalculator() {
   const unit = form.watch('unit');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     let heightInCm: number;
     let weightInKg: number;
 
@@ -115,17 +121,7 @@ export default function WeightLossCalculator() {
         weightLoss: maintenanceCalories - deficitLevels.standard,
         extremeLoss: maintenanceCalories - deficitLevels.extreme
     });
-
-    try {
-      await incrementFeatureCounterAction('weightLoss');
-      router.refresh();
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    }
+    incrementUsage();
   }
   
   const resetForm = () => {
@@ -250,5 +246,3 @@ export default function WeightLossCalculator() {
     </div>
   );
 }
-
-    

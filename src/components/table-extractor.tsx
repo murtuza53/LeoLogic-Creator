@@ -8,6 +8,7 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
@@ -18,8 +19,15 @@ export default function TableExtractor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('imageExcel');
 
   const handleImageProcess = useCallback(async (file: File) => {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     setIsLoading(true);
 
     if (imagePreview) {
@@ -57,6 +65,7 @@ export default function TableExtractor() {
             title: "Success!",
             description: "Your Excel file has been downloaded.",
           });
+          incrementUsage();
         }
         
         router.refresh();
@@ -80,7 +89,7 @@ export default function TableExtractor() {
       });
       setIsLoading(false);
     };
-  }, [toast, imagePreview, router]);
+  }, [toast, imagePreview, router, checkLimit, incrementUsage, isUserLoading]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

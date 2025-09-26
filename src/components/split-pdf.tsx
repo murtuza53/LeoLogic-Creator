@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef } from 'react';
@@ -11,6 +10,7 @@ import { useRouter } from 'next/navigation';
 import { PDFDocument } from 'pdf-lib';
 import JSZip from 'jszip';
 import { saveAs } from 'file-saver';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
@@ -21,6 +21,7 @@ export default function SplitPdf() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('splitPdf');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -48,6 +49,11 @@ export default function SplitPdf() {
       toast({ variant: "destructive", title: "No file", description: "Please upload a PDF file to split." });
       return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
 
     setIsLoading(true);
 
@@ -74,7 +80,7 @@ export default function SplitPdf() {
         description: `Your PDF has been split into ${numPages} files and downloaded as a zip.`
       });
 
-      await incrementFeatureCounterAction('splitPdf');
+      incrementUsage();
       router.refresh();
 
     } catch (error) {

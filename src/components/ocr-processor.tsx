@@ -14,6 +14,7 @@ import jsPDF from 'jspdf';
 import html2canvas from 'html2canvas';
 import { Document, Packer, Paragraph } from 'docx';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
@@ -34,8 +35,15 @@ export default function OcrProcessor() {
   const styledContentRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('ocr');
 
   const handleImageProcess = useCallback(async (file: File) => {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     setIsLoading(true);
     setExtractedData(null);
 
@@ -56,6 +64,7 @@ export default function OcrProcessor() {
           throw new Error(result.error);
         }
         setExtractedData(result as ExtractedData);
+        incrementUsage();
         router.refresh();
       } catch (error) {
         console.error(error);
@@ -78,7 +87,7 @@ export default function OcrProcessor() {
       });
       setIsLoading(false);
     };
-  }, [toast, imagePreview, router]);
+  }, [toast, imagePreview, router, checkLimit, incrementUsage, isUserLoading]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];

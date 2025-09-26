@@ -1,14 +1,13 @@
-
 "use client";
 
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { useRouter } from 'next/navigation';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 export default function ScientificCalculator() {
   const [input, setInput] = useState('0');
@@ -17,30 +16,24 @@ export default function ScientificCalculator() {
   const [isDeg, setIsDeg] = useState(true);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('scientificCalculator');
 
-  const handleFirstUse = async () => {
-    try {
-      await incrementFeatureCounterAction('scientificCalculator');
-      router.refresh();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    }
-  };
+  const handleFirstUse = useCallback(() => {
+    if (!checkLimit()) return;
+    incrementUsage();
+  }, [checkLimit, incrementUsage]);
 
   useEffect(() => {
     const onFirstUse = () => {
+      if (isUserLoading) return;
       handleFirstUse();
-      window.removeEventListener('click', onFirstUse);
     };
     window.addEventListener('click', onFirstUse, { once: true });
     return () => window.removeEventListener('click', onFirstUse);
-  }, []);
+  }, [isUserLoading, handleFirstUse]);
 
   const handleNumber = (value: string) => {
+    if (!checkLimit()) return;
     if (input === '0' || input === 'Error') {
       setInput(value);
     } else {
@@ -49,12 +42,14 @@ export default function ScientificCalculator() {
   };
 
   const handleDecimal = () => {
+    if (!checkLimit()) return;
     if (!input.includes('.')) {
       setInput(prev => prev + '.');
     }
   };
 
   const handleOperator = (op: string) => {
+    if (!checkLimit()) return;
     if (previousInput && operator && input !== 'Error') {
       handleEquals();
       setOperator(op);
@@ -66,6 +61,7 @@ export default function ScientificCalculator() {
   };
 
   const handleEquals = () => {
+    if (!checkLimit()) return;
     if (!operator || previousInput === null) return;
     const prev = parseFloat(previousInput);
     const current = parseFloat(input);
@@ -90,12 +86,14 @@ export default function ScientificCalculator() {
   };
 
   const handleClear = () => {
+    if (!checkLimit()) return;
     setInput('0');
     setPreviousInput(null);
     setOperator(null);
   };
 
   const handleFunction = (func: string) => {
+    if (!checkLimit()) return;
     const num = parseFloat(input);
     let result: number;
     const toRad = (deg: number) => deg * Math.PI / 180;
@@ -184,4 +182,3 @@ export default function ScientificCalculator() {
     </Card>
   );
 }
-    

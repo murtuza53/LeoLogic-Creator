@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -13,9 +12,9 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from './ui/table';
 import { cn } from '@/lib/utils';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   height_cm: z.coerce.number().optional(),
@@ -66,6 +65,7 @@ export default function BmrCalculator() {
   const [result, setResult] = useState<BmrResult | null>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('bmrCalculator');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -84,6 +84,12 @@ export default function BmrCalculator() {
   const unit = form.watch('unit');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     let heightInCm: number;
     let weightInKg: number;
 
@@ -110,17 +116,7 @@ export default function BmrCalculator() {
     }));
 
     setResult({ bmr: Math.round(bmr), activityLevels });
-
-    try {
-      await incrementFeatureCounterAction('bmrCalculator');
-      router.refresh();
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    }
+    incrementUsage();
   }
   
   const resetForm = () => {

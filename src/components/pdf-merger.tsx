@@ -7,6 +7,7 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, File, Trash2, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
@@ -17,6 +18,7 @@ export default function PdfMerger() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('mergePdf');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
@@ -51,6 +53,11 @@ export default function PdfMerger() {
         });
         return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
     
     setIsLoading(true);
 
@@ -85,7 +92,8 @@ export default function PdfMerger() {
             title: "Merge Successful",
             description: "Your PDF has been downloaded.",
         });
-
+        
+        incrementUsage();
         setFiles([]);
         router.refresh();
     } catch (error) {

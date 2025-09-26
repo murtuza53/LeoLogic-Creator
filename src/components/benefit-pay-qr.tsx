@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -16,8 +15,8 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Slider } from './ui/slider';
 import { Download } from 'lucide-react';
 import { Switch } from './ui/switch';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   iban: z.string().min(1, "IBAN is required.").max(34, "IBAN cannot exceed 34 characters."),
@@ -33,6 +32,7 @@ export default function BenefitPayQr() {
   const [qrValue, setQrValue] = useState<string | null>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('benefitPay');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,22 +48,18 @@ export default function BenefitPayQr() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     const qrJson = {
       iban: values.iban,
       amount: ""
     };
     setQrValue(JSON.stringify(qrJson));
-    
-    const result = await incrementFeatureCounterAction('benefitPay');
-    if (result?.error) {
-      toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    } else {
-      router.refresh();
-    }
+    incrementUsage();
   }
 
   const downloadQR = () => {

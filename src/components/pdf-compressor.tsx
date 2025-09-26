@@ -9,6 +9,7 @@ import { LoaderCircle, UploadCloud, File, Trash2, Download } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 100 * 1024 * 1024; // 100MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
@@ -27,6 +28,7 @@ export default function PdfCompressor() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('pdfCompress');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFile = event.target.files?.[0];
@@ -65,6 +67,11 @@ export default function PdfCompressor() {
       toast({ variant: "destructive", title: "No file", description: "Please upload a PDF file to compress." });
       return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
 
     setIsLoading(true);
     setResult(null);
@@ -90,6 +97,7 @@ export default function PdfCompressor() {
           title: "Compression Successful!",
           description: `Reduced file size by ${Math.round(100 - (compressedSize / originalSize) * 100)}%.`
         });
+        incrementUsage();
         router.refresh();
       };
       reader.onerror = () => {

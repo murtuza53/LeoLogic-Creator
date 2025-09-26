@@ -9,6 +9,7 @@ import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2, Palette } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -25,6 +26,7 @@ export default function ChangeBackground() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('imgChangeBg');
 
   const resetState = () => {
     setIsLoading(false);
@@ -61,6 +63,11 @@ export default function ChangeBackground() {
       toast({ variant: "destructive", title: "No file", description: "Please upload an image." });
       return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
 
     setIsLoading(true);
     setProcessedImage(null);
@@ -75,6 +82,7 @@ export default function ChangeBackground() {
         
         setProcessedImage(result.imageDataUri!);
         toast({ title: "Background Changed", description: "Your image has been processed." });
+        incrementUsage();
         router.refresh();
         setIsLoading(false);
       };

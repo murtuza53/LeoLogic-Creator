@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -13,8 +12,8 @@ import { Input } from '@/components/ui/input';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { cn } from '@/lib/utils';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   height: z.coerce.number().positive("Height must be a positive number."),
@@ -68,6 +67,7 @@ export default function BmiCalculator() {
   const [result, setResult] = useState<BmiResult | null>(null);
   const router = useRouter();
   const { toast } = useToast();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('bmiCalculator');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -83,6 +83,12 @@ export default function BmiCalculator() {
   const unit = form.watch('unit');
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     let heightInMeters: number;
     let weightInKg: number;
 
@@ -114,16 +120,7 @@ export default function BmiCalculator() {
       }
     });
 
-    try {
-      await incrementFeatureCounterAction('bmiCalculator');
-      router.refresh();
-    } catch (error) {
-       toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    }
+    incrementUsage();
   }
 
   const categoryStyles = result ? getCategoryStyle(result.category) : null;

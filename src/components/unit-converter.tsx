@@ -1,9 +1,7 @@
-
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { useRouter } from 'next/navigation';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
@@ -12,6 +10,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '@
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
 import { ArrowRightLeft } from 'lucide-react';
 import { cn } from '@/lib/utils';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 
 const conversionFactors = {
@@ -130,22 +129,16 @@ export default function UnitConverter() {
   const [toValue, setToValue] = useState('');
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('unitConverter');
 
-  const handleFirstUse = useCallback(async () => {
-    try {
-      await incrementFeatureCounterAction('unitConverter');
-      router.refresh();
-    } catch (error) {
-      toast({
-        variant: "destructive",
-        title: "Counter Error",
-        description: "Could not update the global counter.",
-      });
-    }
-  }, [router, toast]);
+  const handleFirstUse = useCallback(() => {
+    if (!checkLimit()) return;
+    incrementUsage();
+  }, [checkLimit, incrementUsage]);
   
   useEffect(() => {
     const onFirstInteraction = () => {
+        if(isUserLoading) return;
         handleFirstUse();
         window.removeEventListener('click', onFirstInteraction);
         window.removeEventListener('keydown', onFirstInteraction);
@@ -157,7 +150,7 @@ export default function UnitConverter() {
         window.removeEventListener('click', onFirstInteraction);
         window.removeEventListener('keydown', onFirstInteraction);
     };
-  }, [handleFirstUse]);
+  }, [handleFirstUse, isUserLoading]);
 
   const unitsForCategory = useMemo(() => {
     return Object.keys(conversionFactors[activeCategory]);
@@ -172,10 +165,11 @@ export default function UnitConverter() {
         setToUnit(unitsForCategory[1] || unitsForCategory[0]);
     }
     setFromValue('1');
-  }, [activeCategory, unitsForCategory]);
+  }, [activeCategory, unitsForCategory, fromUnit]);
 
   const convert = useCallback((value: number, from: string, to: string, category: UnitCategory) => {
     if (isNaN(value)) return '';
+    if(!checkLimit()) return '';
 
     if (category === 'temperature') {
       const tempFactors = conversionFactors.temperature;
@@ -194,7 +188,7 @@ export default function UnitConverter() {
       const result = baseValue / factors[to];
       return result.toFixed(4);
     }
-  }, []);
+  }, [checkLimit]);
   
   useEffect(() => {
     const val = parseFloat(fromValue);
@@ -203,17 +197,22 @@ export default function UnitConverter() {
   }, [fromValue, fromUnit, toUnit, activeCategory, convert]);
 
   const handleFromValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(!checkLimit()) return;
     setFromValue(e.target.value);
+    incrementUsage();
   };
   
   const handleToValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if(!checkLimit()) return;
     const val = parseFloat(e.target.value);
     setToValue(e.target.value);
     const converted = convert(val, toUnit, fromUnit, activeCategory);
     setFromValue(converted);
+    incrementUsage();
   };
 
   const swapUnits = () => {
+    if(!checkLimit()) return;
     const tempUnit = fromUnit;
     setFromUnit(toUnit);
     setToUnit(tempUnit);
@@ -221,6 +220,7 @@ export default function UnitConverter() {
     const tempValue = fromValue;
     setFromValue(toValue);
     setToValue(tempValue);
+    incrementUsage();
   }
 
   return (

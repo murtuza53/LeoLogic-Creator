@@ -8,6 +8,7 @@ import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2 } from 'lucide-react';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
@@ -19,6 +20,7 @@ export default function RemoveBackground() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('imgRemoveBg');
 
   const resetState = () => {
     setIsLoading(false);
@@ -54,6 +56,11 @@ export default function RemoveBackground() {
       toast({ variant: "destructive", title: "No file", description: "Please upload an image." });
       return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
 
     setIsLoading(true);
     setProcessedImage(null);
@@ -68,6 +75,7 @@ export default function RemoveBackground() {
         
         setProcessedImage(result.imageDataUri!);
         toast({ title: "Background Removed", description: "Your image has been processed." });
+        incrementUsage();
         router.refresh();
         setIsLoading(false);
       };

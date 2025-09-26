@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -16,6 +15,7 @@ import { ScrollArea } from './ui/scroll-area';
 import { cn } from '@/lib/utils';
 import { Avatar, AvatarFallback } from './ui/avatar';
 import ReactMarkdown from 'react-markdown';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   message: z.string().min(1, {
@@ -35,6 +35,7 @@ export default function FitnessMentor() {
   ]);
   const { toast } = useToast();
   const scrollAreaRef = useRef<HTMLDivElement>(null);
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('fitnessMentor');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -53,6 +54,12 @@ export default function FitnessMentor() {
   }, [messages]);
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     const userMessage: Message = { role: 'user', content: values.message };
     setMessages(prev => [...prev, userMessage]);
     setIsLoading(true);
@@ -65,6 +72,7 @@ export default function FitnessMentor() {
       }
       const botMessage: Message = { role: 'bot', content: result.response };
       setMessages(prev => [...prev, botMessage]);
+      incrementUsage();
     } catch (error) {
       console.error(error);
       toast({

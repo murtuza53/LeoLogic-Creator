@@ -10,6 +10,7 @@ import { LoaderCircle, UploadCloud, Trash2, Download, WandSparkles, Crop } from 
 import { useRouter } from 'next/navigation';
 import { Slider } from './ui/slider';
 import { Label } from './ui/label';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILES = 3;
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB per file
@@ -33,6 +34,7 @@ export default function ResizeCropImage() {
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('resizeCropImage');
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const selectedFiles = event.target.files;
@@ -75,6 +77,11 @@ export default function ResizeCropImage() {
       toast({ variant: "destructive", title: "No files", description: "Please upload at least one image." });
       return;
     }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
 
     setIsLoading(true);
     setProcessedImages([]);
@@ -108,6 +115,7 @@ export default function ResizeCropImage() {
         }));
         setProcessedImages(namedProcessedImages);
         toast({ title: "Processing Successful", description: "Your images have been processed." });
+        incrementUsage();
         router.refresh();
       }
     } catch (error) {

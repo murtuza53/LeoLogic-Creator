@@ -15,6 +15,7 @@ import { LoaderCircle, WandSparkles } from 'lucide-react';
 import { useToast } from '@/hooks/use-toast';
 import { Separator } from './ui/separator';
 import { useRouter } from 'next/navigation';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const formSchema = z.object({
   problem: z.string().min(3, {
@@ -39,6 +40,7 @@ export default function MathSolver() {
   const [solution, setSolution] = useState<Solution | null>(null);
   const { toast } = useToast();
   const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('aiMath');
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -48,6 +50,12 @@ export default function MathSolver() {
   });
 
   async function onSubmit(values: z.infer<typeof formSchema>) {
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
     setIsLoading(true);
     setSolution(null);
     try {
@@ -56,6 +64,7 @@ export default function MathSolver() {
         throw new Error(result.error);
       }
       setSolution(result as Solution);
+      incrementUsage();
       router.refresh();
 
     } catch (error) {
