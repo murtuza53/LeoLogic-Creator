@@ -1,19 +1,18 @@
 
 "use client";
 
-import { useEffect, useState, useMemo } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight } from 'lucide-react';
+import { useState, useMemo } from 'react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { Card, CardContent } from '@/components/ui/card';
-import { getFeatureCounts } from './actions';
-import { Feature } from '@/lib/firebase';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Footer from '@/components/footer';
 import { useAuth, useUser, signOutUser } from '@/firebase';
+import { type Feature } from '@/lib/firebase';
 
 const tools = [
     { 
@@ -218,51 +217,65 @@ const tools = [
     },
 ];
 
+const features = [
+    {
+      icon: Users,
+      title: 'Privacy First - Files Never Leave Your Device',
+      description: 'Unlike other tools, your files are processed locally in your browser. Zero uploads, zero storage, zero privacy risks. Your sensitive data stays yours.',
+      bgColor: 'bg-purple-100',
+      textColor: 'text-purple-700',
+    },
+    {
+      icon: Star,
+      title: 'Replace 30+ Apps with One Complete Platform',
+      description: 'Stop paying for Adobe Acrobat ($20/month), Canva Pro ($15/month), and 8 other tools. Our 50+ professional tools cost $0 forever.',
+      bgColor: 'bg-orange-100',
+      textColor: 'text-orange-700',
+    },
+    {
+      icon: Zap,
+      title: 'Lightning-Fast Results - No Waiting',
+      description: 'Compress a 50MB PDF in 3 seconds. Convert images instantly. No downloading software, no loading screens, no frustration.',
+      bgColor: 'bg-green-100',
+      textColor: 'text-green-700',
+    },
+    {
+      icon: Clock,
+      title: 'Works on Any Device, Anywhere',
+      description: 'Access your complete file toolkit from any browser, any device. Perfect for remote work, client meetings, or quick mobile edits.',
+      bgColor: 'bg-blue-100',
+      textColor: 'text-blue-700',
+    },
+    {
+      icon: Wand2,
+      title: 'Professional Quality, Zero Learning Curve',
+      description: 'Get enterprise-grade results without technical skills. Intuitive tools that work perfectly every time.',
+      bgColor: 'bg-pink-100',
+      textColor: 'text-pink-700',
+    },
+    {
+      icon: SmilePlus,
+      title: 'New Tools Added Weekly',
+      description: 'Join our growing community of 100,000+ users. Fresh tools and features added every week based on user feedback.',
+      bgColor: 'bg-purple-100',
+      textColor: 'text-purple-700',
+    },
+];
+
 const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
-const statsCategories = ['PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
 
 
 export default function Home() {
-  const [counts, setCounts] = useState<Record<string, number> | null>(null);
-  const [loading, setLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeCategory, setActiveCategory] = useState('All');
   const { user, isUserLoading } = useUser();
   const auth = useAuth();
-
-
-  useEffect(() => {
-    const fetchCounts = async () => {
-      try {
-        setLoading(true);
-        const featureCounts = await getFeatureCounts();
-        setCounts(featureCounts);
-      } catch (error) {
-        console.error("Failed to fetch feature counts:", error);
-      } finally {
-        setLoading(false);
-      }
-    };
-    fetchCounts();
-  }, []);
 
   const filteredTools = tools.filter(tool => {
     const matchesCategory = activeCategory === 'All' || tool.category === activeCategory;
     const matchesSearch = tool.title.toLowerCase().includes(searchTerm.toLowerCase()) || tool.description.toLowerCase().includes(searchTerm.toLowerCase());
     return matchesCategory && matchesSearch;
   });
-
-  const categoryCounts = useMemo(() => {
-    if (!counts) return {};
-    return statsCategories.reduce((acc, category) => {
-      const categoryTools = tools.filter(tool => tool.category === category && tool.feature);
-      const total = categoryTools.reduce((sum, tool) => {
-        return sum + (counts[tool.feature as Feature] || 0);
-      }, 0);
-      acc[category] = total;
-      return acc;
-    }, {} as Record<string, number>);
-  }, [counts]);
 
   return (
     <div className="flex min-h-screen w-full flex-col bg-background">
@@ -368,25 +381,26 @@ export default function Home() {
         </section>
 
         <section className="w-full py-12 md:py-24">
-           <div className="container mx-auto px-4 md:px-6">
-              <div className="flex flex-col items-center justify-center space-y-4 text-center">
-                  <div className="space-y-2">
-                      <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Usage Statistics</h2>
-                      <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
-                          See how many creations have been made by the community.
-                      </p>
-                  </div>
-              </div>
-              <div className="mx-auto max-w-5xl pt-12 grid grid-cols-2 md:grid-cols-5 gap-8">
-                {statsCategories.map(category => (
-                    <div key={category} className='text-center'>
-                        <div className="text-4xl font-bold text-primary">
-                            {loading ? <Skeleton className='h-10 w-24 mx-auto' /> : (categoryCounts[category] ?? 0)}
-                        </div>
-                        <p className='text-muted-foreground'>{category}</p>
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                    <div className="space-y-2">
+                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Why Choose Leo Creator?</h2>
+                        <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            A complete suite of tools designed for speed, privacy, and professional results.
+                        </p>
                     </div>
-                ))}
-              </div>
+                </div>
+                <div className="mx-auto grid justify-center gap-8 pt-12 sm:grid-cols-2 md:grid-cols-3 lg:max-w-5xl">
+                    {features.map((feature, index) => (
+                        <div key={index} className="flex flex-col items-center text-center">
+                            <div className={`mb-4 flex h-14 w-14 items-center justify-center rounded-lg ${feature.bgColor}`}>
+                                <feature.icon className={`h-8 w-8 ${feature.textColor}`} />
+                            </div>
+                            <h3 className="mb-2 text-xl font-bold">{feature.title}</h3>
+                            <p className="text-muted-foreground">{feature.description}</p>
+                        </div>
+                    ))}
+                </div>
             </div>
         </section>
       </main>
@@ -394,7 +408,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
