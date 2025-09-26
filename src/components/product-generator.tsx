@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState } from 'react';
@@ -7,7 +6,7 @@ import ProductDisplay from '@/components/product-display';
 import { generateProductDetails } from '@/app/actions';
 import { useToast } from '@/hooks/use-toast';
 import { useRouter } from 'next/navigation';
-import { useUsageLimiter } from '@/hooks/use-usage-limiter';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 export type ProductData = {
   description: string;
