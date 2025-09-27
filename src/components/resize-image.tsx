@@ -20,8 +20,8 @@ export default function ResizeImage() {
   const [isLoading, setIsLoading] = useState(false);
   const [originalImage, setOriginalImage] = useState<{file: File, previewUrl: string, width: number, height: number} | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
-  const [width, setWidth] = useState(500);
-  const [height, setHeight] = useState(500);
+  const [width, setWidth] = useState<number | string>(500);
+  const [height, setHeight] = useState<number | string>(500);
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -144,20 +144,40 @@ export default function ResizeImage() {
   };
   
   const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newWidth = parseInt(e.target.value, 10);
-    setWidth(newWidth);
-    if (maintainAspectRatio && originalImage) {
-        const ratio = originalImage.height / originalImage.width;
-        setHeight(Math.round(newWidth * ratio));
+    const value = e.target.value;
+    const newWidth = parseInt(value, 10);
+
+    if (value === "") {
+        setWidth("");
+        if (maintainAspectRatio) setHeight("");
+        return;
+    }
+
+    if (!isNaN(newWidth)) {
+        setWidth(newWidth);
+        if (maintainAspectRatio && originalImage) {
+            const ratio = originalImage.height / originalImage.width;
+            setHeight(Math.round(newWidth * ratio));
+        }
     }
   };
   
   const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const newHeight = parseInt(e.target.value, 10);
-    setHeight(newHeight);
-    if (maintainAspectRatio && originalImage) {
-        const ratio = originalImage.width / originalImage.height;
-        setWidth(Math.round(newHeight * ratio));
+    const value = e.target.value;
+    const newHeight = parseInt(value, 10);
+    
+    if (value === "") {
+        setHeight("");
+        if (maintainAspectRatio) setWidth("");
+        return;
+    }
+
+    if (!isNaN(newHeight)) {
+        setHeight(newHeight);
+        if (maintainAspectRatio && originalImage) {
+            const ratio = originalImage.width / originalImage.height;
+            setWidth(Math.round(newHeight * ratio));
+        }
     }
   };
 
