@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useCallback } from 'react';
@@ -36,6 +37,15 @@ export default function OcrProcessor() {
   const { toast } = useToast();
   const router = useRouter();
   const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('ocr');
+  
+  const getBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+      });
+  };
 
   const handleImageProcess = useCallback(async (file: File) => {
     if (isUserLoading) {
@@ -53,40 +63,26 @@ export default function OcrProcessor() {
     const imagePreviewUrl = URL.createObjectURL(file);
     setImagePreview(imagePreviewUrl);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onloadend = async () => {
-      const base64Image = reader.result as string;
-      try {
-        const result = await extractTextFromImageAction(base64Image);
-        if ('error' in result) {
-          throw new Error(result.error);
-        }
-        setExtractedData(result as ExtractedData);
-        incrementUsage();
-        router.refresh();
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          title: "Extraction Failed",
-          description: "There was an issue extracting text from the image. Please try again.",
-        });
-        setImagePreview(null);
-      } finally {
-        setIsLoading(false);
+    try {
+      const base64Image = await getBase64(file);
+      const result = await extractTextFromImageAction(base64Image);
+      if ('error' in result) {
+        throw new Error(result.error);
       }
-    };
-
-    reader.onerror = () => {
+      setExtractedData(result as ExtractedData);
+      incrementUsage();
+      router.refresh();
+    } catch (error) {
+      console.error(error);
       toast({
         variant: "destructive",
-        title: "Image Read Failed",
-        description: "Could not read the selected image file.",
+        title: "Extraction Failed",
+        description: "There was an issue extracting text from the image. Please try again.",
       });
+      setImagePreview(null);
+    } finally {
       setIsLoading(false);
-    };
+    }
   }, [toast, imagePreview, router, checkLimit, incrementUsage, isUserLoading]);
 
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -194,7 +190,7 @@ export default function OcrProcessor() {
         <Card className="shadow-lg p-6 flex flex-col items-center justify-center">
             {imagePreview && (
                 <div className="relative w-full h-full min-h-[300px] rounded-md overflow-hidden border">
-                    <Image src={imagePreview} alt="Image preview" layout="fill" objectFit="contain" />
+                    <Image src={imagePreview} alt="Image preview" fill objectFit="contain" />
                 </div>
             )}
         </Card>
@@ -252,7 +248,7 @@ export default function OcrProcessor() {
             <Card className="shadow-lg p-4">
               <p className='text-sm font-semibold text-muted-foreground mb-2'>Original Image</p>
               <div className="relative w-full min-h-[400px] max-h-[80vh] rounded-md overflow-hidden border">
-                <Image src={imagePreview} alt="Original input" layout="fill" objectFit="contain" />
+                <Image src={imagePreview} alt="Original input" fill objectFit="contain" />
               </div>
             </Card>
             <Card className="shadow-lg p-4 flex flex-col">
@@ -305,3 +301,5 @@ export default function OcrProcessor() {
     </>
   );
 }
+
+    

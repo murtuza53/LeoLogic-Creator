@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useCallback } from 'react';
@@ -13,10 +14,6 @@ import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
-
-const PRESET_COLORS = [
-  '#FFFFFF', '#000000', '#FF0000', '#00FF00', '#0000FF', '#FFFF00', '#FF00FF', '#00FFFF'
-];
 
 export default function ChangeBackground() {
   const [isLoading, setIsLoading] = useState(false);
@@ -57,6 +54,15 @@ export default function ChangeBackground() {
     });
     setProcessedImage(null);
   };
+  
+  const getBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+      });
+  };
 
   const handleProcess = async () => {
     if (!originalImage) {
@@ -73,22 +79,15 @@ export default function ChangeBackground() {
     setProcessedImage(null);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(originalImage.file);
-      reader.onload = async () => {
-        const result = await changeBackgroundAction(reader.result as string, bgColor);
-        
-        if (result.error) throw new Error(result.error);
-        
-        setProcessedImage(result.imageDataUri!);
-        toast({ title: "Background Changed", description: "Your image has been processed." });
-        incrementUsage();
-        router.refresh();
-        setIsLoading(false);
-      };
-      reader.onerror = (error) => {
-        throw new Error("Failed to read file.");
-      }
+      const base64Image = await getBase64(originalImage.file);
+      const result = await changeBackgroundAction(base64Image, bgColor);
+      
+      if (result.error) throw new Error(result.error);
+      
+      setProcessedImage(result.imageDataUri!);
+      toast({ title: "Background Changed", description: "Your image has been processed." });
+      incrementUsage();
+      router.refresh();
     } catch (error) {
       console.error(error);
       toast({
@@ -96,7 +95,8 @@ export default function ChangeBackground() {
         title: "Processing Failed",
         description: error instanceof Error ? error.message : "An unknown error occurred.",
       });
-      setIsLoading(false);
+    } finally {
+        setIsLoading(false);
     }
   };
   
@@ -184,14 +184,14 @@ export default function ChangeBackground() {
                 <div className="space-y-2">
                     <h3 className="text-center font-medium">Original</h3>
                     <div className="relative aspect-video w-full rounded-md overflow-hidden border bg-muted/20 flex items-center justify-center">
-                        {originalImage ? <Image src={originalImage.previewUrl} alt="Original image preview" layout="fill" objectFit="contain" /> : <p className="text-muted-foreground text-sm">Upload an image</p>}
+                        {originalImage ? <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" /> : <p className="text-muted-foreground text-sm">Upload an image</p>}
                     </div>
                 </div>
                 <div className="space-y-2">
                     <h3 className="text-center font-medium">Result</h3>
                     <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center" style={{backgroundColor: processedImage ? bgColor : 'hsl(var(--muted)/0.2)'}}>
                         {isLoading && <LoaderCircle className="h-8 w-8 animate-spin text-primary" />}
-                        {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" layout="fill" objectFit="contain" />}
+                        {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" fill objectFit="contain" />}
                          {!processedImage && !isLoading && <p className="text-muted-foreground text-sm">Your result will appear here</p>}
                     </div>
                 </div>
@@ -201,3 +201,5 @@ export default function ChangeBackground() {
     </div>
   );
 }
+
+    

@@ -1,6 +1,7 @@
+
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
 import { removeBackgroundAction } from '@/app/actions';
@@ -50,6 +51,15 @@ export default function RemoveBackground() {
     });
     setProcessedImage(null);
   };
+  
+  const getBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+      });
+  };
 
   const handleProcess = async () => {
     if (!originalImage) {
@@ -66,10 +76,8 @@ export default function RemoveBackground() {
     setProcessedImage(null);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(originalImage.file);
-      reader.onload = async () => {
-        const result = await removeBackgroundAction(reader.result as string);
+        const base64Image = await getBase64(originalImage.file);
+        const result = await removeBackgroundAction(base64Image);
         
         if (result.error) throw new Error(result.error);
         
@@ -77,11 +85,6 @@ export default function RemoveBackground() {
         toast({ title: "Background Removed", description: "Your image has been processed." });
         incrementUsage();
         router.refresh();
-        setIsLoading(false);
-      };
-      reader.onerror = (error) => {
-        throw new Error("Failed to read file.");
-      }
     } catch (error) {
       console.error(error);
       toast({
@@ -89,7 +92,8 @@ export default function RemoveBackground() {
         title: "Processing Failed",
         description: error instanceof Error ? error.message : "An unknown error occurred.",
       });
-      setIsLoading(false);
+    } finally {
+        setIsLoading(false);
     }
   };
   
@@ -137,7 +141,7 @@ export default function RemoveBackground() {
               <div className="space-y-2">
                 <h3 className="text-center font-medium">Original</h3>
                 <div className="relative aspect-video w-full rounded-md overflow-hidden border">
-                    <Image src={originalImage.previewUrl} alt="Original image preview" layout="fill" objectFit="contain" />
+                    <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />
                 </div>
               </div>
             )}
@@ -145,7 +149,7 @@ export default function RemoveBackground() {
               <div className="space-y-2">
                 <h3 className="text-center font-medium">Result</h3>
                 <div className="relative aspect-video w-full rounded-md overflow-hidden border bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')]">
-                  <Image src={processedImage} alt="Processed image with background removed" layout="fill" objectFit="contain" />
+                  <Image src={processedImage} alt="Processed image with background removed" fill objectFit="contain" />
                 </div>
               </div>
             )}
@@ -170,3 +174,5 @@ export default function RemoveBackground() {
     </div>
   );
 }
+
+    

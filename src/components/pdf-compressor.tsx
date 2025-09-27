@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef } from 'react';
@@ -61,6 +62,15 @@ export default function PdfCompressor() {
     const i = Math.floor(Math.log(bytes) / Math.log(k));
     return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
   }
+  
+  const getBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+      });
+  };
 
   const handleCompress = async () => {
     if (!file) {
@@ -77,10 +87,7 @@ export default function PdfCompressor() {
     setResult(null);
 
     try {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = async () => {
-        const dataUri = reader.result as string;
+        const dataUri = await getBase64(file);
         const actionResult = await compressPdfAction(dataUri, compressionLevel);
 
         if (actionResult.error) throw new Error(actionResult.error);
@@ -99,10 +106,6 @@ export default function PdfCompressor() {
         });
         incrementUsage();
         router.refresh();
-      };
-      reader.onerror = () => {
-        throw new Error("Failed to read the file.");
-      };
     } catch (error) {
       console.error(error);
       toast({
@@ -238,3 +241,5 @@ export default function PdfCompressor() {
     </div>
   );
 }
+
+    

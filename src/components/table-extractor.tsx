@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useCallback } from 'react';
@@ -20,6 +21,15 @@ export default function TableExtractor() {
   const { toast } = useToast();
   const router = useRouter();
   const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('imageExcel');
+  
+  const getBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+      });
+  };
 
   const handleImageProcess = useCallback(async (file: File) => {
     if (isUserLoading) {
@@ -36,59 +46,45 @@ export default function TableExtractor() {
     const imagePreviewUrl = URL.createObjectURL(file);
     setImagePreview(imagePreviewUrl);
 
-    const reader = new FileReader();
-    reader.readAsDataURL(file);
-
-    reader.onloadend = async () => {
-      const base64Image = reader.result as string;
-      try {
-        const result = await extractTableAndGenerateExcelAction(base64Image);
-        if (result.error) {
-          throw new Error(result.error);
-        }
-
-        if (result.message) {
-            toast({
-                title: "Extraction Info",
-                description: result.message,
-            });
-        }
-
-        if (result.excelDataUri) {
-          const link = document.createElement('a');
-          link.href = result.excelDataUri;
-          link.download = `extracted_table_${Date.now()}.xlsx`;
-          document.body.appendChild(link);
-          link.click();
-          document.body.removeChild(link);
-          toast({
-            title: "Success!",
-            description: "Your Excel file has been downloaded.",
-          });
-          incrementUsage();
-        }
-        
-        router.refresh();
-      } catch (error) {
-        console.error(error);
-        toast({
-          variant: "destructive",
-          title: "Extraction Failed",
-          description: "There was an issue creating the Excel file. Please try again.",
-        });
-      } finally {
-        setIsLoading(false);
+    try {
+      const base64Image = await getBase64(file);
+      const result = await extractTableAndGenerateExcelAction(base64Image);
+      if (result.error) {
+        throw new Error(result.error);
       }
-    };
 
-    reader.onerror = () => {
+      if (result.message) {
+          toast({
+              title: "Extraction Info",
+              description: result.message,
+          });
+      }
+
+      if (result.excelDataUri) {
+        const link = document.createElement('a');
+        link.href = result.excelDataUri;
+        link.download = `extracted_table_${Date.now()}.xlsx`;
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
+        toast({
+          title: "Success!",
+          description: "Your Excel file has been downloaded.",
+        });
+        incrementUsage();
+      }
+      
+      router.refresh();
+    } catch (error) {
+      console.error(error);
       toast({
         variant: "destructive",
-        title: "Image Read Failed",
-        description: "Could not read the selected image file.",
+        title: "Extraction Failed",
+        description: "There was an issue creating the Excel file. Please try again.",
       });
+    } finally {
       setIsLoading(false);
-    };
+    }
   }, [toast, imagePreview, router, checkLimit, incrementUsage, isUserLoading]);
 
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -151,7 +147,7 @@ export default function TableExtractor() {
             <CardContent className="p-6 text-center">
               <h3 className="text-lg font-medium mb-4">Image Preview</h3>
               <div className="relative w-full max-w-md mx-auto aspect-video rounded-md overflow-hidden border">
-                <Image src={imagePreview} alt="Image preview" layout="fill" objectFit="contain" />
+                <Image src={imagePreview} alt="Image preview" fill objectFit="contain" />
               </div>
             </CardContent>
           </Card>
@@ -174,3 +170,5 @@ export default function TableExtractor() {
     </>
   );
 }
+
+    
