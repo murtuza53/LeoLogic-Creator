@@ -44,11 +44,11 @@ You are an expert image editor. Your task is to accurately isolate the main subj
 
 1.  **Identify the main subject.** This could be a person, object, or animal.
 2.  **Create a clean mask** around the subject, paying close attention to details like hair or fine edges.
-3.  **Remove the background entirely**, leaving a transparent PNG.
+3.  **Remove the background entirely**, leaving a transparent PNG. The final output must have a transparent background.
     `;
 
     const { media } = await ai.generate({
-      model: 'googleai/imagen-4.0-fast-edit-001',
+      model: 'googleai/gemini-2.5-flash-image-preview',
       prompt: [
         { media: { url: imageDataUri } },
         { text: promptText },
