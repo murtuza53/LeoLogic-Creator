@@ -155,7 +155,7 @@ export default function PdfCompressor() {
                 </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">PDF up to 100MB</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">PDF up to 50DM</p>
               <input 
                   id="file-upload" 
                   type="file" 
