@@ -20,8 +20,8 @@ export default function ResizeImage() {
   const [isLoading, setIsLoading] = useState(false);
   const [originalImage, setOriginalImage] = useState<{file: File, previewUrl: string, width: number, height: number} | null>(null);
   const [processedImage, setProcessedImage] = useState<string | null>(null);
-  const [width, setWidth] = useState<number | string>(500);
-  const [height, setHeight] = useState<number | string>(500);
+  const [width, setWidth] = useState<number | string>('');
+  const [height, setHeight] = useState<number | string>('');
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
@@ -33,8 +33,8 @@ export default function ResizeImage() {
     if (originalImage) URL.revokeObjectURL(originalImage.previewUrl);
     setOriginalImage(null);
     setProcessedImage(null);
-    setWidth(500);
-    setHeight(500);
+    setWidth('');
+    setHeight('');
     setMaintainAspectRatio(true);
     if(fileInputRef.current) fileInputRef.current.value = "";
   }
@@ -111,14 +111,13 @@ export default function ResizeImage() {
 
         if (maintainAspectRatio) {
             const originalRatio = image.width / image.height;
-            const targetRatio = targetWidth / targetHeight;
-
-            if (originalRatio > targetRatio) {
-                finalHeight = targetWidth / originalRatio;
-                finalWidth = targetWidth;
-            } else {
+            // Determine the final dimensions based on the limiting factor (width or height)
+            if (targetWidth / targetHeight > originalRatio) {
                 finalWidth = targetHeight * originalRatio;
                 finalHeight = targetHeight;
+            } else {
+                finalHeight = targetWidth / originalRatio;
+                finalWidth = targetWidth;
             }
         }
         
@@ -227,11 +226,11 @@ export default function ResizeImage() {
                 <div className="flex items-center gap-4">
                     <div className='space-y-2'>
                         <Label htmlFor='width'>Width</Label>
-                        <Input id='width' type='number' value={width || ''} onChange={handleWidthChange} />
+                        <Input id='width' type='number' value={width} onChange={handleWidthChange} />
                     </div>
                     <div className='space-y-2'>
                         <Label htmlFor='height'>Height</Label>
-                        <Input id='height' type='number' value={height || ''} onChange={handleHeightChange} />
+                        <Input id='height' type='number' value={height} onChange={handleHeightChange} />
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">
@@ -265,13 +264,27 @@ export default function ResizeImage() {
             <CardHeader>
                 <CardTitle>Image Preview</CardTitle>
             </CardHeader>
-            <CardContent className="h-full">
+            <CardContent className="h-full space-y-6">
+                {originalImage ? (
+                    <div className="space-y-2">
+                        <h3 className="text-center font-medium text-muted-foreground">Original ({originalImage.width} x {originalImage.height})</h3>
+                        <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-muted/10">
+                            <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />
+                        </div>
+                    </div>
+                ) : (
+                    <div className="text-center text-muted-foreground py-10">Upload an image to start</div>
+                )}
+                
                 <div className="space-y-2">
+                    <h3 className="text-center font-medium text-muted-foreground">Result</h3>
                     <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')]">
                         {isLoading && <LoaderCircle className="h-8 w-8 animate-spin text-primary" />}
-                        {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" fill objectFit="contain" />}
-                         {!originalImage && !isLoading && <p className="text-muted-foreground text-sm p-4 text-center">Upload an image to see the result</p>}
-                         {originalImage && !processedImage && !isLoading && <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />}
+                        {processedImage && !isLoading ? (
+                            <Image src={processedImage} alt="Processed image" fill objectFit="contain" />
+                        ) : !isLoading && (
+                             <div className="text-center text-muted-foreground p-4">Your result will appear here</div>
+                        )}
                     </div>
                 </div>
             </CardContent>
