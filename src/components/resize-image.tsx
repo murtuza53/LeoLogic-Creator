@@ -1,10 +1,10 @@
 
 "use client";
 
-import { useState, useRef, useEffect } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2, Lock, Unlock } from 'lucide-react';
 import { useRouter } from 'next/navigation';
@@ -70,15 +70,6 @@ export default function ResizeImage() {
 
     setProcessedImage(null);
   };
-  
-  const getBase64 = (file: File): Promise<string> => {
-      return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result as string);
-          reader.onerror = error => reject(error);
-      });
-  };
 
   const handleProcess = async () => {
     if (!originalImage) {
@@ -94,40 +85,57 @@ export default function ResizeImage() {
     setIsLoading(true);
     setProcessedImage(null);
 
-    try {
-      const base64Image = await getBase64(originalImage.file);
-      
-      const response = await fetch('/api/image-tools', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tool: 'resize-image',
-          imageDataUri: base64Image,
-          width,
-          height,
-          maintainAspectRatio
-        })
-      });
+    const targetWidth = Number(width);
+    const targetHeight = Number(height);
+    
+    if (isNaN(targetWidth) || isNaN(targetHeight) || targetWidth <= 0 || targetHeight <= 0) {
+        toast({ variant: "destructive", title: "Invalid Dimensions", description: "Please enter valid width and height." });
+        setIsLoading(false);
+        return;
+    }
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'An unknown error occurred.');
-      }
+    const image = new window.Image();
+    image.src = originalImage.previewUrl;
+    image.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        
+        if (!ctx) {
+            toast({ variant: "destructive", title: "Canvas not supported", description: "Your browser does not support the required technology." });
+            setIsLoading(false);
+            return;
+        }
 
-      const result = await response.json();
-      
-      setProcessedImage(result.imageDataUri!);
-      toast({ title: "Image Resized", description: "Your image has been processed." });
-      incrementUsage();
-      router.refresh();
-    } catch (error) {
-      console.error(error);
-      toast({
-        variant: "destructive",
-        title: "Processing Failed",
-        description: error instanceof Error ? error.message : "An unknown error occurred.",
-      });
-    } finally {
+        let finalWidth = targetWidth;
+        let finalHeight = targetHeight;
+
+        if (maintainAspectRatio) {
+            const originalRatio = image.width / image.height;
+            const targetRatio = targetWidth / targetHeight;
+
+            if (originalRatio > targetRatio) {
+                finalHeight = targetWidth / originalRatio;
+                finalWidth = targetWidth;
+            } else {
+                finalWidth = targetHeight * originalRatio;
+                finalHeight = targetHeight;
+            }
+        }
+        
+        canvas.width = finalWidth;
+        canvas.height = finalHeight;
+        
+        ctx.drawImage(image, 0, 0, finalWidth, finalHeight);
+        
+        const dataUrl = canvas.toDataURL(originalImage.file.type); // Use original file type
+        setProcessedImage(dataUrl);
+        toast({ title: "Image Resized", description: "Your image has been processed." });
+        incrementUsage();
+        router.refresh();
+        setIsLoading(false);
+    };
+    image.onerror = () => {
+        toast({ variant: "destructive", title: "Image Load Failed", description: "Could not load the image for processing." });
         setIsLoading(false);
     }
   };
@@ -137,7 +145,8 @@ export default function ResizeImage() {
     const link = document.createElement('a');
     link.href = processedImage;
     const name = originalImage.file.name.substring(0, originalImage.file.name.lastIndexOf('.')) || originalImage.file.name;
-    link.download = `${name}_resized.webp`;
+    const extension = originalImage.file.name.split('.').pop() || 'png';
+    link.download = `${name}_resized.${extension}`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -145,14 +154,12 @@ export default function ResizeImage() {
   
   const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const newWidth = parseInt(value, 10);
-
     if (value === "") {
         setWidth("");
         if (maintainAspectRatio) setHeight("");
         return;
     }
-
+    const newWidth = parseInt(value, 10);
     if (!isNaN(newWidth)) {
         setWidth(newWidth);
         if (maintainAspectRatio && originalImage) {
@@ -164,14 +171,12 @@ export default function ResizeImage() {
   
   const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const value = e.target.value;
-    const newHeight = parseInt(value, 10);
-    
     if (value === "") {
         setHeight("");
         if (maintainAspectRatio) setWidth("");
         return;
     }
-
+    const newHeight = parseInt(value, 10);
     if (!isNaN(newHeight)) {
         setHeight(newHeight);
         if (maintainAspectRatio && originalImage) {
@@ -222,11 +227,11 @@ export default function ResizeImage() {
                 <div className="flex items-center gap-4">
                     <div className='space-y-2'>
                         <Label htmlFor='width'>Width</Label>
-                        <Input id='width' type='number' value={width} onChange={handleWidthChange} />
+                        <Input id='width' type='number' value={width || ''} onChange={handleWidthChange} />
                     </div>
                     <div className='space-y-2'>
                         <Label htmlFor='height'>Height</Label>
-                        <Input id='height' type='number' value={height} onChange={handleHeightChange} />
+                        <Input id='height' type='number' value={height || ''} onChange={handleHeightChange} />
                     </div>
                 </div>
                 <div className="flex items-center space-x-2">

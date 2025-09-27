@@ -42,18 +42,7 @@ export async function POST(req: Request) {
         const resizeResults = await Promise.all(resizePromises);
         return NextResponse.json({ processedImages: resizeResults.map(r => r.imageDataUri) });
 
-      case 'resize-image':
-        if (!imageDataUri || !width || !height) {
-          throw new Error('imageDataUri, width, and height are required.');
-        }
-        const resizeImageResult = await resizeImage({
-          imageDataUri,
-          width,
-          height,
-          maintainAspectRatio,
-        });
-        return NextResponse.json(resizeImageResult);
-
+      
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });
     }
