@@ -42,9 +42,11 @@ const removeBackgroundFlow = ai.defineFlow(
     const promptText = `
 You are an expert image editor. Your task is to accurately isolate the main subject of the image and make the background transparent.
 
-1.  **Identify the main subject.** This could be a person, object, or animal.
-2.  **Create a clean mask** around the subject, paying close attention to details like hair or fine edges.
-3.  **Remove the background entirely**, leaving a transparent PNG. The final output must have a transparent background.
+**Instructions:**
+
+1.  **Identify the main subject.** This could be a person, an object, or an animal.
+2.  **Create a clean and precise mask** around the subject, paying close attention to details like hair, fur, or other fine edges.
+3.  **Generate a PNG image where the background is fully transparent.** The output must have a true alpha channel for transparency. Do not create a checkered or any other visual pattern for the background. The background should be empty.
     `;
 
     const { media } = await ai.generate({
