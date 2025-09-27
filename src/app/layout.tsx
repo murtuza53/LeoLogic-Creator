@@ -9,6 +9,9 @@ export const metadata: Metadata = {
   title: 'Leo Creator',
   description: 'Generate product descriptions and specifications with AI.',
   manifest: '/manifest.json',
+  icons: {
+    icon: '/favicon.png',
+  },
 };
 
 export default function RootLayout({
