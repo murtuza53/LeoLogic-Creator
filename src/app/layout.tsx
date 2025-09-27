@@ -10,7 +10,10 @@ export const metadata: Metadata = {
   description: 'Generate product descriptions and specifications with AI.',
   manifest: '/manifest.json',
   icons: {
-    icon: '/favicon.png',
+    icon: {
+      url: '/favicon.png',
+      type: 'image/png',
+    }
   },
 };
 
