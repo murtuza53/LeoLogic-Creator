@@ -1,0 +1,270 @@
+
+"use client";
+
+import { useState, useRef, useEffect } from 'react';
+import Image from 'next/image';
+import { useToast } from '@/hooks/use-toast';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
+import { Button } from './ui/button';
+import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2, Lock, Unlock } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Input } from './ui/input';
+import { Switch } from './ui/switch';
+import { Label } from './ui/label';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
+
+const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
+
+export default function ResizeImage() {
+  const [isLoading, setIsLoading] = useState(false);
+  const [originalImage, setOriginalImage] = useState<{file: File, previewUrl: string, width: number, height: number} | null>(null);
+  const [processedImage, setProcessedImage] = useState<string | null>(null);
+  const [width, setWidth] = useState(500);
+  const [height, setHeight] = useState(500);
+  const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
+  const fileInputRef = useRef<HTMLInputElement>(null);
+  const { toast } = useToast();
+  const router = useRouter();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('resizeImage');
+
+  const resetState = () => {
+    setIsLoading(false);
+    if (originalImage) URL.revokeObjectURL(originalImage.previewUrl);
+    setOriginalImage(null);
+    setProcessedImage(null);
+    setWidth(500);
+    setHeight(500);
+    setMaintainAspectRatio(true);
+    if(fileInputRef.current) fileInputRef.current.value = "";
+  }
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const file = event.target.files?.[0];
+    if (!file) return;
+
+    if (file.size > MAX_FILE_SIZE) {
+      toast({ variant: "destructive", title: "File too large", description: `File exceeds the 10MB size limit.` });
+      return;
+    }
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      toast({ variant: "destructive", title: "Invalid file type", description: `File is not a supported image type.` });
+      return;
+    }
+
+    if (originalImage) URL.revokeObjectURL(originalImage.previewUrl);
+    
+    const previewUrl = URL.createObjectURL(file);
+    const img = new window.Image();
+    img.onload = () => {
+      setOriginalImage({
+        file,
+        previewUrl,
+        width: img.width,
+        height: img.height,
+      });
+      setWidth(img.width);
+      setHeight(img.height);
+    };
+    img.src = previewUrl;
+
+    setProcessedImage(null);
+  };
+  
+  const getBase64 = (file: File): Promise<string> => {
+      return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result as string);
+          reader.onerror = error => reject(error);
+      });
+  };
+
+  const handleProcess = async () => {
+    if (!originalImage) {
+      toast({ variant: "destructive", title: "No file", description: "Please upload an image." });
+      return;
+    }
+    if (isUserLoading) {
+      toast({ description: "Verifying user status..."});
+      return;
+    }
+    if (!checkLimit()) return;
+
+    setIsLoading(true);
+    setProcessedImage(null);
+
+    try {
+      const base64Image = await getBase64(originalImage.file);
+      
+      const response = await fetch('/api/image-tools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'resize-image',
+          imageDataUri: base64Image,
+          width,
+          height,
+          maintainAspectRatio
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
+      }
+
+      const result = await response.json();
+      
+      setProcessedImage(result.imageDataUri!);
+      toast({ title: "Image Resized", description: "Your image has been processed." });
+      incrementUsage();
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Processing Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred.",
+      });
+    } finally {
+        setIsLoading(false);
+    }
+  };
+  
+  const downloadImage = () => {
+    if (!processedImage || !originalImage) return;
+    const link = document.createElement('a');
+    link.href = processedImage;
+    const name = originalImage.file.name.substring(0, originalImage.file.name.lastIndexOf('.')) || originalImage.file.name;
+    link.download = `${name}_resized.webp`;
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+  };
+  
+  const handleWidthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newWidth = parseInt(e.target.value, 10);
+    setWidth(newWidth);
+    if (maintainAspectRatio && originalImage) {
+        const ratio = originalImage.height / originalImage.width;
+        setHeight(Math.round(newWidth * ratio));
+    }
+  };
+  
+  const handleHeightChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const newHeight = parseInt(e.target.value, 10);
+    setHeight(newHeight);
+    if (maintainAspectRatio && originalImage) {
+        const ratio = originalImage.width / originalImage.height;
+        setWidth(Math.round(newHeight * ratio));
+    }
+  };
+
+  return (
+    <div className="mt-8 grid gap-8 md:grid-cols-2">
+      <div>
+        <Card className="shadow-lg">
+            <CardHeader>
+                <CardTitle>1. Upload Image</CardTitle>
+            </CardHeader>
+            <CardContent>
+                <div 
+                    className="relative flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-10 hover:border-primary/50 transition-colors cursor-pointer shadow-inner"
+                    onClick={() => fileInputRef.current?.click()}
+                >
+                    <div className="text-center">
+                    <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
+                    <div className="mt-4 flex text-lg leading-6 text-muted-foreground">
+                        <span className="font-semibold text-primary">
+                        Upload an image
+                        </span>
+                        <p className="pl-1">or drag and drop</p>
+                    </div>
+                    <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 10MB</p>
+                    <input 
+                        id="file-upload" 
+                        type="file" 
+                        className="sr-only"
+                        ref={fileInputRef}
+                        accept={ACCEPTED_IMAGE_TYPES.join(',')}
+                        onChange={handleFileChange}
+                        />
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+        <Card className="mt-8 shadow-lg">
+            <CardHeader>
+                <CardTitle>2. Set Dimensions</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+                <div className="flex items-center gap-4">
+                    <div className='space-y-2'>
+                        <Label htmlFor='width'>Width</Label>
+                        <Input id='width' type='number' value={width} onChange={handleWidthChange} />
+                    </div>
+                    <div className='space-y-2'>
+                        <Label htmlFor='height'>Height</Label>
+                        <Input id='height' type='number' value={height} onChange={handleHeightChange} />
+                    </div>
+                </div>
+                <div className="flex items-center space-x-2">
+                    <Switch id="aspect-ratio" checked={maintainAspectRatio} onCheckedChange={setMaintainAspectRatio} />
+                    <Label htmlFor="aspect-ratio" className='flex items-center'>
+                        {maintainAspectRatio ? <Lock className="mr-2 h-4 w-4"/> : <Unlock className="mr-2 h-4 w-4" />}
+                        Maintain aspect ratio
+                    </Label>
+                </div>
+            </CardContent>
+        </Card>
+
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-8">
+            <Button onClick={handleProcess} disabled={isLoading || !originalImage} className="w-full bg-accent hover:bg-accent/90 text-accent-foreground font-bold text-base py-6">
+                {isLoading ? <><LoaderCircle className="mr-2 h-5 w-5 animate-spin" />Processing...</> : <><WandSparkles className="mr-2 h-5 w-5" />Resize Image</>}
+            </Button>
+            <Button onClick={downloadImage} disabled={!processedImage} className="w-full">
+                <Download className="mr-2 h-4 w-4" /> Download Image
+            </Button>
+         </div>
+
+        {(originalImage || processedImage) && (
+            <Button variant="outline" onClick={resetState} className="mt-4 w-full">
+                <Trash2 className="mr-2 h-4 w-4" /> Start Over
+            </Button>
+        )}
+      </div>
+
+      <div className='space-y-4'>
+        <Card className="shadow-lg h-full">
+            <CardHeader>
+                <CardTitle>Image Preview</CardTitle>
+            </CardHeader>
+            <CardContent className="grid gap-6 sm:grid-cols-2 h-full">
+                <div className="space-y-2">
+                    <h3 className="text-center font-medium">Original</h3>
+                    <div className="relative aspect-video w-full rounded-md overflow-hidden border bg-muted/20 flex items-center justify-center">
+                        {originalImage ? (
+                          <>
+                            <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />
+                            <div className='absolute bottom-1 right-1 bg-black/50 text-white text-xs px-2 py-1 rounded'>
+                                {originalImage.width} x {originalImage.height}
+                            </div>
+                          </>
+                        ) : <p className="text-muted-foreground text-sm">Upload an image</p>}
+                    </div>
+                </div>
+                <div className="space-y-2">
+                    <h3 className="text-center font-medium">Result</h3>
+                    <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')]">
+                        {isLoading && <LoaderCircle className="h-8 w-8 animate-spin text-primary" />}
+                        {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" fill objectFit="contain" />}
+                         {!processedImage && !isLoading && <p className="text-muted-foreground text-sm">Your result will appear here</p>}
+                    </div>
+                </div>
+            </CardContent>
+        </Card>
+      </div>
+    </div>
+  );
+}

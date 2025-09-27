@@ -4,6 +4,7 @@ import { removeBackground } from '@/ai/flows/remove-background';
 import { changeBackground } from '@/ai/flows/change-background';
 import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
 import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
+import { resizeImage } from '@/ai/flows/resize-image';
 
 export const config = {
   api: {
@@ -16,7 +17,7 @@ export const config = {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { tool, imageDataUri, images, backgroundColor, targetSize } = body;
+    const { tool, imageDataUri, images, backgroundColor, targetSize, width, height, maintainAspectRatio } = body;
 
     switch (tool) {
       case 'remove-background':
@@ -40,6 +41,18 @@ export async function POST(req: Request) {
         const resizePromises = images.map(image => resizeAndCropImage({ imageDataUri: image.dataUri, targetSize }));
         const resizeResults = await Promise.all(resizePromises);
         return NextResponse.json({ processedImages: resizeResults.map(r => r.imageDataUri) });
+
+      case 'resize-image':
+        if (!imageDataUri || !width || !height) {
+          throw new Error('imageDataUri, width, and height are required.');
+        }
+        const resizeImageResult = await resizeImage({
+          imageDataUri,
+          width,
+          height,
+          maintainAspectRatio,
+        });
+        return NextResponse.json(resizeImageResult);
 
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });
