@@ -17,8 +17,6 @@ if (!getApps().length) {
 
 const db = getFirestore(app);
 
-const COUNTERS_COLLECTION = 'generationCounters';
-const COUNTERS_DOC_ID = 'featureCounts';
 const CONTACTS_COLLECTION = 'contacts';
 const USERS_COLLECTION = 'users';
 
@@ -50,57 +48,4 @@ export async function saveContactMessage(message: ContactMessage): Promise<void>
       ...message,
       createdAt: FieldValue.serverTimestamp(),
     });
-}
-
-export async function incrementCount(feature: Feature): Promise<void> {
-    const counterRef = db.collection(COUNTERS_COLLECTION).doc(COUNTERS_DOC_ID);
-    
-    // This is a robust way to handle increments.
-    // It creates the document if it doesn't exist and increments the field.
-    await counterRef.set({
-        [feature]: FieldValue.increment(1)
-    }, { merge: true });
-}
-
-export async function getFeatureCountsFromDb(): Promise<Record<Feature, number>> {
-    const initialCounts: Record<Feature, number> = {
-        smartProduct: 0,
-        aiMath: 0,
-        benefitPay: 0,
-        qrGenerator: 0,
-        ocr: 0,
-        mergePdf: 0,
-        imageExcel: 0,
-        imageToWebp: 0,
-        imgRemoveBg: 0,
-        imgChangeBg: 0,
-        resizeCropImage: 0,
-        logoMaker: 0,
-        pdfCompress: 0,
-        bmiCalculator: 0,
-        bmrCalculator: 0,
-        fitnessMentor: 0,
-        splitPdf: 0,
-        weightLoss: 0,
-        scientificCalculator: 0,
-        unitConverter: 0,
-    };
-
-    try {
-        const counterRef = db.collection(COUNTERS_COLLECTION).doc(COUNTERS_DOC_ID);
-        const docSnap = await counterRef.get();
-
-        if (docSnap.exists) {
-            const data = docSnap.data();
-            const counts = { ...initialCounts, ...data };
-            return counts as Record<Feature, number>;
-        } else {
-            // If the document doesn't exist, create it with initial values
-            await counterRef.set(initialCounts);
-            return initialCounts;
-        }
-    } catch (error) {
-        console.error("Error fetching feature counts:", error);
-        return initialCounts;
-    }
 }

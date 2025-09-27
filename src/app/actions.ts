@@ -15,7 +15,7 @@ import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
 import { compressPdf } from '@/ai/flows/compress-pdf';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { incrementCount, getFeatureCountsFromDb, saveContactMessage, ContactMessage, Feature, createUserProfile } from '@/lib/firebase';
+import { saveContactMessage, ContactMessage, createUserProfile } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
 
@@ -49,8 +49,6 @@ export async function generateProductDetails(
       throw new Error('AI failed to generate complete details.');
     }
     
-    await incrementFeatureCounterAction('smartProduct');
-
     return {
       description: descriptionResult.description,
       specifications: specificationsResult.specifications,
@@ -74,7 +72,6 @@ export async function solveMathProblemAction(problem: string) {
     if (!result) {
       throw new Error('AI failed to solve the problem.');
     }
-    await incrementFeatureCounterAction('aiMath');
     return result;
   } catch (error) {
     console.error('Error solving math problem:', error);
@@ -93,26 +90,10 @@ export async function extractTextFromImageAction(imageDataUri: string) {
     if (!result) {
       throw new Error('AI failed to extract text from the image.');
     }
-    await incrementFeatureCounterAction('ocr');
     return result;
   } catch (error) {
     console.error('Error extracting text from image:', error);
     return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred.',
-    };
-  }
-}
-
-export async function incrementFeatureCounterAction(feature: Feature) {
-  try {
-    await incrementCount(feature);
-    return { success: true };
-  } catch (error) {
-     console.error(`Error incrementing ${feature} counter:`, error);
-     return {
       error:
         error instanceof Error
           ? error.message
@@ -139,8 +120,6 @@ export async function mergePdfsAction(pdfDataUris: string[]) {
       mergedPdfBytes
     ).toString('base64')}`;
     
-    await incrementFeatureCounterAction('mergePdf');
-
     return { mergedPdf: mergedPdfDataUri };
   } catch (error) {
     console.error('Error merging PDFs:', error);
@@ -199,8 +178,6 @@ export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
     const buffer = await workbook.xlsx.writeBuffer();
     const excelDataUri = `data:application/vnd.openxmlformats-officedocument.spreadsheetml.sheet;base64,${Buffer.from(buffer).toString('base64')}`;
 
-    await incrementFeatureCounterAction('imageExcel');
-
     return { excelDataUri };
   } catch (error) {
     console.error('Error extracting table from image:', error);
@@ -225,8 +202,6 @@ export async function convertImagesToWebpAction(
 
     const results = await Promise.all(conversionPromises);
     
-    await incrementFeatureCounterAction('imageToWebp');
-    
     return { convertedImages: results.map(r => r.webpDataUri) };
   } catch (error) {
     console.error('Error converting images to WebP:', error);
@@ -246,7 +221,6 @@ export async function removeBackgroundAction(imageDataUri: string) {
     if (!result) {
       throw new Error('AI failed to remove background from the image.');
     }
-    await incrementFeatureCounterAction('imgRemoveBg');
     return result;
   } catch (error) {
     console.error('Error removing background from image:', error);
@@ -265,7 +239,6 @@ export async function changeBackgroundAction(imageDataUri: string, backgroundCol
     if (!result) {
       throw new Error('AI failed to change background of the image.');
     }
-    await incrementFeatureCounterAction('imgChangeBg');
     return result;
   } catch (error) {
     console.error('Error changing background of image:', error);
@@ -292,8 +265,6 @@ export async function resizeAndCropImageAction(
 
     const results = await Promise.all(promises);
     
-    await incrementFeatureCounterAction('resizeCropImage');
-    
     return { processedImages: results.map(r => r.imageDataUri) };
   } catch (error) {
     console.error('Error resizing/cropping images:', error);
@@ -312,7 +283,6 @@ export async function generateLogoAction(concept: string) {
     if (!result?.imageUrls || result.imageUrls.length === 0) {
       throw new Error('AI failed to generate logos.');
     }
-    await incrementFeatureCounterAction('logoMaker');
     return result;
   } catch (error) {
     console.error('Error generating logos:', error);
@@ -334,7 +304,6 @@ export async function compressPdfAction(
         if (!result) {
             throw new Error('AI failed to compress the PDF.');
         }
-        await incrementFeatureCounterAction('pdfCompress');
         return result;
     } catch (error) {
         console.error('Error compressing PDF:', error);
@@ -353,7 +322,6 @@ export async function fitnessMentorAction(message: string) {
     if (!result) {
       throw new Error('AI failed to respond.');
     }
-    await incrementFeatureCounterAction('fitnessMentor');
     return result;
   } catch (error) {
     console.error('Error with fitness mentor:', error);
@@ -395,14 +363,3 @@ export async function createUserProfileAction(userId: string, data: { name: stri
     };
   }
 }
-
-
-export async function getFeatureCounts() {
-  return await getFeatureCountsFromDb();
-}
-
-    
-
-    
-
-
