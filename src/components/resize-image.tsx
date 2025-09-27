@@ -260,26 +260,13 @@ export default function ResizeImage() {
             <CardHeader>
                 <CardTitle>Image Preview</CardTitle>
             </CardHeader>
-            <CardContent className="grid gap-6 sm:grid-cols-2 h-full">
+            <CardContent className="h-full">
                 <div className="space-y-2">
-                    <h3 className="text-center font-medium">Original</h3>
-                    <div className="relative aspect-video w-full rounded-md overflow-hidden border bg-muted/20 flex items-center justify-center">
-                        {originalImage ? (
-                          <>
-                            <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />
-                            <div className='absolute bottom-1 right-1 bg-black/50 text-white text-xs px-2 py-1 rounded'>
-                                {originalImage.width} x {originalImage.height}
-                            </div>
-                          </>
-                        ) : <p className="text-muted-foreground text-sm">Upload an image</p>}
-                    </div>
-                </div>
-                <div className="space-y-2">
-                    <h3 className="text-center font-medium">Result</h3>
                     <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')]">
                         {isLoading && <LoaderCircle className="h-8 w-8 animate-spin text-primary" />}
                         {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" fill objectFit="contain" />}
-                         {!processedImage && !isLoading && <p className="text-muted-foreground text-sm">Your result will appear here</p>}
+                         {!originalImage && !isLoading && <p className="text-muted-foreground text-sm p-4 text-center">Upload an image to see the result</p>}
+                         {originalImage && !processedImage && !isLoading && <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />}
                     </div>
                 </div>
             </CardContent>
