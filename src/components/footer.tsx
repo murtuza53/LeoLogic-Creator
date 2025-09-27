@@ -13,7 +13,7 @@ export default function Footer() {
           <Link href="/terms-of-use" className="text-sm font-medium hover:text-foreground text-muted-foreground">Terms of Use</Link>
         </div>
         <div className="flex flex-col items-center gap-2">
-          <Image src="/sek-logo.png" alt="Souq e Kamil Trading & Solutions" width={40} height={40} />
+          <Image src="/logo.png" alt="Souq e Kamil Trading & Solutions" width={40} height={40} />
           <div className='text-center'>
             <p className="text-sm font-bold">Souq e Kamil Trading & Solutions</p>
             <p className="text-xs text-muted-foreground">Innovation at the Core</p>
