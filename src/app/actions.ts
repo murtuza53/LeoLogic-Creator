@@ -9,7 +9,6 @@ import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
-import { compressPdf } from '@/ai/flows/compress-pdf';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
 import { saveContactMessage, ContactMessage, createUserProfile } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
@@ -98,36 +97,6 @@ export async function extractTextFromImageAction(imageDataUri: string) {
   }
 }
 
-export async function mergePdfsAction(pdfDataUris: string[]) {
-  try {
-    const mergedPdf = await PDFDocument.create();
-
-    for (const dataUri of pdfDataUris) {
-      const pdfBytes = Buffer.from(dataUri.split(',')[1], 'base64');
-      const pdf = await PDFDocument.load(pdfBytes);
-      const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
-      copiedPages.forEach((page) => {
-        mergedPdf.addPage(page);
-      });
-    }
-
-    const mergedPdfBytes = await mergedPdf.save();
-    const mergedPdfDataUri = `data:application/pdf;base64,${Buffer.from(
-      mergedPdfBytes
-    ).toString('base64')}`;
-    
-    return { mergedPdf: mergedPdfDataUri };
-  } catch (error) {
-    console.error('Error merging PDFs:', error);
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred while merging PDFs.',
-    };
-  }
-}
-
 export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
   try {
     const result = await extractTableFromImage({ imageDataUri });
@@ -202,27 +171,6 @@ export async function generateLogoAction(concept: string) {
           : 'An unknown error occurred.',
     };
   }
-}
-
-export async function compressPdfAction(
-    pdfDataUri: string,
-    compressionLevel: 'low' | 'medium' | 'high'
-) {
-    try {
-        const result = await compressPdf({ pdfDataUri, compressionLevel });
-        if (!result) {
-            throw new Error('AI failed to compress the PDF.');
-        }
-        return result;
-    } catch (error) {
-        console.error('Error compressing PDF:', error);
-        return {
-            error:
-                error instanceof Error
-                    ? error.message
-                    : 'An unknown error occurred during PDF compression.',
-        };
-    }
 }
 
 export async function fitnessMentorAction(message: string) {

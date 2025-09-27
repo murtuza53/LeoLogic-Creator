@@ -1,8 +1,8 @@
+
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { mergePdfsAction } from '@/app/actions';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, File, Trash2, Download } from 'lucide-react';
@@ -73,11 +73,21 @@ export default function PdfMerger() {
 
         const dataUris = await Promise.all(filePromises);
         
-        const result = await mergePdfsAction(dataUris);
+        const response = await fetch('/api/pdf-tools', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'merge-pdf',
+            pdfDataUris: dataUris,
+          }),
+        });
 
-        if (result.error) {
-            throw new Error(result.error);
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'PDF merging failed.');
         }
+        
+        const result = await response.json();
 
         if (result.mergedPdf) {
              const link = document.createElement('a');

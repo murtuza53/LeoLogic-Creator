@@ -3,7 +3,6 @@
 
 import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { compressPdfAction } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, File, Trash2, Download } from 'lucide-react';
@@ -88,9 +87,23 @@ export default function PdfCompressor() {
 
     try {
         const dataUri = await getBase64(file);
-        const actionResult = await compressPdfAction(dataUri, compressionLevel);
+        
+        const response = await fetch('/api/pdf-tools', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            tool: 'compress-pdf',
+            pdfDataUri: dataUri,
+            compressionLevel: compressionLevel,
+          }),
+        });
 
-        if (actionResult.error) throw new Error(actionResult.error);
+        if (!response.ok) {
+          const errorData = await response.json();
+          throw new Error(errorData.error || 'PDF compression failed.');
+        }
+
+        const actionResult = await response.json();
 
         const { compressedPdfDataUri, originalSize, compressedSize } = actionResult;
         
@@ -241,5 +254,3 @@ export default function PdfCompressor() {
     </div>
   );
 }
-
-    
