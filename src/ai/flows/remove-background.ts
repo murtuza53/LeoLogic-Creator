@@ -39,10 +39,16 @@ const removeBackgroundFlow = ai.defineFlow(
     outputSchema: RemoveBackgroundOutputSchema,
   },
   async ({ imageDataUri }) => {
-    let promptText = 'Remove the background from this image, leaving only the main subject with a transparent background.';
+    const promptText = `
+You are an expert image editor. Your task is to accurately isolate the main subject of the image and make the background transparent.
+
+1.  **Identify the main subject.** This could be a person, object, or animal.
+2.  **Create a clean mask** around the subject, paying close attention to details like hair or fine edges.
+3.  **Remove the background entirely**, leaving a transparent PNG.
+    `;
 
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
+      model: 'googleai/imagen-4.0-fast-edit-001',
       prompt: [
         { media: { url: imageDataUri } },
         { text: promptText },
