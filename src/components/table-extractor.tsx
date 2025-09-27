@@ -37,6 +37,7 @@ export default function TableExtractor() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
 
@@ -71,7 +72,6 @@ export default function TableExtractor() {
           title: "Success!",
           description: "Your Excel file has been downloaded.",
         });
-        incrementUsage();
       }
       
       router.refresh();
@@ -170,5 +170,7 @@ export default function TableExtractor() {
     </>
   );
 }
+
+    
 
     

@@ -88,6 +88,7 @@ export default function ImageToWebpConverter() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setConvertedImages([]);
@@ -118,7 +119,7 @@ export default function ImageToWebpConverter() {
         }));
         setConvertedImages(namedConvertedImages);
         toast({ title: "Conversion Successful", description: "Your images have been converted to WebP." });
-        incrementUsage();
+        
         router.refresh();
       }
     } catch (error) {
@@ -238,3 +239,5 @@ export default function ImageToWebpConverter() {
     </>
   );
 }
+
+    

@@ -81,6 +81,7 @@ export default function ResizeImage() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setProcessedImage(null);
@@ -129,7 +130,7 @@ export default function ResizeImage() {
         const dataUrl = canvas.toDataURL(originalImage.file.type); // Use original file type
         setProcessedImage(dataUrl);
         toast({ title: "Image Resized", description: "Your image has been processed." });
-        incrementUsage();
+        
         router.refresh();
         setIsLoading(false);
     };
@@ -293,3 +294,5 @@ export default function ResizeImage() {
     </div>
   );
 }
+
+    

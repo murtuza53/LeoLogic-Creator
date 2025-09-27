@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -93,6 +94,7 @@ export default function WeightLossCalculator() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     let heightInCm: number;
     let weightInKg: number;
@@ -121,7 +123,6 @@ export default function WeightLossCalculator() {
         weightLoss: maintenanceCalories - deficitLevels.standard,
         extremeLoss: maintenanceCalories - deficitLevels.extreme
     });
-    incrementUsage();
   }
   
   const resetForm = () => {
@@ -246,3 +247,5 @@ export default function WeightLossCalculator() {
     </div>
   );
 }
+
+    

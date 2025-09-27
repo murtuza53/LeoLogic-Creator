@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useCallback } from 'react';
@@ -34,6 +35,7 @@ export default function ScientificCalculator() {
 
   const handleNumber = (value: string) => {
     if (!checkLimit()) return;
+    incrementUsage();
     if (input === '0' || input === 'Error') {
       setInput(value);
     } else {
@@ -43,6 +45,7 @@ export default function ScientificCalculator() {
 
   const handleDecimal = () => {
     if (!checkLimit()) return;
+    incrementUsage();
     if (!input.includes('.')) {
       setInput(prev => prev + '.');
     }
@@ -50,6 +53,7 @@ export default function ScientificCalculator() {
 
   const handleOperator = (op: string) => {
     if (!checkLimit()) return;
+    incrementUsage();
     if (previousInput && operator && input !== 'Error') {
       handleEquals();
       setOperator(op);
@@ -62,6 +66,7 @@ export default function ScientificCalculator() {
 
   const handleEquals = () => {
     if (!checkLimit()) return;
+    incrementUsage();
     if (!operator || previousInput === null) return;
     const prev = parseFloat(previousInput);
     const current = parseFloat(input);
@@ -87,6 +92,7 @@ export default function ScientificCalculator() {
 
   const handleClear = () => {
     if (!checkLimit()) return;
+    incrementUsage();
     setInput('0');
     setPreviousInput(null);
     setOperator(null);
@@ -94,6 +100,7 @@ export default function ScientificCalculator() {
 
   const handleFunction = (func: string) => {
     if (!checkLimit()) return;
+    incrementUsage();
     const num = parseFloat(input);
     let result: number;
     const toRad = (deg: number) => deg * Math.PI / 180;
@@ -182,3 +189,5 @@ export default function ScientificCalculator() {
     </Card>
   );
 }
+
+    

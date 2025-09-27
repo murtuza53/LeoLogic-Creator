@@ -58,6 +58,7 @@ export default function PdfMerger() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
     
     setIsLoading(true);
 
@@ -103,7 +104,7 @@ export default function PdfMerger() {
             description: "Your PDF has been downloaded.",
         });
         
-        incrementUsage();
+        
         setFiles([]);
         router.refresh();
     } catch (error) {
@@ -185,3 +186,5 @@ export default function PdfMerger() {
     </>
   );
 }
+
+    

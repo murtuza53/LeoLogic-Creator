@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useEffect, useMemo, useCallback } from 'react';
@@ -169,7 +170,6 @@ export default function UnitConverter() {
 
   const convert = useCallback((value: number, from: string, to: string, category: UnitCategory) => {
     if (isNaN(value)) return '';
-    if(!checkLimit()) return '';
 
     if (category === 'temperature') {
       const tempFactors = conversionFactors.temperature;
@@ -188,7 +188,7 @@ export default function UnitConverter() {
       const result = baseValue / factors[to];
       return result.toFixed(4);
     }
-  }, [checkLimit]);
+  }, []);
   
   useEffect(() => {
     const val = parseFloat(fromValue);
@@ -198,21 +198,22 @@ export default function UnitConverter() {
 
   const handleFromValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if(!checkLimit()) return;
-    setFromValue(e.target.value);
     incrementUsage();
+    setFromValue(e.target.value);
   };
   
   const handleToValueChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if(!checkLimit()) return;
+    incrementUsage();
     const val = parseFloat(e.target.value);
     setToValue(e.target.value);
     const converted = convert(val, toUnit, fromUnit, activeCategory);
     setFromValue(converted);
-    incrementUsage();
   };
 
   const swapUnits = () => {
     if(!checkLimit()) return;
+    incrementUsage();
     const tempUnit = fromUnit;
     setFromUnit(toUnit);
     setToUnit(tempUnit);
@@ -220,7 +221,6 @@ export default function UnitConverter() {
     const tempValue = fromValue;
     setFromValue(toValue);
     setToValue(tempValue);
-    incrementUsage();
   }
 
   return (
@@ -273,3 +273,5 @@ export default function UnitConverter() {
     </Card>
   );
 }
+
+    

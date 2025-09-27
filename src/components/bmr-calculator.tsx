@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -89,6 +90,7 @@ export default function BmrCalculator() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     let heightInCm: number;
     let weightInKg: number;
@@ -116,7 +118,6 @@ export default function BmrCalculator() {
     }));
 
     setResult({ bmr: Math.round(bmr), activityLevels });
-    incrementUsage();
   }
   
   const resetForm = () => {
@@ -297,3 +298,5 @@ export default function BmrCalculator() {
     </div>
   );
 }
+
+    

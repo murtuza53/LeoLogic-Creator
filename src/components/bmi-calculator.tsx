@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -88,6 +89,7 @@ export default function BmiCalculator() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     let heightInMeters: number;
     let weightInKg: number;
@@ -120,7 +122,6 @@ export default function BmiCalculator() {
       }
     });
 
-    incrementUsage();
   }
 
   const categoryStyles = result ? getCategoryStyle(result.category) : null;
@@ -304,3 +305,5 @@ export default function BmiCalculator() {
     </div>
   );
 }
+
+    

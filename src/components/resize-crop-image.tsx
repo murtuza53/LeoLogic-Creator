@@ -91,6 +91,7 @@ export default function ResizeCropImage() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setProcessedImages([]);
@@ -122,7 +123,7 @@ export default function ResizeCropImage() {
         }));
         setProcessedImages(namedProcessedImages);
         toast({ title: "Processing Successful", description: "Your images have been processed." });
-        incrementUsage();
+        
         router.refresh();
       }
     } catch (error) {
@@ -262,3 +263,5 @@ export default function ResizeCropImage() {
     </>
   );
 }
+
+    

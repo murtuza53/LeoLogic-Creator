@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -53,13 +54,14 @@ export default function BenefitPayQr() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     const qrJson = {
       iban: values.iban,
       amount: ""
     };
     setQrValue(JSON.stringify(qrJson));
-    incrementUsage();
+    
   }
 
   const downloadQR = () => {
@@ -264,3 +266,5 @@ export default function BenefitPayQr() {
     </>
   );
 }
+
+    

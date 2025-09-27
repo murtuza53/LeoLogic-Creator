@@ -43,6 +43,7 @@ export default function ProductGenerator() {
     if (!checkLimit()) {
       return; // Stop if limit is reached
     }
+    incrementUsage();
 
     setIsLoading(true);
     setProductData(null);
@@ -61,7 +62,7 @@ export default function ProductGenerator() {
         throw new Error(result.error);
       }
       setProductData(result as ProductData);
-      incrementUsage(); // Increment usage only on success
+      
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -92,5 +93,7 @@ export default function ProductGenerator() {
     </>
   );
 }
+
+    
 
     

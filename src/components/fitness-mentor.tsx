@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef, useEffect } from 'react';
@@ -59,6 +60,7 @@ export default function FitnessMentor() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     const userMessage: Message = { role: 'user', content: values.message };
     setMessages(prev => [...prev, userMessage]);
@@ -72,7 +74,7 @@ export default function FitnessMentor() {
       }
       const botMessage: Message = { role: 'bot', content: result.response };
       setMessages(prev => [...prev, botMessage]);
-      incrementUsage();
+      
     } catch (error) {
       console.error(error);
       toast({
@@ -161,3 +163,5 @@ export default function FitnessMentor() {
     </Card>
   );
 }
+
+    

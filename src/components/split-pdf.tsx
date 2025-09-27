@@ -1,8 +1,8 @@
+
 "use client";
 
 import { useState, useRef } from 'react';
 import { useToast } from '@/hooks/use-toast';
-import { incrementFeatureCounterAction } from '@/app/actions';
 import { Card } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, File, Trash2, Download, SplitSquareHorizontal } from 'lucide-react';
@@ -54,6 +54,7 @@ export default function SplitPdf() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
 
@@ -80,7 +81,7 @@ export default function SplitPdf() {
         description: `Your PDF has been split into ${numPages} files and downloaded as a zip.`
       });
 
-      incrementUsage();
+      
       router.refresh();
 
     } catch (error) {
@@ -144,3 +145,5 @@ export default function SplitPdf() {
     </div>
   );
 }
+
+    

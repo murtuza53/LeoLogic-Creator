@@ -81,6 +81,7 @@ export default function PdfCompressor() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setResult(null);
@@ -117,7 +118,7 @@ export default function PdfCompressor() {
           title: "Compression Successful!",
           description: `Reduced file size by ${Math.round(100 - (compressedSize / originalSize) * 100)}%.`
         });
-        incrementUsage();
+        
         router.refresh();
     } catch (error) {
       console.error(error);
@@ -254,3 +255,5 @@ export default function PdfCompressor() {
     </div>
   );
 }
+
+    

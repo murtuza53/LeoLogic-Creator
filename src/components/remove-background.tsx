@@ -70,6 +70,7 @@ export default function RemoveBackground() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setProcessedImage(null);
@@ -95,7 +96,7 @@ export default function RemoveBackground() {
         
         setProcessedImage(result.imageDataUri!);
         toast({ title: "Background Removed", description: "Your image has been processed." });
-        incrementUsage();
+        
         router.refresh();
     } catch (error) {
       console.error(error);
@@ -187,3 +188,5 @@ export default function RemoveBackground() {
     </div>
   );
 }
+
+    

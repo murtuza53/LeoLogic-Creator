@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -55,6 +56,7 @@ export default function MathSolver() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setSolution(null);
@@ -64,7 +66,7 @@ export default function MathSolver() {
         throw new Error(result.error);
       }
       setSolution(result as Solution);
-      incrementUsage();
+      
       router.refresh();
 
     } catch (error) {
@@ -170,3 +172,5 @@ export default function MathSolver() {
     </>
   );
 }
+
+    

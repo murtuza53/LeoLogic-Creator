@@ -53,6 +53,7 @@ export default function OcrProcessor() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setExtractedData(null);
@@ -70,7 +71,7 @@ export default function OcrProcessor() {
         throw new Error(result.error);
       }
       setExtractedData(result as ExtractedData);
-      incrementUsage();
+      
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -301,5 +302,7 @@ export default function OcrProcessor() {
     </>
   );
 }
+
+    
 
     

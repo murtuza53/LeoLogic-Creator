@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -47,6 +48,7 @@ export default function LogoMaker() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setGeneratedLogos([]);
@@ -58,7 +60,7 @@ export default function LogoMaker() {
       if (result.imageUrls) {
         setGeneratedLogos(result.imageUrls.map(url => ({ url })));
         toast({ title: "Logos Generated!", description: "Your new logo concepts are ready." });
-        incrementUsage();
+        
         router.refresh();
       }
     } catch (error) {
@@ -163,3 +165,5 @@ export default function LogoMaker() {
     </div>
   );
 }
+
+    

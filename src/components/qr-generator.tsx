@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState } from 'react';
@@ -58,9 +59,9 @@ export default function QrGenerator() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
     
     setQrValue(values.text);
-    incrementUsage();
   }
 
   const downloadQR = () => {
@@ -260,3 +261,5 @@ export default function QrGenerator() {
     </>
   );
 }
+
+    

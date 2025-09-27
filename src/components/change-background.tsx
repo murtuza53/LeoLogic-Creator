@@ -74,6 +74,7 @@ export default function ChangeBackground() {
       return;
     }
     if (!checkLimit()) return;
+    incrementUsage();
 
     setIsLoading(true);
     setProcessedImage(null);
@@ -100,7 +101,7 @@ export default function ChangeBackground() {
       
       setProcessedImage(result.imageDataUri!);
       toast({ title: "Background Changed", description: "Your image has been processed." });
-      incrementUsage();
+      
       router.refresh();
     } catch (error) {
       console.error(error);
@@ -215,3 +216,5 @@ export default function ChangeBackground() {
     </div>
   );
 }
+
+    
