@@ -8,10 +8,6 @@ import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
-import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
-import { removeBackground } from '@/ai/flows/remove-background';
-import { changeBackground } from '@/ai/flows/change-background';
-import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { generateLogo } from '@/ai/flows/generate-logo';
 import { compressPdf } from '@/ai/flows/compress-pdf';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
@@ -186,93 +182,6 @@ export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
         error instanceof Error
           ? error.message
           : 'An unknown error occurred.',
-    };
-  }
-}
-
-export async function convertImagesToWebpAction(
-  images: { dataUri: string }[]
-) {
-  try {
-    const conversionPromises = images.map(image => 
-      convertImageToWebp({
-        imageDataUri: image.dataUri,
-      })
-    );
-
-    const results = await Promise.all(conversionPromises);
-    
-    return { convertedImages: results.map(r => r.webpDataUri) };
-  } catch (error) {
-    console.error('Error converting images to WebP:', error);
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during image conversion.',
-    };
-  }
-}
-
-
-export async function removeBackgroundAction(imageDataUri: string) {
-  try {
-    const result = await removeBackground({ imageDataUri });
-    if (!result) {
-      throw new Error('AI failed to remove background from the image.');
-    }
-    return result;
-  } catch (error) {
-    console.error('Error removing background from image:', error);
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred.',
-    };
-  }
-}
-
-export async function changeBackgroundAction(imageDataUri: string, backgroundColor: string) {
-  try {
-    const result = await changeBackground({ imageDataUri, backgroundColor });
-    if (!result) {
-      throw new Error('AI failed to change background of the image.');
-    }
-    return result;
-  } catch (error) {
-    console.error('Error changing background of image:', error);
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred.',
-    };
-  }
-}
-
-export async function resizeAndCropImageAction(
-  images: { dataUri: string }[],
-  targetSize: number
-) {
-  try {
-    const promises = images.map(image => 
-      resizeAndCropImage({
-        imageDataUri: image.dataUri,
-        targetSize,
-      })
-    );
-
-    const results = await Promise.all(promises);
-    
-    return { processedImages: results.map(r => r.imageDataUri) };
-  } catch (error) {
-    console.error('Error resizing/cropping images:', error);
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred during image processing.',
     };
   }
 }

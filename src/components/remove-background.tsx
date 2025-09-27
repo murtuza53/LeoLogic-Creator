@@ -4,7 +4,6 @@
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { removeBackgroundAction } from '@/app/actions';
 import { Card, CardContent } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2 } from 'lucide-react';
@@ -77,9 +76,22 @@ export default function RemoveBackground() {
 
     try {
         const base64Image = await getBase64(originalImage.file);
-        const result = await removeBackgroundAction(base64Image);
         
-        if (result.error) throw new Error(result.error);
+        const response = await fetch('/api/image-tools', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                tool: 'remove-background',
+                imageDataUri: base64Image,
+            })
+        });
+
+        if (!response.ok) {
+            const errorData = await response.json();
+            throw new Error(errorData.error || 'An unknown error occurred.');
+        }
+
+        const result = await response.json();
         
         setProcessedImage(result.imageDataUri!);
         toast({ title: "Background Removed", description: "Your image has been processed." });
@@ -145,6 +157,14 @@ export default function RemoveBackground() {
                 </div>
               </div>
             )}
+            {isLoading && !processedImage && (
+                <div className='space-y-2'>
+                    <h3 className="text-center font-medium">Result</h3>
+                    <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center bg-muted/20">
+                         <LoaderCircle className="h-8 w-8 animate-spin text-primary" />
+                    </div>
+                </div>
+            )}
             {processedImage && (
               <div className="space-y-2">
                 <h3 className="text-center font-medium">Result</h3>
@@ -174,5 +194,3 @@ export default function RemoveBackground() {
     </div>
   );
 }
-
-    

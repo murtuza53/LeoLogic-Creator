@@ -1,12 +1,12 @@
+
 "use client";
 
 import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { resizeAndCropImageAction } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
-import { LoaderCircle, UploadCloud, Trash2, Download, WandSparkles, Crop } from 'lucide-react';
+import { LoaderCircle, UploadCloud, Trash2, Download, Crop } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { Slider } from './ui/slider';
 import { Label } from './ui/label';
@@ -71,6 +71,15 @@ export default function ResizeCropImage() {
     }
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
+  
+  const getBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const handleProcess = async () => {
     if (files.length === 0) {
@@ -87,29 +96,27 @@ export default function ResizeCropImage() {
     setProcessedImages([]);
 
     try {
-      const imagePayloads = await Promise.all(
-        files.map(imageFile => {
-          return new Promise<{ dataUri: string }>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFile.file);
-            reader.onload = () => {
-              resolve({
-                dataUri: reader.result as string,
-              });
-            };
-            reader.onerror = reject;
-          });
-        })
-      );
-      
-      const result = await resizeAndCropImageAction(imagePayloads, targetSize);
+      const imagePayloads = await Promise.all(files.map(imageFile => getBase64(imageFile.file)));
 
-      if (result.error) {
-        throw new Error(result.error);
+      const response = await fetch('/api/image-tools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'resize-crop',
+          images: imagePayloads.map(dataUri => ({ dataUri })),
+          targetSize,
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
       }
 
+      const result = await response.json();
+
       if (result.processedImages) {
-        const namedProcessedImages = result.processedImages.map((dataUri, index) => ({
+        const namedProcessedImages = result.processedImages.map((dataUri: string, index: number) => ({
           originalName: files[index].file.name,
           dataUri,
         }));

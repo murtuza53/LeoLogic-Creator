@@ -1,9 +1,9 @@
+
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { convertImagesToWebpAction } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Trash2, Download, WandSparkles } from 'lucide-react';
@@ -69,6 +69,15 @@ export default function ImageToWebpConverter() {
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
 
+  const getBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
+
   const handleConvert = async () => {
     if (files.length === 0) {
       toast({ variant: "destructive", title: "No files", description: "Please upload at least one image to convert." });
@@ -84,29 +93,26 @@ export default function ImageToWebpConverter() {
     setConvertedImages([]);
 
     try {
-      const imagePayloads = await Promise.all(
-        files.map(imageFile => {
-          return new Promise<{ dataUri: string }>((resolve, reject) => {
-            const reader = new FileReader();
-            reader.readAsDataURL(imageFile.file);
-            reader.onload = () => {
-              resolve({
-                dataUri: reader.result as string,
-              });
-            };
-            reader.onerror = reject;
-          });
-        })
-      );
-      
-      const result = await convertImagesToWebpAction(imagePayloads);
+      const imagePayloads = await Promise.all(files.map(imageFile => getBase64(imageFile.file)));
 
-      if (result.error) {
-        throw new Error(result.error);
+      const response = await fetch('/api/image-tools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'convert-to-webp',
+          images: imagePayloads.map(dataUri => ({ dataUri })),
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
       }
 
+      const result = await response.json();
+
       if (result.convertedImages) {
-        const namedConvertedImages = result.convertedImages.map((dataUri, index) => ({
+        const namedConvertedImages = result.convertedImages.map((dataUri: string, index: number) => ({
           originalName: files[index].file.name,
           dataUri,
         }));
@@ -152,7 +158,7 @@ export default function ImageToWebpConverter() {
                 </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">Up to {MAX_FILES} images (PNG, JPG, WEBP), 10MB each</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">Up to ${MAX_FILES} images (PNG, JPG, WEBP), 10MB each</p>
               <input 
                   id="file-upload" 
                   type="file" 

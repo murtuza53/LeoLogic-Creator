@@ -1,10 +1,9 @@
 
 "use client";
 
-import { useState, useRef, useCallback } from 'react';
+import { useState, useRef } from 'react';
 import Image from 'next/image';
 import { useToast } from '@/hooks/use-toast';
-import { changeBackgroundAction } from '@/app/actions';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2, Palette } from 'lucide-react';
@@ -12,6 +11,7 @@ import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
+const PRESET_COLORS = ['#FFFFFF', '#000000', '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF'];
 const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
@@ -80,9 +80,23 @@ export default function ChangeBackground() {
 
     try {
       const base64Image = await getBase64(originalImage.file);
-      const result = await changeBackgroundAction(base64Image, bgColor);
       
-      if (result.error) throw new Error(result.error);
+      const response = await fetch('/api/image-tools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'change-background',
+          imageDataUri: base64Image,
+          backgroundColor: bgColor,
+        })
+      });
+
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
+      }
+
+      const result = await response.json();
       
       setProcessedImage(result.imageDataUri!);
       toast({ title: "Background Changed", description: "Your image has been processed." });
@@ -201,5 +215,3 @@ export default function ChangeBackground() {
     </div>
   );
 }
-
-    
