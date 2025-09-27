@@ -11,14 +11,13 @@ export default function TableExtractorPage() {
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
         <nav className="flex items-center gap-2 text-lg font-medium md:text-sm">
-          <a
+          <Link
             href="/"
             className="flex items-center gap-2 font-semibold text-foreground"
           >
             <Logo className="h-6 w-6 text-primary" />
-            <span className="sr-only">Leo Creator</span>
-          </a>
-          <span className="font-semibold">Leo Creator</span>
+            <span className="font-semibold">Leo Creator</span>
+          </Link>
         </nav>
         <div className="flex items-center gap-4">
           <Button variant="outline" asChild>
