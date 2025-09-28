@@ -206,9 +206,9 @@ const tools = [
         icon: FileSpreadsheet,
     },
     { 
-        title: 'Logo Maker', 
-        description: 'Generate unique logo concepts with AI.', 
-        href: '/logo-maker', 
+        title: 'Icon Maker', 
+        description: 'Generate unique icon concepts with AI.', 
+        href: '/icon-maker', 
         category: 'AI / ML',
         feature: 'logoMaker' as Feature,
         bgColor: 'bg-blue-100',

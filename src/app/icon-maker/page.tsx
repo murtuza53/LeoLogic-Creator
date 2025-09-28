@@ -1,12 +1,12 @@
 
-import LogoMaker from '@/components/logo-maker';
+import IconMaker from '@/components/icon-maker';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 
-export default function LogoMakerPage() {
+export default function IconMakerPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
@@ -32,13 +32,13 @@ export default function LogoMakerPage() {
         <div className="mx-auto max-w-6xl">
           <div className="text-center">
             <h1 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              AI-Powered Logo Maker
+              AI-Powered Icon Maker
             </h1>
             <p className="mt-3 text-lg text-muted-foreground md:text-xl">
-              Describe your logo concept and let our AI generate three unique designs for you.
+              Describe your icon concept and let our AI generate three unique designs for you.
             </p>
           </div>
-          <LogoMaker />
+          <IconMaker />
         </div>
       </main>
       <Footer />

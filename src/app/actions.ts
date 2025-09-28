@@ -8,7 +8,7 @@ import { generateAdditionalProductImages } from '@/ai/flows/generate-additional-
 import { solveMathProblem } from '@/ai/flows/solve-math-problem';
 import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
-import { generateLogo } from '@/ai/flows/generate-logo';
+import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
 import { saveContactMessage, ContactMessage, createUserProfile } from '@/lib/firebase';
 import { PDFDocument } from 'pdf-lib';
@@ -155,15 +155,15 @@ export async function extractTableAndGenerateExcelAction(imageDataUri: string) {
   }
 }
 
-export async function generateLogoAction(concept: string) {
+export async function generateIconAction(concept: string, image?: string) {
   try {
-    const result = await generateLogo({ concept });
+    const result = await generateIcon({ concept, image });
     if (!result?.imageUrls || result.imageUrls.length === 0) {
-      throw new Error('AI failed to generate logos.');
+      throw new Error('AI failed to generate icons.');
     }
     return result;
   } catch (error) {
-    console.error('Error generating logos:', error);
+    console.error('Error generating icons:', error);
     return {
       error:
         error instanceof Error
