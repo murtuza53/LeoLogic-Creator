@@ -199,14 +199,14 @@ export default function ChangeBackground() {
                 <div className="space-y-2">
                     <h3 className="text-center font-medium">Original</h3>
                     <div className="relative aspect-video w-full rounded-md overflow-hidden border bg-muted/20 flex items-center justify-center">
-                        {originalImage ? <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" /> : <p className="text-muted-foreground text-sm">Upload an image</p>}
+                        {originalImage ? <Image src={originalImage.previewUrl} alt="Original image preview" fill className="object-contain" /> : <p className="text-muted-foreground text-sm">Upload an image</p>}
                     </div>
                 </div>
                 <div className="space-y-2">
                     <h3 className="text-center font-medium">Result</h3>
                     <div className="relative aspect-video w-full rounded-md overflow-hidden border flex items-center justify-center" style={{backgroundColor: processedImage ? bgColor : 'hsl(var(--muted)/0.2)'}}>
                         {isLoading && <LoaderCircle className="h-8 w-8 animate-spin text-primary" />}
-                        {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" fill objectFit="contain" />}
+                        {processedImage && !isLoading && <Image src={processedImage} alt="Processed image" fill className="object-contain" />}
                          {!processedImage && !isLoading && <p className="text-muted-foreground text-sm">Your result will appear here</p>}
                     </div>
                 </div>

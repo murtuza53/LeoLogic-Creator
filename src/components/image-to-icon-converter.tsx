@@ -162,7 +162,7 @@ export default function ImageToIconConverter() {
               <div className="space-y-2">
                 <h3 className="text-center font-medium">Original</h3>
                 <div className="relative aspect-square w-full max-w-[256px] mx-auto rounded-md overflow-hidden border">
-                    <Image src={originalImage.previewUrl} alt="Original image preview" fill objectFit="contain" />
+                    <Image src={originalImage.previewUrl} alt="Original image preview" fill className="object-contain" />
                 </div>
               </div>
             )}

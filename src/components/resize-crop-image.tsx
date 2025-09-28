@@ -188,7 +188,7 @@ export default function ResizeCropImage() {
                         <Card key={index} className="overflow-hidden relative">
                           <CardContent className="p-4 space-y-4">
                             <div className="relative aspect-video w-full rounded-md overflow-hidden border">
-                                <Image src={imageFile.previewUrl} alt={`Preview of ${imageFile.file.name}`} layout="fill" objectFit="contain" />
+                                <Image src={imageFile.previewUrl} alt={`Preview of ${imageFile.file.name}`} layout="fill" className="object-contain" />
                             </div>
                             <p className="text-sm font-medium truncate">{imageFile.file.name}</p>
                            </CardContent>
@@ -246,7 +246,7 @@ export default function ResizeCropImage() {
                         <Card key={index} className="overflow-hidden group">
                            <CardContent className="p-4 space-y-4">
                              <div className="relative aspect-square w-full rounded-md overflow-hidden border bg-white bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')]">
-                                <Image src={image.dataUri} alt={`Processed ${image.originalName}`} layout="fill" objectFit="contain" />
+                                <Image src={image.dataUri} alt={`Processed ${image.originalName}`} layout="fill" className="object-contain" />
                              </div>
                               <p className="text-sm font-medium truncate">{image.originalName}</p>
                              <Button onClick={() => downloadImage(image.dataUri, image.originalName)} className="w-full">

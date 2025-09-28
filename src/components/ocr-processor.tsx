@@ -191,7 +191,7 @@ export default function OcrProcessor() {
         <Card className="shadow-lg p-6 flex flex-col items-center justify-center">
             {imagePreview && (
                 <div className="relative w-full h-full min-h-[300px] rounded-md overflow-hidden border">
-                    <Image src={imagePreview} alt="Image preview" fill objectFit="contain" />
+                    <Image src={imagePreview} alt="Image preview" fill className="object-contain" />
                 </div>
             )}
         </Card>
@@ -249,7 +249,7 @@ export default function OcrProcessor() {
             <Card className="shadow-lg p-4">
               <p className='text-sm font-semibold text-muted-foreground mb-2'>Original Image</p>
               <div className="relative w-full min-h-[400px] max-h-[80vh] rounded-md overflow-hidden border">
-                <Image src={imagePreview} alt="Original input" fill objectFit="contain" />
+                <Image src={imagePreview} alt="Original input" fill className="object-contain" />
               </div>
             </Card>
             <Card className="shadow-lg p-4 flex flex-col">

@@ -184,7 +184,7 @@ export default function ImageToWebpConverter() {
                         <Card key={index} className="overflow-hidden relative">
                           <CardContent className="p-4 space-y-4">
                             <div className="relative aspect-video w-full rounded-md overflow-hidden border">
-                                <Image src={imageFile.previewUrl} alt={`Preview of ${imageFile.file.name}`} layout="fill" objectFit="contain" />
+                                <Image src={imageFile.previewUrl} alt={`Preview of ${imageFile.file.name}`} layout="fill" className="object-contain" />
                             </div>
                             <p className="text-sm font-medium truncate">{imageFile.file.name}</p>
                            </CardContent>
@@ -222,7 +222,7 @@ export default function ImageToWebpConverter() {
                         <Card key={index} className="overflow-hidden group">
                            <CardContent className="p-4 space-y-4">
                              <div className="relative aspect-video w-full rounded-md overflow-hidden border bg-muted">
-                                <Image src={image.dataUri} alt={`Converted ${image.originalName}`} layout="fill" objectFit="contain" />
+                                <Image src={image.dataUri} alt={`Converted ${image.originalName}`} layout="fill" className="object-contain" />
                              </div>
                               <p className="text-sm font-medium truncate">{image.originalName}</p>
                              <Button onClick={() => downloadImage(image.dataUri, image.originalName)} className="w-full">
