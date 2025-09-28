@@ -5,6 +5,7 @@ import { changeBackground } from '@/ai/flows/change-background';
 import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
 import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { resizeImage } from '@/ai/flows/resize-image';
+import { convertImageToIco } from '@/ai/flows/convert-image-to-ico';
 
 export const config = {
   api: {
@@ -41,7 +42,11 @@ export async function POST(req: Request) {
         const resizePromises = images.map(image => resizeAndCropImage({ imageDataUri: image.dataUri, targetSize }));
         const resizeResults = await Promise.all(resizePromises);
         return NextResponse.json({ processedImages: resizeResults.map(r => r.imageDataUri) });
-
+      
+      case 'convert-to-ico':
+        if (!imageDataUri) throw new Error('imageDataUri is required.');
+        const icoResult = await convertImageToIco({ imageDataUri });
+        return NextResponse.json(icoResult);
       
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });
