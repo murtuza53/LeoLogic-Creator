@@ -12,7 +12,7 @@
 
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
-import { PNG } from 'pngjs';
+import sharp from 'sharp';
 import toIco from 'to-ico';
 
 const ConvertImageToIcoInputSchema = z.object({
@@ -42,31 +42,37 @@ const convertImageToIcoFlow = ai.defineFlow(
     outputSchema: ConvertImageToIcoOutputSchema,
   },
   async ({ imageDataUri }) => {
-    const sizes = [16, 24, 32, 48, 64];
+    // 1. Get a single high-quality square image from the AI
+    const { media } = await ai.generate({
+      model: 'googleai/gemini-2.5-flash-image-preview',
+      prompt: [
+        { media: { url: imageDataUri } },
+        { text: 'Resize this image to be a 256x256 pixel square. The background must be transparent. The output must be in PNG format.' },
+      ],
+    });
 
-    const imageGenerationPromises = sizes.map(size => 
-      ai.generate({
-        model: 'googleai/gemini-2.5-flash-image-preview',
-        prompt: [
-          { media: { url: imageDataUri } },
-          { text: `Resize this image to be exactly ${size}x${size} pixels. It is critical that the final dimensions are a perfect square. Do not maintain the original aspect ratio; stretch or crop the image as needed to fit the square canvas. The final image must be in PNG format with a transparent background.` },
-        ],
-      })
+    if (!media || !media.url) {
+      throw new Error('AI failed to generate the base image for the icon.');
+    }
+
+    const base64 = media.url.split(',')[1];
+    const baseImageBuffer = Buffer.from(base64, 'base64');
+
+    // 2. Use 'sharp' to create all the required sizes from the base image
+    const sizes = [16, 24, 32, 48, 64, 128, 256];
+    const imageBuffers = await Promise.all(
+      sizes.map(size =>
+        sharp(baseImageBuffer)
+          .resize(size, size, {
+            fit: 'contain', // Use 'contain' to avoid distortion, filling with transparency
+            background: { r: 0, g: 0, b: 0, alpha: 0 }
+          })
+          .png() // Ensure output is PNG for to-ico
+          .toBuffer()
+      )
     );
 
-    const results = await Promise.all(imageGenerationPromises);
-
-    const imageBuffers = await Promise.all(results.map(async ({ media }) => {
-        if (!media || !media.url) {
-            throw new Error('Image generation failed for one of the icon sizes.');
-        }
-        const base64 = media.url.split(',')[1];
-        const buffer = Buffer.from(base64, 'base64');
-        // We need to decode and re-encode to ensure it's a valid PNG buffer for the `to-ico` library
-        const png = PNG.sync.read(buffer);
-        return PNG.sync.write(png);
-    }));
-
+    // 3. Use 'to-ico' to compile the final .ico file
     const icoBuffer = await toIco(imageBuffers);
     const icoDataUri = `data:image/x-icon;base64,${icoBuffer.toString('base64')}`;
 
