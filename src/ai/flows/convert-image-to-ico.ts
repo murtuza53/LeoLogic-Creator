@@ -47,7 +47,7 @@ const convertImageToIcoFlow = ai.defineFlow(
       model: 'googleai/gemini-2.5-flash-image-preview',
       prompt: [
         { media: { url: imageDataUri } },
-        { text: 'Resize this image to be a 256x256 pixel square. The background must be transparent. The output must be in PNG format.' },
+        { text: 'Isolate the main subject of the image. Make the image a 256x256 pixel square, preserving the subject\'s aspect ratio by adding transparent padding if necessary. The final image must have a transparent background and be in PNG format.' },
       ],
     });
 
@@ -63,11 +63,8 @@ const convertImageToIcoFlow = ai.defineFlow(
     const imageBuffers = await Promise.all(
       sizes.map(size =>
         sharp(baseImageBuffer)
-          .resize(size, size, {
-            fit: 'contain', // Use 'contain' to avoid distortion, filling with transparency
-            background: { r: 0, g: 0, b: 0, alpha: 0 }
-          })
-          .png() // Ensure output is PNG for to-ico
+          .resize(size, size) // The base image is already square with transparency
+          .png()
           .toBuffer()
       )
     );
