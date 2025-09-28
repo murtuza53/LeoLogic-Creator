@@ -33,7 +33,7 @@ const conversionFactors = {
     ounces: 0.0283495,
   },
   temperature: {
-    celsius: { toBase: (c: number) => c, fromBase: (k: number) => k },
+    celsius: { toBase: (c: number) => c, fromBase: (c: number) => c },
     fahrenheit: { toBase: (f: number) => (f - 32) * 5/9, fromBase: (c: number) => c * 9/5 + 32 },
     kelvin: { toBase: (k: number) => k - 273.15, fromBase: (c: number) => c + 273.15 },
   },
@@ -158,15 +158,11 @@ export default function UnitConverter() {
   }, [activeCategory]);
   
   useEffect(() => {
-    if (activeCategory === 'temperature' && (fromUnit !== 'celsius' && fromUnit !== 'fahrenheit' && fromUnit !== 'kelvin')) {
-        setFromUnit('celsius');
-        setToUnit('fahrenheit');
-    } else if (activeCategory !== 'temperature') {
-        setFromUnit(unitsForCategory[0]);
-        setToUnit(unitsForCategory[1] || unitsForCategory[0]);
-    }
+    const newUnits = Object.keys(conversionFactors[activeCategory]);
+    setFromUnit(newUnits[0]);
+    setToUnit(newUnits[1] || newUnits[0]);
     setFromValue('1');
-  }, [activeCategory, unitsForCategory, fromUnit]);
+  }, [activeCategory]);
 
   const convert = useCallback((value: number, from: string, to: string, category: UnitCategory) => {
     if (isNaN(value)) return '';
@@ -186,7 +182,8 @@ export default function UnitConverter() {
        if (!factors[from] || !factors[to]) return '';
       const baseValue = value * factors[from];
       const result = baseValue / factors[to];
-      return result.toFixed(4);
+      // Use toPrecision to handle both very small and very large numbers better
+      return parseFloat(result.toPrecision(15)).toString();
     }
   }, []);
   
@@ -214,13 +211,18 @@ export default function UnitConverter() {
   const swapUnits = () => {
     if(!checkLimit()) return;
     incrementUsage();
-    const tempUnit = fromUnit;
-    setFromUnit(toUnit);
-    setToUnit(tempUnit);
+    
+    // Store current state
+    const currentFromUnit = fromUnit;
+    const currentToUnit = toUnit;
+    const currentFromValue = fromValue;
+    const currentToValue = toValue;
 
-    const tempValue = fromValue;
-    setFromValue(toValue);
-    setToValue(tempValue);
+    // Swap units and values
+    setFromUnit(currentToUnit);
+    setToUnit(currentFromUnit);
+    setFromValue(currentToValue);
+    setToValue(currentFromValue);
   }
 
   return (
@@ -273,5 +275,3 @@ export default function UnitConverter() {
     </Card>
   );
 }
-
-    
