@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   manifest: '/manifest.json',
   icons: {
     icon: {
-      url: `/favicon.png`,
+      url: `/favicon.png?v=2`,
       type: 'image/png',
     }
   },

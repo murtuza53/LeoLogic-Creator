@@ -4,10 +4,10 @@ import Image from 'next/image';
 
 export const Logo = (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'alt'>) => (
   <Image
-    src="/logo.png"
+    src="/logo.png?v=2"
     alt="Leo Creator Logo"
-    width={24}
-    height={24}
+    width={props.width || 40}
+    height={props.height || 40}
     {...props}
   />
 );
