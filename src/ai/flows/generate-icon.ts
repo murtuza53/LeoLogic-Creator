@@ -12,13 +12,13 @@
 import { ai } from '@/ai/genkit';
 import { z } from 'genkit';
 
-export const GenerateIconInputSchema = z.object({
+const GenerateIconInputSchema = z.object({
   concept: z.string().describe('The concept or idea for the icon.'),
   image: z.string().optional().describe('An optional reference image as a data URI.'),
 });
 export type GenerateIconInput = z.infer<typeof GenerateIconInputSchema>;
 
-export const GenerateIconOutputSchema = z.object({
+const GenerateIconOutputSchema = z.object({
   imageUrls: z
     .array(z.string())
     .describe('The data URIs of the generated icon images in 512x512 PNG format.'),
