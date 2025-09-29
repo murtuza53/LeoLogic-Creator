@@ -4,7 +4,7 @@
 import { useState, useCallback, useEffect } from 'react';
 import { useUser } from '@/firebase';
 import { useToast } from '@/hooks/use-toast';
-import { type Feature } from '@/lib/firebase';
+import { type Feature } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 

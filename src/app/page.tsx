@@ -12,7 +12,7 @@ import { Input } from '@/components/ui/input';
 import Image from 'next/image';
 import Footer from '@/components/footer';
 import { useAuth, useUser, signOutUser } from '@/firebase';
-import { type Feature } from '@/lib/firebase';
+import { type Feature } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
 
 const tools = [

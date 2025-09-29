@@ -10,7 +10,8 @@ import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { saveContactMessage, ContactMessage, createUserProfile } from '@/lib/firebase';
+import { saveContactMessage, createUserProfile } from '@/lib/firebase';
+import type { ContactMessage } from '@/lib/types';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
 
@@ -201,6 +202,7 @@ export async function saveContactMessageAction(message: ContactMessage) {
       error:
         error instanceof Error
           ? error.message
+          cG_Ld_e
           : 'An unknown error occurred.',
     };
   }
