@@ -22,7 +22,7 @@ import { cn } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 const formSchema = z.object({
@@ -34,7 +34,7 @@ const formSchema = z.object({
   productImage: z
     .custom<FileList>()
     .refine((files) => files?.length === 1, "An image is required.")
-    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 5MB.`)
+    .refine((files) => files?.[0]?.size <= MAX_FILE_SIZE, `Max file size is 50MB.`)
     .refine(
       (files) => ACCEPTED_IMAGE_TYPES.includes(files?.[0]?.type),
       ".jpg, .jpeg, .png and .webp files are accepted."
@@ -131,7 +131,7 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
                           </span>
                           <p className="pl-1">or drag and drop</p>
                         </div>
-                        <p className="text-xs leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 5MB</p>
+                        <p className="text-xs leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 50MB</p>
                         <input 
                             id="file-upload" 
                             type="file" 

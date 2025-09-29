@@ -6,7 +6,7 @@ import { PDFDocument } from 'pdf-lib';
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '20mb',
+      sizeLimit: '50mb',
     },
   },
 };

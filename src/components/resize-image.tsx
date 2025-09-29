@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef } from 'react';
@@ -13,7 +12,7 @@ import { Switch } from './ui/switch';
 import { Label } from './ui/label';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
-const MAX_FILE_SIZE = 10 * 1024 * 1024; // 10MB
+const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export default function ResizeImage() {
@@ -44,7 +43,7 @@ export default function ResizeImage() {
     if (!file) return;
 
     if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: `File exceeds the 10MB size limit.` });
+      toast({ variant: "destructive", title: "File too large", description: `File exceeds the 50MB size limit.` });
       return;
     }
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
@@ -206,7 +205,7 @@ export default function ResizeImage() {
                         </span>
                         <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 10MB</p>
+                    <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 50MB</p>
                     <input 
                         id="file-upload" 
                         type="file" 
@@ -294,5 +293,3 @@ export default function ResizeImage() {
     </div>
   );
 }
-
-    

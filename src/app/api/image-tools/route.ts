@@ -10,7 +10,7 @@ import { convertImageToIco } from '@/ai/flows/convert-image-to-ico';
 export const config = {
   api: {
     bodyParser: {
-      sizeLimit: '20mb',
+      sizeLimit: '50mb',
     },
   },
 };
