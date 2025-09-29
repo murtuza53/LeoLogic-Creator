@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef } from 'react';
@@ -64,6 +65,15 @@ export default function ResizeImage() {
 
     setProcessedImage(null);
   };
+  
+  const getBase64 = (file: File): Promise<string> => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result as string);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const handleProcess = async () => {
     if (!originalImage) {
@@ -89,48 +99,39 @@ export default function ResizeImage() {
         return;
     }
 
-    const image = new window.Image();
-    image.src = originalImage.previewUrl;
-    image.onload = () => {
-        const canvas = document.createElement('canvas');
-        const ctx = canvas.getContext('2d');
-        
-        if (!ctx) {
-            toast({ variant: "destructive", title: "Canvas not supported", description: "Your browser does not support the required technology." });
-            setIsLoading(false);
-            return;
-        }
+    try {
+      const base64Image = await getBase64(originalImage.file);
 
-        let finalWidth = targetWidth;
-        let finalHeight = targetHeight;
+      const response = await fetch('/api/image-tools', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          tool: 'resize-image',
+          imageDataUri: base64Image,
+          width: targetWidth,
+          height: targetHeight,
+          maintainAspectRatio,
+        }),
+      });
 
-        if (maintainAspectRatio) {
-            const originalRatio = image.width / image.height;
-            // Determine the final dimensions based on the limiting factor (width or height)
-            if (targetWidth / targetHeight > originalRatio) {
-                finalWidth = targetHeight * originalRatio;
-                finalHeight = targetHeight;
-            } else {
-                finalHeight = targetWidth / originalRatio;
-                finalWidth = targetWidth;
-            }
-        }
-        
-        canvas.width = finalWidth;
-        canvas.height = finalHeight;
-        
-        ctx.drawImage(image, 0, 0, finalWidth, finalHeight);
-        
-        const dataUrl = canvas.toDataURL(originalImage.file.type); // Use original file type
-        setProcessedImage(dataUrl);
-        toast({ title: "Image Resized", description: "Your image has been processed." });
-        
-        router.refresh();
-        setIsLoading(false);
-    };
-    image.onerror = () => {
-        toast({ variant: "destructive", title: "Image Load Failed", description: "Could not load the image for processing." });
-        setIsLoading(false);
+      if (!response.ok) {
+        const errorData = await response.json();
+        throw new Error(errorData.error || 'An unknown error occurred.');
+      }
+
+      const result = await response.json();
+      setProcessedImage(result.imageDataUri);
+      toast({ title: "Image Resized", description: "Your image has been processed." });
+      router.refresh();
+    } catch (error) {
+      console.error(error);
+      toast({
+        variant: "destructive",
+        title: "Processing Failed",
+        description: error instanceof Error ? error.message : "An unknown error occurred during processing.",
+      });
+    } finally {
+      setIsLoading(false);
     }
   };
   
@@ -139,8 +140,7 @@ export default function ResizeImage() {
     const link = document.createElement('a');
     link.href = processedImage;
     const name = originalImage.file.name.substring(0, originalImage.file.name.lastIndexOf('.')) || originalImage.file.name;
-    const extension = originalImage.file.name.split('.').pop() || 'png';
-    link.download = `${name}_resized.${extension}`;
+    link.download = `${name}_resized.webp`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);

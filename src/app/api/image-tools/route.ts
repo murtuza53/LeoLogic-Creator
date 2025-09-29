@@ -48,6 +48,11 @@ export async function POST(req: Request) {
         const icoResult = await convertImageToIco({ imageDataUri });
         return NextResponse.json(icoResult);
       
+      case 'resize-image':
+        if (!imageDataUri || !width || !height) throw new Error('imageDataUri, width, and height are required.');
+        const resizeImageResult = await resizeImage({ imageDataUri, width, height, maintainAspectRatio });
+        return NextResponse.json(resizeImageResult);
+
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });
     }
