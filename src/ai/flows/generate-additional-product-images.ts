@@ -1,3 +1,4 @@
+
 'use server';
 
 /**
@@ -17,7 +18,7 @@ const GenerateAdditionalProductImagesInputSchema = z.object({
   productImage: z
     .string()
     .describe(
-      "A photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'."
+      "A photo of the product, as a data URI that must include a MIME type and use Base64 encoding. Expected format: 'data:<mimetype>;base64,<encoded_data>'"
     ),
   additionalInfo: z.string().optional().describe('Additional information about the product.'),
 });
@@ -62,28 +63,27 @@ const generateAdditionalProductImagesFlow = ai.defineFlow(
        If no specific features are mentioned, create a visually interesting lifestyle shot with the product. Ensure the image is fully compliant with the product's official specifications.`
     ];
 
-    const generations = await Promise.all(
-      prompts.map((prompt) =>
-        ai.generate({
-          model: 'googleai/gemini-2.5-flash-image-preview',
-          prompt: [
-            {media: {url: productImage}},
-            { text: prompt },
-          ],
-        })
-      )
+    const generationPromises = prompts.map((prompt) =>
+      ai.generate({
+        model: 'googleai/gemini-2.5-flash-image-preview',
+        prompt: [
+          {media: {url: productImage}},
+          { text: prompt },
+        ],
+      }).catch(err => {
+        console.warn('An image generation failed:', err);
+        return null; // Return null on failure instead of throwing
+      })
     );
 
-    const imageUrls = generations.map(({media}) => {
-      if (!media || !media.url) {
-        throw new Error('An image generation failed to produce an image.');
-      }
-      return media.url;
-    });
+    const results = await Promise.all(generationPromises);
 
-    if (imageUrls.length === 0) {
-      throw new Error('Image generation failed to produce any images.');
-    }
+    const imageUrls = results
+      .map(result => result?.media?.url)
+      .filter((url): url is string => !!url); // Filter out nulls and undefined URLs
+
+    // We no longer throw an error if some images fail. 
+    // We just return the ones that succeeded.
 
     return {
       imageUrls,
