@@ -8,7 +8,6 @@ import { LoaderCircle, UploadCloud, File, Trash2, Download } from 'lucide-react'
 import { useRouter } from 'next/navigation';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB per file
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
 export default function PdfMerger() {
@@ -26,10 +25,6 @@ export default function PdfMerger() {
     const newFiles = Array.from(selectedFiles);
     
     for (const file of newFiles) {
-      if (file.size > MAX_FILE_SIZE) {
-        toast({ variant: "destructive", title: "File too large", description: `File "${file.name}" exceeds the 50MB size limit.` });
-        return;
-      }
       if (!ACCEPTED_FILE_TYPES.includes(file.type)) {
         toast({ variant: "destructive", title: "Invalid file type", description: `File "${file.name}" is not a PDF.` });
         return;
@@ -133,7 +128,7 @@ export default function PdfMerger() {
                 </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">PDFs up to 50MB each</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">PDFs</p>
               <input 
                   id="file-upload" 
                   type="file" 

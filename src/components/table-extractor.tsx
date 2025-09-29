@@ -10,7 +10,6 @@ import { LoaderCircle, UploadCloud, Download } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
 
 export default function TableExtractor() {
@@ -89,10 +88,6 @@ export default function TableExtractor() {
   const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: `Max file size is ${MAX_FILE_SIZE / 1024 / 1024}MB.` });
-      return;
-    }
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       toast({ variant: "destructive", title: "Invalid file type", description: "Only image files are accepted." });
       return;
@@ -129,7 +124,7 @@ export default function TableExtractor() {
               </span>
               <p className="pl-1">, paste an image, or drag and drop</p>
             </div>
-            <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, GIF, WEBP up to 50MB</p>
+            <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, GIF, WEBP</p>
             <input 
                 id="file-upload" 
                 type="file" 

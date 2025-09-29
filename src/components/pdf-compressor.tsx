@@ -1,4 +1,3 @@
-
 "use client";
 
 import { useState, useRef } from 'react';
@@ -11,7 +10,6 @@ import { RadioGroup, RadioGroupItem } from './ui/radio-group';
 import { Label } from './ui/label';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_FILE_TYPES = ["application/pdf"];
 
 type CompressionResult = {
@@ -34,10 +32,6 @@ export default function PdfCompressor() {
     const selectedFile = event.target.files?.[0];
     if (!selectedFile) return;
 
-    if (selectedFile.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: `File exceeds the 50MB size limit.` });
-      return;
-    }
     if (!ACCEPTED_FILE_TYPES.includes(selectedFile.type)) {
       toast({ variant: "destructive", title: "Invalid file type", description: `File is not a PDF.` });
       return;
@@ -156,7 +150,7 @@ export default function PdfCompressor() {
                 </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">PDF up to 50MB</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">PDF</p>
               <input 
                   id="file-upload" 
                   type="file" 
@@ -255,5 +249,3 @@ export default function PdfCompressor() {
     </div>
   );
 }
-
-    

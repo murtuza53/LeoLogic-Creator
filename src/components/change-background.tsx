@@ -11,7 +11,6 @@ import { Input } from './ui/input';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const PRESET_COLORS = ['#FFFFFF', '#000000', '#FF5733', '#33FF57', '#3357FF', '#FF33A1', '#A133FF'];
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export default function ChangeBackground() {
@@ -37,10 +36,6 @@ export default function ChangeBackground() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: `File exceeds the 50MB size limit.` });
-      return;
-    }
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       toast({ variant: "destructive", title: "Invalid file type", description: `File is not a supported image type.` });
       return;
@@ -145,7 +140,7 @@ export default function ChangeBackground() {
                         </span>
                         <p className="pl-1">or drag and drop</p>
                     </div>
-                    <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 50MB</p>
+                    <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP</p>
                     <input 
                         id="file-upload" 
                         type="file" 

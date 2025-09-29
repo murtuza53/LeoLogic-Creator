@@ -10,7 +10,6 @@ import { useRouter } from 'next/navigation';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
 
-const MAX_FILE_SIZE = 50 * 1024 * 1024; // 50MB
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export default function ImageToIconConverter() {
@@ -34,10 +33,6 @@ export default function ImageToIconConverter() {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    if (file.size > MAX_FILE_SIZE) {
-      toast({ variant: "destructive", title: "File too large", description: `File exceeds the 50MB size limit.` });
-      return;
-    }
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
       toast({ variant: "destructive", title: "Invalid file type", description: `File is not a supported image type.` });
       return;
@@ -142,7 +137,7 @@ export default function ImageToIconConverter() {
               </span>
               <p className="pl-1">or drag and drop</p>
             </div>
-            <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP up to 50MB</p>
+            <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, WEBP</p>
             <input 
                 id="file-upload" 
                 type="file" 
@@ -170,7 +165,7 @@ export default function ImageToIconConverter() {
                 <div className="relative aspect-square w-full max-w-[256px] mx-auto rounded-md overflow-hidden border bg-[url('data:image/svg+xml,%3Csvg%20width%3D%2220%22%20height%3D%2220%22%20viewBox%3D%220%200%2020%2020%22%20fill%3D%22none%22%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%3E%3Crect%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23F3F4F6%22/%3E%3Crect%20x%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3Crect%20y%3D%2210%22%20width%3D%2210%22%20height%3D%2210%22%20fill%3D%22%23E5E7EB%22/%3E%3C/svg%3E')] flex items-center justify-center">
                     {isLoading && <LoaderCircle className="h-8 w-8 animate-spin text-primary" />}
                     {processedIco && (
-                        <Image src={processedIco} alt="Generated ICO preview" width={64} height={64} />
+                        <Image src={processedIco} alt="Generated ICO preview" width={64} height={64} unoptimized />
                     )}
                      {!processedIco && !isLoading && <p className="text-muted-foreground text-sm p-4 text-center">Your ICO will appear here</p>}
                 </div>
