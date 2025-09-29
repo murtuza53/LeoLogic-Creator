@@ -202,7 +202,6 @@ export async function saveContactMessageAction(message: ContactMessage) {
       error:
         error instanceof Error
           ? error.message
-          cG_Ld_e
           : 'An unknown error occurred.',
     };
   }
