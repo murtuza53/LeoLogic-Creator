@@ -6,8 +6,9 @@ export const Logo = (props: Omit<React.ComponentProps<typeof Image>, 'src' | 'al
   <Image
     src="/logo.png?v=2"
     alt="Leo Creator Logo"
-    width={props.width || 40}
-    height={props.height || 40}
+    unoptimized={true}
+    width={40}
+    height={40}
     {...props}
   />
 );
