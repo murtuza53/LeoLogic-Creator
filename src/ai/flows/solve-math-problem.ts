@@ -13,7 +13,7 @@ import { z } from 'genkit';
 const SolveMathProblemInputSchema = z.object({
   problem: z.string().describe('The math problem to solve, which can be an equation or a word problem.'),
 });
-export type SolveMathProblemInput = z.infer<typeof SolveMathProblemInputSchema>;
+type SolveMathProblemInput = z.infer<typeof SolveMathProblemInputSchema>;
 
 const SolveMathProblemOutputSchema = z.object({
   steps: z.array(
@@ -24,7 +24,7 @@ const SolveMathProblemOutputSchema = z.object({
   ).describe('The step-by-step solution to the problem.'),
    finalAnswer: z.string().describe('The final answer in LaTeX format.'),
 });
-export type SolveMathProblemOutput = z.infer<typeof SolveMathProblemOutputSchema>;
+type SolveMathProblemOutput = z.infer<typeof SolveMathProblemOutputSchema>;
 
 export async function solveMathProblem(
   input: SolveMathProblemInput
