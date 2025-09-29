@@ -4,6 +4,7 @@ import { Toaster } from '@/components/ui/toaster';
 import 'katex/dist/katex.min.css';
 import { SpeedInsights } from '@vercel/speed-insights/next';
 import { FirebaseClientProvider } from '@/firebase';
+import GoogleAds from '@/components/google-ads';
 
 export const metadata: Metadata = {
   title: 'Leo Creator',
@@ -28,13 +29,13 @@ export default function RootLayout({
         <link rel="preconnect" href="https://fonts.googleapis.com" />
         <link rel="preconnect" href="https://fonts.gstatic.com" crossOrigin="anonymous" />
         <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600;700&display=swap" rel="stylesheet" />
-        <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-4404974079606262" crossOrigin="anonymous"></script>
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
           {children}
           <SpeedInsights />
           <Toaster />
+          <GoogleAds />
         </FirebaseClientProvider>
       </body>
     </html>
