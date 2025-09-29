@@ -16,7 +16,7 @@ async function mergePdfs(pdfDataUris: string[]) {
 
     for (const dataUri of pdfDataUris) {
       const pdfBytes = Buffer.from(dataUri.split(',')[1], 'base64');
-      const pdf = await PDFDocument.load(pdfBytes);
+      const pdf = await PDFDocument.load(pdfBytes, { ignoreEncryption: true });
       const copiedPages = await mergedPdf.copyPages(pdf, pdf.getPageIndices());
       copiedPages.forEach((page) => {
         mergedPdf.addPage(page);
@@ -61,3 +61,4 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
+
