@@ -43,7 +43,7 @@ const changeBackgroundFlow = ai.defineFlow(
     let promptText = `Change the background of the image to a solid color with the hex code ${backgroundColor}. The subject of the image should be cleanly isolated.`;
 
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash',
+      model: 'googleai/gemini-2.5-flash-image-preview',
       prompt: [
         { media: { url: imageDataUri } },
         { text: promptText },

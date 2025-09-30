@@ -65,7 +65,7 @@ const generateAdditionalProductImagesFlow = ai.defineFlow(
 
     const generationPromises = prompts.map((prompt) =>
       ai.generate({
-        model: 'googleai/gemini-2.5-flash',
+        model: 'googleai/gemini-2.5-flash-image-preview',
         prompt: [
           {media: {url: productImage}},
           { text: prompt },
