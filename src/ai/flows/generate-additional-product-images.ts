@@ -52,15 +52,15 @@ const generateAdditionalProductImagesFlow = ai.defineFlow(
       `You are a professional product photographer. Your task is to generate an additional product image that visually communicates the item’s features more effectively by showcasing it from a different angle (e.g., side, top-down). 
        Product Name: ${productName}
        ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
-       Maintain consistent lighting, background, and styling to match the original visual. Ensure the image is fully compliant with the product's official specifications.`,
+       Maintain consistent lighting, background, and styling to match the original visual. Ensure the image is fully compliant with the product's official specifications. The output must be in webp format with a transparent background.`,
       `You are a professional product photographer. Your task is to generate an additional product image that shows the product in a real-life application or context. 
        Product Name: ${productName}
        ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
-       The image should look realistic and appealing, helping customers visualize how they would use the product. Maintain brand consistency in styling.`,
+       The image should look realistic and appealing, helping customers visualize how they would use the product. Maintain brand consistency in styling. The output must be in webp format.`,
       `You are a professional product photographer. Your task is to generate a product image that highlights a specific feature or includes a size/color variation, if applicable.
        Product Name: ${productName}
        ${additionalInfo ? `Additional Information: ${additionalInfo}` : ''}
-       If no specific features are mentioned, create a visually interesting lifestyle shot with the product. Ensure the image is fully compliant with the product's official specifications.`
+       If no specific features are mentioned, create a visually interesting lifestyle shot with the product. Ensure the image is fully compliant with the product's official specifications. The output must be in webp format.`
     ];
 
     const generationPromises = prompts.map((prompt) =>
