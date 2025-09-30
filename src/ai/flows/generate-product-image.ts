@@ -46,7 +46,7 @@ const generateProductImageFlow = ai.defineFlow(
   },
   async ({productImage}) => {
     const {media} = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
+      model: 'googleai/gemini-2.5-flash',
       prompt: [
         {media: {url: productImage}},
         {
@@ -60,7 +60,7 @@ const generateProductImageFlow = ai.defineFlow(
     }
 
     // Ensure the output is in webp format as requested. The model should handle this, but we can verify.
-    // The data URI from gemini-2.5-flash-image-preview might not specify webp, but the underlying data is.
+    // The data URI from gemini-2.5-flash might not specify webp, but the underlying data is.
     // For simplicity, we trust the model's output format.
     return {
       imageUrl: media.url,
