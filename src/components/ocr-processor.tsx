@@ -18,6 +18,7 @@ import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp", "image/gif"];
+const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
 
 type ExtractedData = {
   plainText: string;
@@ -46,6 +47,19 @@ export default function OcrProcessor() {
   };
 
   const handleImageProcess = useCallback(async (file: File) => {
+    if (file.size > MAX_FILE_SIZE) {
+      toast({
+        variant: "destructive",
+        title: "File too large",
+        description: "Please upload an image smaller than 1MB.",
+      });
+      return;
+    }
+    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
+      toast({ variant: "destructive", title: "Invalid file type", description: "Only image files are accepted." });
+      return;
+    }
+
     if (isUserLoading) {
       toast({ description: "Verifying user status..."});
       return;
@@ -87,10 +101,6 @@ export default function OcrProcessor() {
   const handleImageChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
-    if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
-      toast({ variant: "destructive", title: "Invalid file type", description: "Only image files are accepted." });
-      return;
-    }
     handleImageProcess(file);
   };
 
@@ -223,7 +233,7 @@ export default function OcrProcessor() {
                 </span>
                 <p className="pl-1">, paste an image, or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, GIF, WEBP</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">PNG, JPG, GIF, WEBP (Max 1MB)</p>
               <input 
                   id="file-upload" 
                   type="file" 
