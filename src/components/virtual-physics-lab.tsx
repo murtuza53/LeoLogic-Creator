@@ -203,42 +203,48 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const { viewBox, viewBoxWidth, scaleFactor, arcPath, bobX, bobY } = useMemo(() => {
-        if (!isMounted) return { viewBox: "0 0 100 100", viewBoxWidth: 100, scaleFactor: 1, arcPath: "", bobX: 0, bobY: 0 };
-        
-        const maxSwingWidth = Math.abs(2 * length * Math.sin(initialAngle * Math.PI / 180));
-        const viewHeight = length * 1.1; // Add 10% padding at the bottom
-        const viewWidth = Math.max(maxSwingWidth * 1.1, viewHeight * 0.8);
-
-        // This scale factor makes the pendulum's drawing units fit within a ~100 unit coordinate system
-        const newScaleFactor = Math.min(100 / viewWidth, 100 / viewHeight);
-
+    const { viewBox, arcPath, bobX, bobY, bobRadius, cordWidth } = useMemo(() => {
+        if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0 };
+    
+        const canvasSize = { width: 100, height: 60 };
+        const maxLen = 3.0; // Corresponds to the slider's max value
+    
+        // Scale factor determines how many 'drawing units' a meter is.
+        // We want the longest pendulum to fit, so we base the scale on maxLen.
+        const scaleFactor = canvasSize.height / maxLen * 0.9; // Use 90% of height for the longest pendulum
+    
+        const scaledLength = length * scaleFactor;
+    
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
-        const currentBobX = newScaleFactor * length * Math.sin(currentAngleRad);
-        const currentBobY = newScaleFactor * length * Math.cos(currentAngleRad);
-        
+        const currentBobX = scaledLength * Math.sin(currentAngleRad);
+        const currentBobY = scaledLength * Math.cos(currentAngleRad);
+    
         const startAngle = -initialAngle * Math.PI / 180;
         const endAngle = initialAngle * Math.PI / 180;
-        const scaledLength = length * newScaleFactor;
+    
         const startX = scaledLength * Math.sin(startAngle);
         const startY = scaledLength * Math.cos(startAngle);
         const endX = scaledLength * Math.sin(endAngle);
         const endY = scaledLength * Math.cos(endAngle);
         const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
         const newArcPath = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
-        
-        const vb = `${-viewWidth / 2} 0 ${viewWidth} ${viewHeight}`;
+    
+        const vbWidth = 100;
+        const vbHeight = 65; // A fixed aspect ratio for the viewbox
+        const vb = `${-vbWidth / 2} 0 ${vbWidth} ${vbHeight}`;
 
+        const dynamicBobRadius = 1.5 * Math.cbrt(mass);
+        const dynamicCordWidth = 0.25;
+    
         return {
             viewBox: vb,
-            viewBoxWidth: viewWidth,
-            scaleFactor: newScaleFactor,
             arcPath: newArcPath,
             bobX: currentBobX,
             bobY: currentBobY,
+            bobRadius: dynamicBobRadius,
+            cordWidth: dynamicCordWidth
         };
-
-    }, [isMounted, length, initialAngle, angularFrequency, time]);
+    }, [isMounted, length, initialAngle, mass, angularFrequency, time]);
 
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
@@ -311,9 +317,9 @@ export const PendulumDynamics = () => {
                             </radialGradient>
                         </defs>
                         <g>
-                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth={0.01 / scaleFactor * 100} fill="none" />
-                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={0.005 / scaleFactor * 100} />
-                             <circle cx={bobX} cy={bobY} r={0.05 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.005 / scaleFactor * 100} />
+                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.5 0.5" strokeWidth={0.2} fill="none" />
+                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={cordWidth} />
+                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.25} />
                         </g>
                     </svg>
                 </CardContent>
@@ -362,5 +368,3 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
-
-    
