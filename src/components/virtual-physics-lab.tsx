@@ -83,13 +83,13 @@ const ProjectileMotion = () => {
                         </div>
                     </CardContent>
                 </Card>
-            </div>
-
-            <div className="space-y-6">
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                     <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
                     <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
                 </div>
+            </div>
+
+            <div className="space-y-6">
                  <Card className="h-full">
                     <CardContent className="p-2 sm:p-6 h-[60vh]">
                          <ResponsiveContainer width="100%" height="100%">
@@ -226,9 +226,9 @@ const PendulumDynamics = () => {
 
             <Card className="h-[60vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox="-3 3 -6 6">
-                        <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
-                        <circle cx={bobX} cy={bobY} r={0.2 * Math.sqrt(mass)} fill="hsl(var(--primary))" />
+                    <svg width="100%" height="100%" viewBox="-3 -0.5 6 4">
+                        <line x1="0" y1="0" x2={bobX} y2={-bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
+                        <circle cx={bobX} cy={-bobY} r={0.2 * Math.sqrt(mass)} fill="hsl(var(--primary))" />
                         <line x1="-3" y1="0" x2="3" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.1" />
                     </svg>
                     <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
