@@ -84,7 +84,7 @@ export default function ProductGenerator() {
 
   return (
     <>
-      <div className="mt-8 grid gap-12 md:grid-cols-2 md:gap-8 lg:mt-12">
+      <div className="mt-8 grid grid-cols-1 md:grid-cols-2 gap-8">
         <ProductForm onGenerate={handleGenerate} isLoading={isLoading} />
         <ProductDisplay
           isLoading={isLoading}

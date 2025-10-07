@@ -21,6 +21,9 @@ import { useState, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { Textarea } from "./ui/textarea";
 import { Switch } from "./ui/switch";
+import { useUser } from "@/firebase";
+import Link from "next/link";
+import { Skeleton } from "./ui/skeleton";
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 const MAX_FILE_SIZE = 1 * 1024 * 1024; // 1MB
@@ -53,6 +56,7 @@ type ProductFormProps = {
 export default function ProductForm({ onGenerate, isLoading }: ProductFormProps) {
   const [preview, setPreview] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
+  const { user, isUserLoading } = useUser();
 
   const form = useForm<z.infer<typeof formSchema>>({
     resolver: zodResolver(formSchema),
@@ -178,14 +182,23 @@ export default function ProductForm({ onGenerate, isLoading }: ProductFormProps)
                     <FormLabel className="text-base">
                       Generate Additional Images
                     </FormLabel>
-                    <FormDescription>
-                      Create multiple variations of your product image.
-                    </FormDescription>
+                     {isUserLoading ? (
+                        <Skeleton className='h-4 w-48' />
+                    ) : !user ? (
+                      <FormDescription>
+                        <Link href="/signup" className="text-primary underline">Sign up</Link> for free to use this feature.
+                      </FormDescription>
+                    ) : (
+                      <FormDescription>
+                        Create multiple variations of your product image.
+                      </FormDescription>
+                    )}
                   </div>
                   <FormControl>
                     <Switch
                       checked={field.value}
                       onCheckedChange={field.onChange}
+                      disabled={isUserLoading || !user}
                     />
                   </FormControl>
                 </FormItem>
