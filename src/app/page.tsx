@@ -60,7 +60,7 @@ const tools = [
     { 
         title: 'Projectile Motion', 
         description: 'Simulate projectile trajectories with adjustable parameters.', 
-        href: '/virtual-physics-lab?sim=projectile', 
+        href: '/projectile-motion', 
         category: 'Education',
         feature: 'projectileMotion' as Feature,
         bgColor: 'bg-blue-100',
@@ -70,7 +70,7 @@ const tools = [
     { 
         title: 'Pendulum Dynamics', 
         description: 'Explore the physics of a simple pendulum in motion.', 
-        href: '/virtual-physics-lab?sim=pendulum', 
+        href: '/pendulum-dynamics', 
         category: 'Education',
         feature: 'pendulumDynamics' as Feature,
         bgColor: 'bg-blue-100',
@@ -80,7 +80,7 @@ const tools = [
     { 
         title: 'Circuit Building', 
         description: 'Design and test virtual electrical circuits.', 
-        href: '/virtual-physics-lab?sim=circuits', 
+        href: '/circuit-builder', 
         category: 'Education',
         feature: 'circuitBuilding' as Feature,
         bgColor: 'bg-blue-100',
@@ -90,7 +90,7 @@ const tools = [
     { 
         title: 'Optics Lab', 
         description: 'Experiment with lenses, mirrors, and light rays.', 
-        href: '/virtual-physics-lab?sim=optics', 
+        href: '/optics-lab', 
         category: 'Education',
         feature: 'opticsLab' as Feature,
         bgColor: 'bg-blue-100',
@@ -677,9 +677,5 @@ export default function Home() {
     </div>
   );
 }
-
-    
-
-    
 
     

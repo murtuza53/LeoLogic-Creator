@@ -1,12 +1,12 @@
 
-import VirtualPhysicsLab from '@/components/virtual-physics-lab';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
+import { CircuitBuilder } from '@/components/virtual-physics-lab';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 
-export default function VirtualPhysicsLabPage() {
+export default function CircuitBuilderPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
       <header className="sticky top-0 z-10 flex h-16 items-center justify-between gap-4 border-b bg-background/95 px-4 backdrop-blur md:px-6">
@@ -32,13 +32,13 @@ export default function VirtualPhysicsLabPage() {
         <div className="mx-auto max-w-7xl">
           <div className="text-center">
             <h1 className="font-headline text-3xl font-bold tracking-tight sm:text-4xl md:text-5xl">
-              Virtual Physics Lab
+              Virtual Physics Lab: Circuit Building
             </h1>
             <p className="mt-3 text-lg text-muted-foreground md:text-xl">
-              Simulate experiments you can’t do at home.
+              Design and test virtual electrical circuits.
             </p>
           </div>
-          <VirtualPhysicsLab />
+          <CircuitBuilder />
         </div>
       </main>
       <Footer />

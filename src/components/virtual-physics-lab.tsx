@@ -3,12 +3,10 @@
 
 import * as React from 'react';
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { useSearchParams } from 'next/navigation';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer, Blend, TestTube, Atom, Wind } from 'lucide-react';
+import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
@@ -16,15 +14,15 @@ import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const GRAVITY = 9.81; // m/s^2
 
-const ComingSoon = ({ experimentName }: { experimentName: string }) => (
-  <div className="flex flex-col items-center justify-center h-full text-center p-8 border-2 border-dashed rounded-lg bg-muted/50">
-    <h3 className="text-2xl font-semibold mb-2">{experimentName} Simulation</h3>
-    <p className="text-muted-foreground">This feature is coming soon. Stay tuned!</p>
-  </div>
+export const ComingSoon = ({ experimentName }: { experimentName: string }) => (
+    <div className="flex flex-col items-center justify-center h-full text-center p-8 border-2 border-dashed rounded-lg bg-muted/50 mt-8">
+      <h3 className="text-2xl font-semibold mb-2">{experimentName} Simulation</h3>
+      <p className="text-muted-foreground">This feature is coming soon. Stay tuned!</p>
+    </div>
 );
 
 
-const ProjectileMotion = () => {
+export const ProjectileMotion = () => {
     const [initialVelocity, setInitialVelocity] = useState(25);
     const [angle, setAngle] = useState(45);
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('projectileMotion');
@@ -72,79 +70,74 @@ const ProjectileMotion = () => {
     );
 
     return (
-        <div className="grid md:grid-cols-1 gap-6 h-full">
-            <div className="space-y-6">
-                 <Card>
-                    <CardHeader>
-                        <CardTitle>Controls</CardTitle>
-                    </CardHeader>
-                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
-                        <div className="space-y-2">
-                            <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
-                            <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} />
-                        </div>
-                        <div className="space-y-2">
-                            <Label htmlFor="angle">Launch Angle ({angle.toFixed(1)}°)</Label>
-                            <Slider id="angle" min={0} max={90} step={0.5} value={[angle]} onValueChange={(v) => setAngle(v[0])} />
-                        </div>
-                         <div className="space-y-2">
-                            <Label htmlFor="gravity">Gravity</Label>
-                            <Input id="gravity" value={`${GRAVITY} m/s²`} disabled />
-                        </div>
-                    </CardContent>
-                </Card>
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
-                    <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
-                </div>
+        <div className="mt-8 space-y-6">
+            <Card>
+                <CardHeader>
+                    <CardTitle>Controls</CardTitle>
+                </CardHeader>
+                <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                    <div className="space-y-2">
+                        <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
+                        <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="angle">Launch Angle ({angle.toFixed(1)}°)</Label>
+                        <Slider id="angle" min={0} max={90} step={0.5} value={[angle]} onValueChange={(v) => setAngle(v[0])} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="gravity">Gravity</Label>
+                        <Input id="gravity" value={`${GRAVITY} m/s²`} disabled />
+                    </div>
+                </CardContent>
+            </Card>
+             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
+                <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
             </div>
-
-            <div className="space-y-6">
-                 <Card className="h-full">
-                    <CardContent className="p-2 sm:p-6 h-[60vh]">
-                         <ResponsiveContainer width="100%" height="100%">
-                            <LineChart 
-                                data={fullPath}
-                                margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
-                            >
-                                <CartesianGrid strokeDasharray="3 3" />
-                                <XAxis 
-                                    type="number" 
-                                    dataKey="x" 
-                                    name="Distance" 
-                                    unit="m" 
-                                    domain={domainX} 
-                                    label={{ value: 'Distance (m)', position: 'insideBottom', offset: -15 }}
-                                    allowDataOverflow={true}
-                                />
-                                <YAxis 
-                                    type="number" 
-                                    dataKey="y" 
-                                    name="Height" 
-                                    unit="m" 
-                                    domain={domainY}
-                                    label={{ value: 'Height (m)', angle: -90, position: 'insideLeft', offset: 10 }}
-                                    allowDataOverflow={true}
-                                />
-                                <Tooltip formatter={(value: number) => value.toFixed(2)} />
-                                <Line 
-                                    type="monotone" 
-                                    dataKey="y" 
-                                    stroke="hsl(var(--primary))" 
-                                    strokeWidth={3} 
-                                    dot={false}
-                                    name="Trajectory"
-                                />
-                            </LineChart>
-                        </ResponsiveContainer>
-                    </CardContent>
-                </Card>
-            </div>
+            <Card className="h-[60vh]">
+                <CardContent className="p-2 sm:p-6 h-full">
+                     <ResponsiveContainer width="100%" height="100%">
+                        <LineChart 
+                            data={fullPath}
+                            margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
+                        >
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis 
+                                type="number" 
+                                dataKey="x" 
+                                name="Distance" 
+                                unit="m" 
+                                domain={domainX} 
+                                label={{ value: 'Distance (m)', position: 'insideBottom', offset: -15 }}
+                                allowDataOverflow={true}
+                            />
+                            <YAxis 
+                                type="number" 
+                                dataKey="y" 
+                                name="Height" 
+                                unit="m" 
+                                domain={domainY}
+                                label={{ value: 'Height (m)', angle: -90, position: 'insideLeft', offset: 10 }}
+                                allowDataOverflow={true}
+                            />
+                            <Tooltip formatter={(value: number) => value.toFixed(2)} />
+                            <Line 
+                                type="monotone" 
+                                dataKey="y" 
+                                stroke="hsl(var(--primary))" 
+                                strokeWidth={3} 
+                                dot={false}
+                                name="Trajectory"
+                            />
+                        </LineChart>
+                    </ResponsiveContainer>
+                </CardContent>
+            </Card>
         </div>
     );
 }
 
-const PendulumDynamics = () => {
+export const PendulumDynamics = () => {
     const [length, setLength] = useState(1); // meters
     const [mass, setMass] = useState(1); // kg
     const [initialAngle, setInitialAngle] = useState(20); // degrees
@@ -218,7 +211,7 @@ const PendulumDynamics = () => {
     }
 
     return (
-        <div className="grid md:grid-cols-1 gap-6 h-full">
+        <div className="mt-8 space-y-6">
             <Card>
                 <CardHeader><CardTitle>Pendulum Controls</CardTitle></CardHeader>
                 <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
@@ -263,7 +256,7 @@ const PendulumDynamics = () => {
     );
 }
 
-const CircuitBuilder = () => {
+export const CircuitBuilder = () => {
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('circuitBuilding');
     useEffect(() => {
         if (isUserLoading) return;
@@ -273,7 +266,7 @@ const CircuitBuilder = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Circuit Building" />;
 }
-const OpticsLab = () => {
+export const OpticsLab = () => {
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('opticsLab');
     useEffect(() => {
         if (isUserLoading) return;
@@ -282,41 +275,6 @@ const OpticsLab = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
-}
-
-export default function VirtualPhysicsLab() {
-  const searchParams = useSearchParams();
-  const initialSim = searchParams.get('sim') || 'projectile';
-  const [activeTab, setActiveTab] = useState(initialSim);
-
-  return (
-    <div className="mt-8">
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-          <TabsTrigger value="projectile"><Wind className="mr-2 h-4 w-4"/>Projectile Motion</TabsTrigger>
-          <TabsTrigger value="pendulum"><TestTube className="mr-2 h-4 w-4"/>Pendulum Dynamics</TabsTrigger>
-          <TabsTrigger value="circuits"><Atom className="mr-2 h-4 w-4"/>Circuit Building</TabsTrigger>
-          <TabsTrigger value="optics"><Blend className="mr-2 h-4 w-4"/>Optics</TabsTrigger>
-        </TabsList>
-        <Card className="mt-4 shadow-lg">
-            <CardContent className="p-6 min-h-[80vh] flex">
-                <TabsContent value="projectile" className="w-full mt-0">
-                    <ProjectileMotion />
-                </TabsContent>
-                <TabsContent value="pendulum" className="w-full mt-0">
-                    <PendulumDynamics />
-                </TabsContent>
-                <TabsContent value="circuits" className="w-full mt-0">
-                    <CircuitBuilder />
-                </TabsContent>
-                <TabsContent value="optics" className="w-full mt-0">
-                    <OpticsLab />
-                </TabsContent>
-            </CardContent>
-        </Card>
-      </Tabs>
-    </div>
-  );
 }
 
     
