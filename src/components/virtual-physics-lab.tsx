@@ -268,38 +268,30 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const maxDisplacement = useMemo(() => length * Math.sin(Math.min(60, initialAngle) * Math.PI / 180), [length, initialAngle]);
+    const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
 
-    const { viewBox, bobX, bobY, bobRadius, cordWidth, frameWidth, frameHeight, baseHeight, pivotY } = useMemo(() => {
-        const canvasHeight = 100;
-        const scaleFactor = canvasHeight / (length + 2); // Ensure length fits with padding
+    const { viewBox, scaleFactor, bobX, bobY, bobRadius, pivotY } = useMemo(() => {
+        const canvasHeight = 500; // The fixed height of our SVG area in pixels
+        const scale = canvasHeight / (length + (length * 0.2)); // Scale based on length plus some buffer
+        const viewHeight = canvasHeight;
+        const viewWidth = viewHeight * 0.8; // Maintain a pleasant aspect ratio
 
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
-        const currentBobX = length * Math.sin(currentAngleRad) * scaleFactor;
-        const currentBobY = length * Math.cos(currentAngleRad) * scaleFactor;
-        
-        const currentFrameWidth = (maxDisplacement * scaleFactor * 2) + 40;
-        const currentFrameHeight = length * scaleFactor + 20;
-        const currentBaseHeight = 10;
-        const totalHeight = currentFrameHeight + currentBaseHeight;
+        const currentBobX = length * Math.sin(currentAngleRad) * scale;
+        const currentBobY = length * Math.cos(currentAngleRad) * scale;
 
-        const currentPivotY = 10;
-
-        const viewHeight = totalHeight;
-        const viewWidth = currentFrameWidth;
+        const pivotPointY = 20;
 
         return {
             viewBox: `-${viewWidth / 2} 0 ${viewWidth} ${viewHeight}`,
+            scaleFactor: scale,
             bobX: currentBobX,
-            bobY: currentBobY + currentPivotY,
-            bobRadius: Math.max(3, 8 * Math.cbrt(mass)),
-            cordWidth: 1,
-            frameWidth: currentFrameWidth,
-            frameHeight: currentFrameHeight,
-            baseHeight: currentBaseHeight,
-            pivotY: currentPivotY
+            bobY: currentBobY + pivotPointY,
+            bobRadius: Math.max(5, 10 * Math.cbrt(mass)),
+            pivotY: pivotPointY,
         };
-    }, [length, mass, initialAngle, angularFrequency, time, maxDisplacement]);
+    }, [length, mass, initialAngle, angularFrequency, time]);
+
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -365,33 +357,32 @@ export const PendulumDynamics = () => {
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
                     <svg width="100%" height="100%" viewBox={viewBox}>
                         <defs>
-                            <radialGradient id="bobGradient2" cx="0.3" cy="0.3" r="0.7">
-                                <stop offset="0%" stopColor="#f0f0f0" />
-                                <stop offset="100%" stopColor="#a0a0a0" />
+                            <radialGradient id="bobGradient" cx="0.3" cy="0.3" r="0.7">
+                                <stop offset="0%" stopColor="#d4af37" />
+                                <stop offset="100%" stopColor="#b8860b" />
                             </radialGradient>
-                             <linearGradient id="standGradient" x1="0.5" y1="0" x2="0.5" y2="1">
-                                <stop offset="0%" stopColor="#d0d0d0" />
-                                <stop offset="100%" stopColor="#b0b0b0" />
+                             <linearGradient id="standGradient" x1="0" y1="0" x2="1" y2="0">
+                                <stop offset="0%" stopColor="#a9a9a9" />
+                                <stop offset="50%" stopColor="#d3d3d3" />
+                                <stop offset="100%" stopColor="#a9a9a9" />
                             </linearGradient>
                         </defs>
                         <g>
                              {/* Base */}
-                            <rect x={`-${frameWidth / 2 - 20}`} y={frameHeight} width={frameWidth} height={baseHeight} fill="#c2b280" rx="2" />
-                            <rect x={`-${frameWidth / 2 - 20}`} y={frameHeight + baseHeight - 2} width={frameWidth} height="2" fill="#a08f65" />
-
+                            <rect x={-150} y={480} width={300} height={20} fill="url(#standGradient)" rx="5" />
                             {/* Frame */}
-                            <rect x={`-${frameWidth / 2}`} y={pivotY} width="5" height={frameHeight - pivotY} fill="url(#standGradient)" rx="1"/>
-                            <rect x={`${frameWidth / 2 - 5}`} y={pivotY} width="5" height={frameHeight - pivotY} fill="url(#standGradient)" rx="1"/>
-                            <rect x={`-${frameWidth / 2}`} y={pivotY - 5} width={frameWidth} height="5" fill="url(#standGradient)" rx="1"/>
-
+                            <rect x={-100} y={pivotY} width="10" height={470 - pivotY} fill="url(#standGradient)" />
+                            <rect x={90} y={pivotY} width="10" height={470 - pivotY} fill="url(#standGradient)" />
+                            <rect x={-100} y={pivotY - 10} width={200} height="10" fill="url(#standGradient)" />
+                            
                             {/* Pivot */}
-                            <circle cx="0" cy={pivotY} r="3" fill="#555" />
+                            <circle cx="0" cy={pivotY} r="4" fill="#333" />
                             
                             {/* Pendulum Cord */}
-                            <line x1="0" y1={pivotY} x2={bobX} y2={bobY} stroke="#333" strokeWidth={cordWidth} />
-
+                            <line x1="0" y1={pivotY} x2={bobX} y2={bobY} stroke="#333" strokeWidth={2} />
+                            
                             {/* Pendulum Bob */}
-                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient2)" stroke="#555" strokeWidth={cordWidth / 2} />
+                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="#555" strokeWidth={1} />
                         </g>
                     </svg>
                 </CardContent>
