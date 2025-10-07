@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -46,6 +46,16 @@ const tools = [
         bgColor: 'bg-teal-100',
         textColor: 'text-teal-600',
         icon: FileTextIcon,
+    },
+    { 
+        title: 'Virtual Physics Lab', 
+        description: 'Simulate experiments like projectile motion, pendulums, and circuits.', 
+        href: '/virtual-physics-lab', 
+        category: 'Education',
+        feature: 'virtualPhysicsLab' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600',
+        icon: Atom,
     },
     { 
         title: 'JSON Beautifier', 
@@ -413,7 +423,7 @@ const features = [
     },
 ];
 
-const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness'];
+const categories = ['All', 'PDF', 'Image', 'AI / ML', 'Productivity', 'Health & Fitness', 'Education'];
 
 
 export default function Home() {
@@ -637,7 +647,5 @@ export default function Home() {
     </div>
   );
 }
-
-    
 
     
