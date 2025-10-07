@@ -2,14 +2,15 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { MoveUp, MoveRight } from 'lucide-react';
+import { MoveUp, MoveRight, Timer, Play, Pause, RotateCcw } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
+import { Button } from './ui/button';
 
 const GRAVITY = 9.81; // m/s^2
 
@@ -134,8 +135,99 @@ const ProjectileMotion = () => {
 }
 
 const PendulumDynamics = () => {
-    return <ComingSoon experimentName="Pendulum Dynamics" />;
+    const [length, setLength] = useState(1); // meters
+    const [mass, setMass] = useState(1); // kg
+    const [initialAngle, setInitialAngle] = useState(20); // degrees
+    const [time, setTime] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
+    const animationFrameId = useRef<number | null>(null);
+
+    // Calculate physics properties
+    const period = useMemo(() => 2 * Math.PI * Math.sqrt(length / GRAVITY), [length]);
+    const angularFrequency = useMemo(() => Math.sqrt(GRAVITY / length), [length]);
+    const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
+
+    const animate = useCallback((timestamp: number) => {
+        setTime(prevTime => prevTime + 16 / 1000); // approx 60fps
+        animationFrameId.current = requestAnimationFrame(animate);
+    }, []);
+    
+    useEffect(() => {
+        if (isRunning) {
+            animationFrameId.current = requestAnimationFrame(animate);
+        } else {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        }
+        return () => {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        };
+    }, [isRunning, animate]);
+
+    const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
+    const bobX = length * Math.sin(currentAngleRad);
+    const bobY = -length * Math.cos(currentAngleRad);
+
+    const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
+        <Card className="p-4 flex flex-col items-center justify-center text-center">
+            <div className="flex items-center gap-2">
+                {React.createElement(icon, { className: "h-6 w-6 text-muted-foreground" })}
+                <CardTitle className="text-lg">{label}</CardTitle>
+            </div>
+            <p className="text-3xl font-bold text-primary mt-2">{value}</p>
+            <p className="text-sm text-muted-foreground">{unit}</p>
+        </Card>
+    );
+
+    return (
+        <div className="grid md:grid-cols-1 gap-6 h-full">
+            <Card>
+                <CardHeader><CardTitle>Pendulum Controls</CardTitle></CardHeader>
+                <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
+                    <div className="space-y-2">
+                        <Label htmlFor="length">Length ({length.toFixed(1)} m)</Label>
+                        <Slider id="length" min={0.5} max={3} step={0.1} value={[length]} onValueChange={(v) => setLength(v[0])} />
+                    </div>
+                     <div className="space-y-2">
+                        <Label htmlFor="mass">Mass ({mass.toFixed(1)} kg)</Label>
+                        <Slider id="mass" min={0.1} max={5} step={0.1} value={[mass]} onValueChange={(v) => setMass(v[0])} />
+                    </div>
+                    <div className="space-y-2">
+                        <Label htmlFor="angle">Initial Angle ({initialAngle.toFixed(1)}°)</Label>
+                        <Slider id="angle" min={1} max={60} step={1} value={[initialAngle]} onValueChange={(v) => { setInitialAngle(v[0]); setTime(0); }} />
+                    </div>
+                </CardContent>
+            </Card>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <StatCard icon={Timer} label="Period" value={period.toFixed(2)} unit="seconds" />
+                <StatCard icon={MoveRight} label="Max Speed" value={maxSpeed.toFixed(2)} unit="m/s" />
+            </div>
+
+            <Card className="h-[60vh] flex flex-col">
+                <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
+                    <svg width="100%" height="100%" viewBox="-3 3 -6 6">
+                        <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
+                        <circle cx={bobX} cy={bobY} r={0.2 * Math.sqrt(mass)} fill="hsl(var(--primary))" />
+                        <line x1="-3" y1="0" x2="3" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.1" />
+                    </svg>
+                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
+                        <Button onClick={() => setIsRunning(!isRunning)} variant="outline" size="lg">
+                            {isRunning ? <><Pause className="mr-2"/> Pause</> : <><Play className="mr-2"/> Start</>}
+                        </Button>
+                        <Button onClick={() => { setIsRunning(false); setTime(0); }} variant="outline" size="lg">
+                            <RotateCcw className="mr-2"/> Reset
+                        </Button>
+                    </div>
+                </CardContent>
+            </Card>
+        </div>
+    );
 }
+
 const CircuitBuilder = () => {
     return <ComingSoon experimentName="Circuit Building" />;
 }
