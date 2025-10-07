@@ -170,7 +170,9 @@ export default function GraphingCalculator() {
 
     const removeEquation = (id: number) => {
         if (equations.length === 1) return;
-        setEquations(equations.filter(eq => eq.id !== id));
+        const newEquations = equations.filter(eq => eq.id !== id);
+        setEquations(newEquations);
+        setPlottedEquations(newEquations); // Update the plotted equations as well
     };
 
 
