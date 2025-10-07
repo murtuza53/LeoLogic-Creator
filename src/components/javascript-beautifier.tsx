@@ -26,7 +26,7 @@ const JavascriptBeautifier = () => {
       let result = '';
       let inString = false;
       let stringChar = '';
-      let inComment = false; // 'single' or 'multi'
+      let inComment: 'single' | 'multi' | false = false;
       let inRegex = false;
 
       for (let i = 0; i < jsInput.length; i++) {
@@ -84,8 +84,8 @@ const JavascriptBeautifier = () => {
           continue;
         }
         
-        const operatorChars = '(){}[]+-*/%=&|<>!~^,;?';
-        if (char === '/' && !operatorChars.includes(jsInput.substring(i - 1, i).trim())) {
+        const expressionEndChars = ' \n\t(){}[];=,';
+        if (char === '/' && expressionEndChars.includes(prevChar)) {
             inRegex = true;
             result += char;
             continue;
@@ -124,13 +124,18 @@ const JavascriptBeautifier = () => {
     if (!jsString) return null;
     if (error) return <span className="text-destructive">{jsString}</span>;
 
-    return jsString
+    let safeString = jsString
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;');
+
+    return safeString
       .replace(/(\/\*[\s\S]*?\*\/|\/\/.*)/g, '<span class="text-gray-500 dark:text-gray-400">$1</span>') // comments
-      .replace(/('.*?'|".*?"|`.*?`)/g, '<span class="text-green-600 dark:text-green-400">$1</span>') // strings
+      .replace(/('.*?'|".*?"|`.*?`)/gs, '<span class="text-green-600 dark:text-green-400">$1</span>') // strings
       .replace(/\b(const|let|var|function|return|if|else|for|while|switch|case|break|new|this|import|from|export|default|async|await|try|catch|finally)\b/g, '<span class="text-purple-600 dark:text-purple-400 font-medium">$1</span>') // keywords
       .replace(/\b(true|false|null|undefined)\b/g, '<span class="text-blue-500 dark:text-blue-400">$1</span>') // booleans and null
       .replace(/\b([A-Z][a-zA-Z0-9_]*)\b/g, '<span class="text-teal-600 dark:text-teal-400">$1</span>') // Class names
-      .replace(/(\d+)/g, '<span class="text-orange-600 dark:text-orange-400">$1</span>') // numbers
+      .replace(/(-?\d+(\.\d+)?)/g, '<span class="text-orange-600 dark:text-orange-400">$1</span>') // numbers
       .replace(/([a-zA-Z0-9_]+)(?=\()/g, '<span class="text-yellow-600 dark:text-yellow-500">$1</span>') // function calls
       .replace(/(\(|\)|\{|\}|\[|\])/g, '<span class="text-foreground/80">$1</span>'); // brackets
   };
@@ -203,5 +208,3 @@ const JavascriptBeautifier = () => {
 };
 
 export default JavascriptBeautifier;
-
-    
