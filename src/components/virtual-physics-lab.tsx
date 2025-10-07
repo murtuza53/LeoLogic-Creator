@@ -104,17 +104,19 @@ export const ProjectileMotion = () => {
         setPathData([]);
     };
     
-    const { viewBoxWidth, viewBoxHeight, scale, groundY, cannonX } = useMemo(() => {
-        const vbWidth = maxRange > 0 ? maxRange * 1.1 : 100;
-        const vbHeight = maxHeight > 0 ? maxHeight * 1.2 : 50;
+    const { viewBoxWidth, viewBoxHeight, cannonX, cannonY, cannonWidth, cannonHeight, wheelRadius } = useMemo(() => {
+        const fixedWidth = 400;
+        const fixedHeight = 200;
         return {
-            viewBoxWidth: vbWidth,
-            viewBoxHeight: vbHeight,
-            scale: 1, // We now use viewBox for scaling
-            groundY: vbHeight * 0.9,
-            cannonX: vbWidth * 0.02,
+            viewBoxWidth: fixedWidth,
+            viewBoxHeight: fixedHeight,
+            cannonX: 10,
+            cannonY: fixedHeight * 0.1, // Positioned on the ground
+            cannonWidth: 20,
+            cannonHeight: 6,
+            wheelRadius: 4,
         };
-    }, [maxRange, maxHeight]);
+    }, []);
 
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
@@ -137,7 +139,7 @@ export const ProjectileMotion = () => {
                 <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
                     <div className="space-y-2">
                         <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
-                        <Slider disabled={isSimulating} id="velocity" min={10} max={60} step={1} value={[initialVelocity]} onValueChange={(v) => { resetSimulation(); setInitialVelocity(v[0]); }} />
+                        <Slider disabled={isSimulating} id="velocity" min={10} max={100} step={1} value={[initialVelocity]} onValueChange={(v) => { resetSimulation(); setInitialVelocity(v[0]); }} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="angle">Launch Angle ({angle.toFixed(1)}°)</Label>
@@ -166,41 +168,41 @@ export const ProjectileMotion = () => {
                             <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.3},${viewBoxHeight * 0.15} ${viewBoxWidth * 0.6},${viewBoxHeight * 0.08} ${viewBoxWidth + 5},${viewBoxHeight * 0.1} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="#dcedc1" />
 
                             {/* House */}
-                             <g transform={`translate(${viewBoxWidth * 0.65}, ${viewBoxHeight * 0.08}) scale(0.005)`}>
+                             <g transform={`translate(${viewBoxWidth * 0.65}, ${viewBoxHeight * 0.08}) scale(0.025)`}>
                                 <rect x="0" y="0" width="100" height="60" fill="#f7d8a3" />
                                 <polygon points="0,60 100,60 50,100" fill="#c0392b" />
                                 <rect x="40" y="10" width="20" height="30" fill="#89cff0" />
                             </g>
 
                             {/* Ground */}
-                            <line x1="0" y1={viewBoxHeight * 0.1} x2={viewBoxWidth} y2={viewBoxHeight * 0.1} stroke="#6B8E23" strokeWidth={viewBoxHeight * 0.005} />
+                            <line x1="0" y1={cannonY} x2={viewBoxWidth} y2={cannonY} stroke="#6B8E23" strokeWidth="1" />
                             
                             {/* Cannon */}
-                            <g transform={`translate(${cannonX}, ${viewBoxHeight * 0.1})`}>
+                            <g transform={`translate(${cannonX}, ${cannonY})`}>
                                 <g transform={`rotate(${angle})`}>
-                                    <rect x="-0.5" y={-viewBoxHeight * 0.015} width={viewBoxWidth * 0.05} height={viewBoxHeight * 0.03} fill="hsl(var(--foreground))" rx={viewBoxHeight * 0.01}/>
+                                    <rect x="-2" y={-cannonHeight / 2} width={cannonWidth} height={cannonHeight} fill="hsl(var(--foreground))" rx="2"/>
                                 </g>
-                                <circle cx="0" cy="0" r={viewBoxHeight * 0.04} fill="hsl(var(--foreground))" />
-                                <circle cx={-viewBoxWidth * 0.01} cy={-viewBoxHeight * 0.01} r={viewBoxHeight * 0.02} fill="hsl(var(--muted-foreground))" />
-                                <circle cx={viewBoxWidth * 0.01} cy={-viewBoxHeight * 0.01} r={viewBoxHeight * 0.02} fill="hsl(var(--muted-foreground))" />
+                                <circle cx="0" cy="0" r={wheelRadius * 1.5} fill="hsl(var(--foreground))" />
+                                <circle cx={-wheelRadius * 1.8} cy={-wheelRadius * 0.5} r={wheelRadius} fill="hsl(var(--muted-foreground))" />
+                                <circle cx={wheelRadius * 1.8} cy={-wheelRadius * 0.5} r={wheelRadius} fill="hsl(var(--muted-foreground))" />
                             </g>
                             
                             {/* Trajectory Path */}
                             {pathData.length > 1 && (
                                 <path 
-                                    d={`M ${cannonX + pathData[0].x} ${viewBoxHeight * 0.1 + pathData[0].y} ` + pathData.map(p => `L ${cannonX + p.x} ${viewBoxHeight * 0.1 + p.y}`).join(' ')}
+                                    d={`M ${cannonX + pathData[0].x} ${cannonY + pathData[0].y} ` + pathData.map(p => `L ${cannonX + p.x} ${cannonY + p.y}`).join(' ')}
                                     fill="none"
                                     stroke="hsl(var(--primary))"
-                                    strokeWidth={viewBoxHeight * 0.005}
-                                    strokeDasharray="0.2 0.2"
+                                    strokeWidth={0.5}
+                                    strokeDasharray="1 1"
                                 />
                             )}
 
                             {/* Cannonball */}
                             <circle 
                                 cx={cannonX + ballPosition.x} 
-                                cy={viewBoxHeight * 0.1 + ballPosition.y} 
-                                r={viewBoxHeight * 0.015}
+                                cy={cannonY + ballPosition.y} 
+                                r="2.5"
                                 fill="hsl(var(--destructive))" 
                             />
                         </g>
@@ -439,3 +441,4 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
+
