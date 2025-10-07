@@ -17,7 +17,7 @@ const evaluateExpression = (expression: string, x: number): number => {
         const sanitizedExpression = expression
             .replace(/\s+/g, '') // Remove all whitespace
             .replace(/\^/g, '**')
-            .replace(/(\d+)(x|sin|cos|tan|sqrt|log|ln|pi|e)/g, '$1*$2') // Add multiplication for implicit cases like 2x or 2sin(x)
+            .replace(/(\d+(\.\d+)?)(x|sin|cos|tan|sqrt|log|ln|pi|e)/g, '$1*$3') // Add multiplication for implicit cases like 2x or 2.5sin(x)
             .replace(/sin/g, 'Math.sin')
             .replace(/cos/g, 'Math.cos')
             .replace(/tan/g, 'Math.tan')
@@ -99,7 +99,7 @@ export default function GraphingCalculator() {
             </Card>
 
             <Card className="shadow-lg">
-                <CardContent className="p-2 sm:p-6 h-[50vh]">
+                <CardContent className="p-2 sm:p-6 h-[60vh]">
                      <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={data}
@@ -114,8 +114,8 @@ export default function GraphingCalculator() {
                                 label={{ value: 'x', position: 'insideBottomRight', offset: 0 }}
                             />
                             <YAxis 
-                                allowDataOverflow={true}
                                 domain={['auto', 'auto']}
+                                tickCount={10}
                                 label={{ value: 'y', position: 'insideTopLeft', offset: -5 }}
                             />
                             <Tooltip 
