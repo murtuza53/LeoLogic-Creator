@@ -9,11 +9,13 @@ import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2, Info } from 
 import { useRouter } from 'next/navigation';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
+import { cn } from '@/lib/utils';
 
 const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/webp"];
 
 export default function ImageToIconConverter() {
   const [isLoading, setIsLoading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const [originalImage, setOriginalImage] = useState<{file: File, previewUrl: string} | null>(null);
   const [processedIco, setProcessedIco] = useState<string | null>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);
@@ -29,8 +31,7 @@ export default function ImageToIconConverter() {
     if(fileInputRef.current) fileInputRef.current.value = "";
   }
 
-  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    const file = event.target.files?.[0];
+  const handleFile = (file: File | null) => {
     if (!file) return;
 
     if (!ACCEPTED_IMAGE_TYPES.includes(file.type)) {
@@ -45,7 +46,30 @@ export default function ImageToIconConverter() {
     });
     setProcessedIco(null);
   };
+
+  const handleFileChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    handleFile(event.target.files?.[0] || null);
+  };
   
+  const handleDrop = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+    handleFile(event.dataTransfer.files?.[0] || null);
+  };
+
+  const handleDragOver = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(true);
+  };
+
+  const handleDragLeave = (event: React.DragEvent<HTMLDivElement>) => {
+    event.preventDefault();
+    event.stopPropagation();
+    setIsDragging(false);
+  };
+
   const getBase64 = (file: File): Promise<string> => {
       return new Promise((resolve, reject) => {
           const reader = new FileReader();
@@ -126,8 +150,14 @@ export default function ImageToIconConverter() {
         </AlertDescription>
       </Alert>
       <Card 
-          className="relative flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-10 hover:border-primary/50 transition-colors cursor-pointer shadow-inner"
+          className={cn(
+            "relative flex justify-center rounded-lg border-2 border-dashed border-input px-6 py-10 hover:border-primary/50 transition-colors cursor-pointer shadow-inner",
+            isDragging && "border-primary bg-primary/10"
+          )}
           onClick={() => fileInputRef.current?.click()}
+          onDrop={handleDrop}
+          onDragOver={handleDragOver}
+          onDragLeave={handleDragLeave}
       >
           <div className="text-center">
             <UploadCloud className="mx-auto h-12 w-12 text-muted-foreground" />
