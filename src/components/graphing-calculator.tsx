@@ -107,7 +107,7 @@ export default function GraphingCalculator() {
                             data={data}
                             margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                         >
-                            <CartesianGrid strokeDasharray="3 3" />
+                            <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 0, 0, 0.2)" />
                             <XAxis 
                                 dataKey="x" 
                                 type="number" 
