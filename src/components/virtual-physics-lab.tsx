@@ -3,14 +3,16 @@
 
 import * as React from 'react';
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
+import { useSearchParams } from 'next/navigation';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer } from 'lucide-react';
+import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer, Blend, TestTube, Atom, Wind } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
+import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
 const GRAVITY = 9.81; // m/s^2
 
@@ -25,7 +27,15 @@ const ComingSoon = ({ experimentName }: { experimentName: string }) => (
 const ProjectileMotion = () => {
     const [initialVelocity, setInitialVelocity] = useState(25);
     const [angle, setAngle] = useState(45);
+    const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('projectileMotion');
     
+    useEffect(() => {
+      if (isUserLoading) return;
+      if (!checkLimit()) return;
+      incrementUsage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isUserLoading]);
+
     const timeOfFlight = useMemo(() => (2 * initialVelocity * Math.sin(angle * Math.PI / 180)) / GRAVITY, [initialVelocity, angle]);
     const maxRange = useMemo(() => (initialVelocity * initialVelocity * Math.sin(2 * angle * Math.PI / 180)) / GRAVITY, [initialVelocity, angle]);
     const maxHeight = useMemo(() => Math.pow(initialVelocity * Math.sin(angle * Math.PI / 180), 2) / (2 * GRAVITY), [initialVelocity, angle]);
@@ -142,6 +152,14 @@ const PendulumDynamics = () => {
     const [isRunning, setIsRunning] = useState(false);
     const animationFrameId = useRef<number | null>(null);
     const lastTimeRef = useRef<number | null>(null);
+    const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('pendulumDynamics');
+    
+    useEffect(() => {
+      if (isUserLoading) return;
+      if (!checkLimit()) return;
+      incrementUsage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isUserLoading]);
 
 
     // Calculate physics properties
@@ -246,22 +264,39 @@ const PendulumDynamics = () => {
 }
 
 const CircuitBuilder = () => {
+    const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('circuitBuilding');
+    useEffect(() => {
+        if (isUserLoading) return;
+        if (!checkLimit()) return;
+        incrementUsage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isUserLoading]);
     return <ComingSoon experimentName="Circuit Building" />;
 }
 const OpticsLab = () => {
+    const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('opticsLab');
+    useEffect(() => {
+        if (isUserLoading) return;
+        if (!checkLimit()) return;
+        incrementUsage();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
 
 export default function VirtualPhysicsLab() {
+  const searchParams = useSearchParams();
+  const initialSim = searchParams.get('sim') || 'projectile';
+  const [activeTab, setActiveTab] = useState(initialSim);
 
   return (
     <div className="mt-8">
-      <Tabs defaultValue="projectile" className="w-full">
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
         <TabsList className="grid w-full grid-cols-2 md:grid-cols-4">
-          <TabsTrigger value="projectile">Projectile Motion</TabsTrigger>
-          <TabsTrigger value="pendulum">Pendulum Dynamics</TabsTrigger>
-          <TabsTrigger value="circuits">Circuit Building</TabsTrigger>
-          <TabsTrigger value="optics">Optics</TabsTrigger>
+          <TabsTrigger value="projectile"><Wind className="mr-2 h-4 w-4"/>Projectile Motion</TabsTrigger>
+          <TabsTrigger value="pendulum"><TestTube className="mr-2 h-4 w-4"/>Pendulum Dynamics</TabsTrigger>
+          <TabsTrigger value="circuits"><Atom className="mr-2 h-4 w-4"/>Circuit Building</TabsTrigger>
+          <TabsTrigger value="optics"><Blend className="mr-2 h-4 w-4"/>Optics</TabsTrigger>
         </TabsList>
         <Card className="mt-4 shadow-lg">
             <CardContent className="p-6 min-h-[80vh] flex">
@@ -283,3 +318,5 @@ export default function VirtualPhysicsLab() {
     </div>
   );
 }
+
+    

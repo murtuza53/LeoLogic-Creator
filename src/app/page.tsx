@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -48,14 +48,44 @@ const tools = [
         icon: FileTextIcon,
     },
     { 
-        title: 'Virtual Physics Lab', 
-        description: 'Simulate experiments like projectile motion, pendulums, and circuits.', 
-        href: '/virtual-physics-lab', 
+        title: 'Projectile Motion', 
+        description: 'Simulate projectile trajectories with adjustable parameters.', 
+        href: '/virtual-physics-lab?sim=projectile', 
         category: 'Education',
-        feature: 'virtualPhysicsLab' as Feature,
+        feature: 'projectileMotion' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600',
+        icon: Wind,
+    },
+    { 
+        title: 'Pendulum Dynamics', 
+        description: 'Explore the physics of a simple pendulum in motion.', 
+        href: '/virtual-physics-lab?sim=pendulum', 
+        category: 'Education',
+        feature: 'pendulumDynamics' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600',
+        icon: TestTube,
+    },
+    { 
+        title: 'Circuit Building', 
+        description: 'Design and test virtual electrical circuits.', 
+        href: '/virtual-physics-lab?sim=circuits', 
+        category: 'Education',
+        feature: 'circuitBuilding' as Feature,
         bgColor: 'bg-blue-100',
         textColor: 'text-blue-600',
         icon: Atom,
+    },
+    { 
+        title: 'Optics Lab', 
+        description: 'Experiment with lenses, mirrors, and light rays.', 
+        href: '/virtual-physics-lab?sim=optics', 
+        category: 'Education',
+        feature: 'opticsLab' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600',
+        icon: Blend,
     },
     { 
         title: 'JSON Beautifier', 
@@ -647,5 +677,7 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     

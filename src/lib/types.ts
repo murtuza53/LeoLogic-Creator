@@ -36,6 +36,10 @@ export type Feature =
   | 'jsonToCsv'
   | 'advancedWordCounter'
   | 'graphingCalculator'
+  | 'projectileMotion'
+  | 'pendulumDynamics'
+  | 'circuitBuilding'
+  | 'opticsLab'
   | 'virtualPhysicsLab';
 
 export type ContactMessage = {
@@ -49,6 +53,8 @@ export type UserProfile = {
   name: string;
   email: string;
 };
+
+    
 
     
 
