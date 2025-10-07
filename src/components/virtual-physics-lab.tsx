@@ -16,7 +16,7 @@ const GRAVITY = 9.81; // m/s^2
 
 export const ComingSoon = ({ experimentName }: { experimentName: string }) => (
     <div className="flex flex-col items-center justify-center h-full text-center p-8 border-2 border-dashed rounded-lg bg-muted/50 mt-8">
-      <h3 className="text-2xl font-semibold mb-2">{experimentName} Simulation</h3>
+      <h3 className="text-2xl font-semibold mb-2">{experimentName}</h3>
       <p className="text-muted-foreground">This feature is coming soon. Stay tuned!</p>
     </div>
 );
@@ -119,6 +119,7 @@ export const ProjectileMotion = () => {
                                 allowDataOverflow={true}
                             />
                             <Tooltip formatter={(value: number) => value.toFixed(2)} />
+                            <ReferenceLine y={0} stroke="hsl(var(--destructive))" strokeWidth={1.5} />
                             <Line 
                                 type="monotone" 
                                 dataKey="y" 
@@ -229,9 +230,17 @@ export const PendulumDynamics = () => {
         const startY = length * Math.cos(startAngle);
         const endX = length * Math.sin(endAngle);
         const endY = length * Math.cos(endAngle);
-        const largeArcFlag = Math.abs(endAngle - startAngle) <= Math.PI ? "0" : "1";
-        return `M ${startX} ${startY} A ${length} ${length} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
+        // Sweep flag should be 0 for arcs less than 180 degrees
+        return `M ${startX} ${startY} A ${length} ${length} 0 0 0 ${endX} ${endY}`;
     }, [initialAngle, length]);
+
+    const viewBox = useMemo(() => {
+        const padding = 0.5;
+        const width = (length + padding) * 2;
+        const height = length + padding;
+        return `-${width / 2} -${padding} ${width} ${height}`;
+    }, [length]);
+
 
     return (
         <div className="mt-8 space-y-6">
@@ -269,7 +278,7 @@ export const PendulumDynamics = () => {
 
             <Card className="h-[50vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox="-3 -0.5 6 4">
+                    <svg width="100%" height="100%" viewBox={viewBox}>
                          <defs>
                             <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
                                 <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
@@ -281,7 +290,7 @@ export const PendulumDynamics = () => {
                              <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
                              <circle cx={bobX} cy={bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                         </g>
-                        <line x1="-3" y1="0" x2="3" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                        <line x1="-100" y1="0" x2="100" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
                 </CardContent>
             </Card>
@@ -295,7 +304,7 @@ export const PendulumDynamics = () => {
                         <LineChart data={positionHistory}>
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis dataKey="time" type="number" domain={[0, 'dataMax']} unit="s" name="Time" tickFormatter={(tick) => tick.toFixed(1)} />
-                            <YAxis domain={[-maxDisplacement * 1.1, maxDisplacement * 1.1]} unit="m" name="Position" />
+                            <YAxis domain={[-maxDisplacement * 1.1, maxDisplacement * 1.1]} unit="m" name="Position" tickFormatter={(tick) => tick.toFixed(1)}/>
                             <Tooltip formatter={(value: number) => value.toFixed(3)} labelFormatter={(label: number) => `Time: ${label.toFixed(2)}s`} />
                             <ReferenceLine y={0} stroke="hsl(var(--border))" />
                              <Line type="monotone" dataKey="x" stroke="hsl(var(--primary))" dot={false} strokeWidth={2} name="Horizontal Position" />
