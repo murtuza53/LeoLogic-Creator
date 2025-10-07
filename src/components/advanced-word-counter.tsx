@@ -9,6 +9,10 @@ import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/com
 import { Clipboard, ClipboardCheck, Trash2, BarChart, Clock, CaseSensitive, Hash, SortAsc, Pilcrow, BookOpen, Mic, BrainCircuit } from 'lucide-react';
 import { Progress } from './ui/progress';
 import { Badge } from './ui/badge';
+import { useUser } from '@/firebase';
+import Link from 'next/link';
+import { Skeleton } from './ui/skeleton';
+import { FormDescription } from './ui/form';
 
 type DetailedStats = {
   // Time Metrics
@@ -69,6 +73,7 @@ export default function AdvancedWordCounter() {
   const [copied, setCopied] = useState(false);
   const [showAnalysis, setShowAnalysis] = useState(false);
   const { toast } = useToast();
+  const { user, isUserLoading } = useUser();
 
   const stats: DetailedStats = useMemo(() => {
     const trimmedText = text.trim();
@@ -162,11 +167,23 @@ export default function AdvancedWordCounter() {
   };
   
   const handleAnalyze = () => {
-      if (!text.trim()) {
-          toast({ variant: 'destructive', title: 'No text to analyze' });
-          return;
-      }
-      setShowAnalysis(true);
+    if (isUserLoading) {
+      toast({ description: "Checking user status..."});
+      return;
+    }
+    if (!user) {
+        toast({
+            title: "Feature Locked",
+            description: "Please sign up for a free account to use the detailed analysis.",
+            action: <Button asChild><Link href="/signup">Sign Up</Link></Button>
+        });
+        return;
+    }
+    if (!text.trim()) {
+        toast({ variant: 'destructive', title: 'No text to analyze' });
+        return;
+    }
+    setShowAnalysis(true);
   }
 
   const formatTime = (seconds: number) => {
@@ -195,9 +212,18 @@ export default function AdvancedWordCounter() {
               <RealTimeStat label="Reading Time" value={formatTime(stats.readingTime)} />
           </div>
           <div className="p-6 pt-4 border-t flex flex-wrap justify-between items-center gap-4">
-            <Button onClick={handleAnalyze}>
-                <BarChart className="mr-2 h-4 w-4" /> Show Detailed Analysis
-            </Button>
+            <div className="flex flex-col">
+              <Button onClick={handleAnalyze} disabled={isUserLoading}>
+                  <BarChart className="mr-2 h-4 w-4" /> Show Detailed Analysis
+              </Button>
+              {isUserLoading ? (
+                <Skeleton className='h-4 w-48 mt-2' />
+              ) : !user && (
+                <p className="text-xs text-muted-foreground mt-2">
+                  <Link href="/signup" className="text-primary underline">Sign up</Link> for free to unlock this feature.
+                </p>
+              )}
+            </div>
             <div className='flex gap-2'>
               <Button variant="outline" onClick={handleCopy} disabled={!text}>
                 {copied ? <ClipboardCheck className="mr-2" /> : <Clipboard className="mr-2" />}
