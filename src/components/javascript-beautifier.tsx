@@ -22,71 +22,98 @@ const JavascriptBeautifier = () => {
     }
 
     try {
-      // Basic formatting logic, not a full parser
       let indentLevel = 0;
+      let result = '';
       let inString = false;
-      let inComment = false;
+      let stringChar = '';
+      let inComment = false; // 'single' or 'multi'
       let inRegex = false;
-      let formattedCode = '';
 
       for (let i = 0; i < jsInput.length; i++) {
         const char = jsInput[i];
-        const nextChar = jsInput[i + 1] || '';
+        const prevChar = i > 0 ? jsInput[i - 1] : '';
+        const nextChar = i < jsInput.length - 1 ? jsInput[i + 1] : '';
+        const currentLine = result.substring(result.lastIndexOf('\n') + 1);
 
-        // Handle comments
-        if (!inString) {
-          if (char === '/' && nextChar === '/') {
-            inComment = 'single';
-          } else if (char === '/' && nextChar === '*') {
-            inComment = 'multi';
+        if (inString) {
+          result += char;
+          if (char === stringChar && prevChar !== '\\') {
+            inString = false;
           }
+          continue;
         }
 
         if (inComment) {
-          formattedCode += char;
-          if ((inComment === 'single' && char === '\n') || (inComment === 'multi' && char === '*' && nextChar === '/')) {
+          result += char;
+          if (
+            (inComment === 'single' && char === '\n') ||
+            (inComment === 'multi' && char === '/' && prevChar === '*')
+          ) {
             inComment = false;
-            if (inComment === 'multi') {
-              formattedCode += '/';
-              i++;
+            if (char === '\n') {
+                 result += '\t'.repeat(indentLevel);
             }
           }
           continue;
-        }
-
-        // Handle strings
-        if (char === "'" || char === '"' || char === '`') {
-          if (inString === char) {
-            inString = false;
-          } else if (!inString) {
-            inString = char;
-          }
         }
         
-        if (inString) {
-          formattedCode += char;
+        if (inRegex) {
+            result += char;
+            if (char === '/' && prevChar !== '\\') {
+                inRegex = false;
+            }
+            continue;
+        }
+
+        if (char === '/' && nextChar === '/') {
+          inComment = 'single';
+          result += char;
           continue;
         }
 
-        // Handle indentation
+        if (char === '/' && nextChar === '*') {
+          inComment = 'multi';
+          result += char;
+          continue;
+        }
+
+        if (char === "'" || char === '"' || char === '`') {
+          inString = true;
+          stringChar = char;
+          result += char;
+          continue;
+        }
+        
+        const operatorChars = '(){}[]+-*/%=&|<>!~^,;?';
+        if (char === '/' && !operatorChars.includes(jsInput.substring(i - 1, i).trim())) {
+            inRegex = true;
+            result += char;
+            continue;
+        }
+
         if (char === '{' || char === '[') {
-          formattedCode += char + '\n' + '\t'.repeat(++indentLevel);
+          result += char + '\n' + '\t'.repeat(++indentLevel);
         } else if (char === '}' || char === ']') {
-          formattedCode += '\n' + '\t'.repeat(--indentLevel) + char;
+          result = result.trimEnd() + '\n' + '\t'.repeat(--indentLevel) + char;
         } else if (char === ';') {
-          formattedCode += char + '\n' + '\t'.repeat(indentLevel);
+          result += char + '\n' + '\t'.repeat(indentLevel);
         } else if (char === '\n') {
-           if (jsInput.substr(i+1,1).match(/[^\s]/)) {
-                formattedCode += '\n' + '\t'.repeat(indentLevel);
-            }
+           if (result.trim().length > 0 && !result.endsWith('\n')) {
+              result += '\n' + '\t'.repeat(indentLevel);
+           }
         } else {
-          formattedCode += char;
+            if (currentLine.trim() === '' && char.trim() !== '') {
+                result += '\t'.repeat(indentLevel);
+            }
+            result += char;
         }
       }
-      
+
       setError(null);
-      // Clean up extra newlines
-      return formattedCode.replace(/\n\s*\n/g, '\n').trim();
+      return result
+        .replace(/\n\s*\n/g, '\n') // remove multiple blank lines
+        .replace(/(\t*)\}\n\s*(else|catch|finally)/g, '$1} $2') // put else on same line as }
+        .trim();
     } catch (e) {
       setError('Could not format JavaScript. Please check for syntax errors.');
       return jsInput;
@@ -176,3 +203,5 @@ const JavascriptBeautifier = () => {
 };
 
 export default JavascriptBeautifier;
+
+    
