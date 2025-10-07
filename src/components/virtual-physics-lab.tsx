@@ -7,7 +7,7 @@ import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
@@ -40,22 +40,18 @@ export const ProjectileMotion = () => {
 
     const fullPath = useMemo(() => {
         const points = [];
-        for (let t = 0; t <= timeOfFlight; t += timeOfFlight / 100) {
+        const steps = 100;
+        for (let i = 0; i <= steps; i++) {
+             const t = (timeOfFlight / steps) * i;
              const x = initialVelocity * Math.cos(angle * Math.PI / 180) * t;
              const y = initialVelocity * Math.sin(angle * Math.PI / 180) * t - 0.5 * GRAVITY * t * t;
-             if (y >= 0) {
-                points.push({x, y});
-             }
-        }
-        if (points.length > 0 && points[points.length-1].y !== 0 && timeOfFlight > 0) {
-            const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
-            points.push({x: finalX, y: 0});
+             points.push({x, y});
         }
         return points;
     }, [initialVelocity, angle, timeOfFlight]);
 
-    const domainX = [0, Math.ceil(maxRange * 1.1) || 10];
-    const domainY = [0, Math.ceil(maxHeight * 1.1) || 10];
+    const domainX = [0, Math.ceil(maxRange / 10) * 10 + 10];
+    const domainY = [0, Math.ceil(maxHeight / 5) * 5 + 5];
 
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
@@ -140,11 +136,13 @@ export const ProjectileMotion = () => {
 }
 
 export const PendulumDynamics = () => {
-    const [length, setLength] = useState(1); // meters
+    const [length, setLength] = useState(1.5); // meters
     const [mass, setMass] = useState(1); // kg
-    const [initialAngle, setInitialAngle] = useState(20); // degrees
+    const [initialAngle, setInitialAngle] = useState(30); // degrees
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
+    const [positionHistory, setPositionHistory] = useState<{time: number, x: number}[]>([]);
+
     const animationFrameId = useRef<number | null>(null);
     const lastTimeRef = useRef<number | null>(null);
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('pendulumDynamics');
@@ -156,20 +154,25 @@ export const PendulumDynamics = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserLoading]);
 
-
-    // Calculate physics properties
     const period = useMemo(() => 2 * Math.PI * Math.sqrt(length / GRAVITY), [length]);
     const angularFrequency = useMemo(() => Math.sqrt(GRAVITY / length), [length]);
     const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
+    const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
 
     const animate = useCallback((timestamp: number) => {
         if (lastTimeRef.current !== null) {
             const deltaTime = (timestamp - lastTimeRef.current) / 1000;
-            setTime(prevTime => prevTime + deltaTime);
+            setTime(prevTime => {
+                const newTime = prevTime + deltaTime;
+                const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * newTime);
+                const bobX = length * Math.sin(currentAngleRad);
+                setPositionHistory(prevHistory => [...prevHistory, { time: newTime, x: bobX }]);
+                return newTime;
+            });
         }
         lastTimeRef.current = timestamp;
         animationFrameId.current = requestAnimationFrame(animate);
-    }, []);
+    }, [angularFrequency, initialAngle, length]);
     
     useEffect(() => {
         if (isRunning) {
@@ -191,12 +194,12 @@ export const PendulumDynamics = () => {
 
     const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
     const bobX = length * Math.sin(currentAngleRad);
-    const bobY = -length * Math.cos(currentAngleRad);
+    const bobY = length * Math.cos(currentAngleRad);
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-2">
-                {React.createElement(icon, { className: "h-6 w-6 text-muted-foreground" })}
+                {React.createElement(icon, {className: "h-6 w-6 text-muted-foreground"})}
                 <CardTitle className="text-lg">{label}</CardTitle>
             </div>
             <p className="text-3xl font-bold text-primary mt-2">{value}</p>
@@ -210,7 +213,25 @@ export const PendulumDynamics = () => {
         setIsRunning(false);
       }
       setTime(0);
+      setPositionHistory([]);
     }
+    
+    const resetSimulation = () => {
+        setIsRunning(false);
+        setTime(0);
+        setPositionHistory([]);
+    }
+    
+    const arcPath = useMemo(() => {
+        const startAngle = -initialAngle * Math.PI / 180;
+        const endAngle = initialAngle * Math.PI / 180;
+        const startX = length * Math.sin(startAngle);
+        const startY = length * Math.cos(startAngle);
+        const endX = length * Math.sin(endAngle);
+        const endY = length * Math.cos(endAngle);
+        const largeArcFlag = Math.abs(endAngle - startAngle) <= Math.PI ? "0" : "1";
+        return `M ${startX} ${startY} A ${length} ${length} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
+    }, [initialAngle, length]);
 
     return (
         <div className="mt-8 space-y-6">
@@ -237,27 +258,56 @@ export const PendulumDynamics = () => {
                 <StatCard icon={MoveRight} label="Max Speed" value={maxSpeed.toFixed(2)} unit="m/s" />
             </div>
 
-            <div className="flex justify-center gap-2 my-4">
+            <div className="flex justify-center gap-2">
                 <Button onClick={() => setIsRunning(!isRunning)} variant="outline" size="lg">
                     {isRunning ? <><Pause className="mr-2"/> Pause</> : <><Play className="mr-2"/> Start</>}
                 </Button>
-                <Button onClick={() => { setIsRunning(false); setTime(0); }} variant="outline" size="lg">
+                <Button onClick={resetSimulation} variant="outline" size="lg">
                     <RotateCcw className="mr-2"/> Reset
                 </Button>
             </div>
 
-            <Card className="h-[60vh] flex flex-col">
+            <Card className="h-[50vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox="-3 -0.5 6 4">
-                        <line x1="0" y1="0" x2={bobX} y2={-bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
-                        <circle cx={bobX} cy={-bobY} r={0.2 * Math.sqrt(mass)} fill="hsl(var(--primary))" />
-                        <line x1="-3" y1="0" x2="3" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.1" />
+                    <svg width="100%" height="100%" viewBox="-3.5 -0.5 7 4">
+                         <defs>
+                            <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
+                                <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
+                                <stop offset="100%" stopColor="hsl(var(--primary))" />
+                            </radialGradient>
+                        </defs>
+                        <g transform="translate(0, 0)">
+                             <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
+                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
+                             <circle cx={bobX} cy={bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                        </g>
+                        <line x1="-3.5" y1="0" x2="3.5" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
                 </CardContent>
             </Card>
+
+            <Card className="h-[40vh]">
+                <CardHeader>
+                    <CardTitle>Position vs. Time</CardTitle>
+                </CardHeader>
+                <CardContent className="h-[80%] pr-8">
+                     <ResponsiveContainer width="100%" height="100%">
+                        <LineChart data={positionHistory}>
+                            <CartesianGrid strokeDasharray="3 3" />
+                            <XAxis dataKey="time" type="number" domain={[0, 'dataMax']} unit="s" name="Time" />
+                            <YAxis domain={[-maxDisplacement * 1.1, maxDisplacement * 1.1]} unit="m" name="Position" />
+                            <Tooltip formatter={(value: number) => value.toFixed(3)} labelFormatter={(label: number) => `Time: ${label.toFixed(2)}s`} />
+                            <ReferenceLine y={0} stroke="hsl(var(--border))" />
+                             <Line type="monotone" dataKey="x" stroke="hsl(var(--primary))" dot={false} strokeWidth={2} name="Horizontal Position" />
+                        </LineChart>
+                     </ResponsiveContainer>
+                </CardContent>
+            </Card>
+
         </div>
     );
 }
+
 
 export const CircuitBuilder = () => {
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('circuitBuilding');
@@ -279,3 +329,4 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
+
