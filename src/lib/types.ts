@@ -27,7 +27,8 @@ export type Feature =
   | 'jsonBeautifier'
   | 'cssBeautifier'
   | 'htmlBeautifier'
-  | 'javascriptBeautifier';
+  | 'javascriptBeautifier'
+  | 'excelToJson';
 
 export type ContactMessage = {
   name: string;
