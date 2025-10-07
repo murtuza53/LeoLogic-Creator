@@ -9,6 +9,7 @@ import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
 import { Play, Pause, RefreshCw, MoveUp, MoveRight, Sigma } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Dot, Customized } from 'recharts';
+import { Input } from '@/components/ui/input';
 
 const GRAVITY = 9.81; // m/s^2
 
