@@ -208,16 +208,6 @@ export const ProjectileMotion = () => {
 }
 
 export const PendulumDynamics = () => {
-    const initialValues = useRef({ length: 1.5, mass: 1, initialAngle: 30 });
-    const [length, setLength] = useState(initialValues.current.length);
-    const [mass, setMass] = useState(initialValues.current.mass);
-    const [initialAngle, setInitialAngle] = useState(initialValues.current.initialAngle);
-    const [time, setTime] = useState(0);
-    const [isRunning, setIsRunning] = useState(false);
-    const [positionHistory, setPositionHistory] = useState<{time: number, x: number}[]>([]);
-
-    const animationFrameId = useRef<number | null>(null);
-    const lastTimeRef = useRef<number | null>(null);
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('pendulumDynamics');
     
     useEffect(() => {
@@ -226,11 +216,21 @@ export const PendulumDynamics = () => {
       incrementUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserLoading]);
+    
+    const [length, setLength] = useState(1.5);
+    const [mass, setMass] = useState(1);
+    const [initialAngle, setInitialAngle] = useState(30);
+    const [time, setTime] = useState(0);
+    const [isRunning, setIsRunning] = useState(false);
+    const [positionHistory, setPositionHistory] = useState<{time: number, x: number}[]>([]);
 
+    const animationFrameId = useRef<number | null>(null);
+    const lastTimeRef = useRef<number | null>(null);
+    
     const period = useMemo(() => 2 * Math.PI * Math.sqrt(length / GRAVITY), [length]);
     const angularFrequency = useMemo(() => Math.sqrt(GRAVITY / length), [length]);
     const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
-    
+
     const animate = useCallback((timestamp: number) => {
         if (lastTimeRef.current !== null) {
             const deltaTime = (timestamp - lastTimeRef.current) / 1000;
@@ -238,14 +238,18 @@ export const PendulumDynamics = () => {
                 const newTime = prevTime + deltaTime;
                 const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * newTime);
                 const bobX = length * Math.sin(currentAngleRad);
-                setPositionHistory(prevHistory => [...prevHistory, { time: newTime, x: bobX }]);
+                setPositionHistory(prevHistory => {
+                    const newHistory = [...prevHistory, { time: newTime, x: bobX }];
+                    // Keep history to a reasonable size to avoid performance issues
+                    return newHistory.length > 500 ? newHistory.slice(newHistory.length - 500) : newHistory;
+                });
                 return newTime;
             });
         }
         lastTimeRef.current = timestamp;
         animationFrameId.current = requestAnimationFrame(animate);
     }, [angularFrequency, initialAngle, length]);
-    
+
     useEffect(() => {
         if (isRunning) {
             lastTimeRef.current = performance.now();
@@ -265,25 +269,28 @@ export const PendulumDynamics = () => {
 
     const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
 
-    const { viewBox, bobX, bobY, bobRadius, stringLength, pivotX, pivotY } = useMemo(() => {
-        const canvasSize = 500;
-        const scaleFactor = canvasSize / 4 / length; 
-        const pX = canvasSize / 2;
+    const { viewBoxWidth, viewBoxHeight, pivotX, pivotY, bobRadius, bobX, bobY, stringLength } = useMemo(() => {
+        const vh = 400;
+        const maxSwingWidth = Math.sin(60 * Math.PI / 180) * 3 * 2; // Max length 3m at 60deg
+        const vw = Math.max(vh, maxSwingWidth * 120);
+
+        const scaleFactor = vh * 0.8 / 3; // Scale based on max length of 3m
+        const pX = vw / 2;
         const pY = 20;
 
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
         
         return {
-            viewBox: `0 0 ${canvasSize} ${canvasSize}`,
+            viewBoxWidth: vw,
+            viewBoxHeight: vh,
             pivotX: pX,
             pivotY: pY,
+            bobRadius: Math.max(8, 12 * Math.cbrt(mass)),
             stringLength: length * scaleFactor,
             bobX: pX + (length * scaleFactor * Math.sin(currentAngleRad)),
             bobY: pY + (length * scaleFactor * Math.cos(currentAngleRad)),
-            bobRadius: Math.max(8, 12 * Math.cbrt(mass)),
         };
     }, [length, mass, initialAngle, angularFrequency, time]);
-
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -298,9 +305,7 @@ export const PendulumDynamics = () => {
 
     const handleInitialAngleChange = (v: number[]) => {
       setInitialAngle(v[0]);
-      if (isRunning) {
-        setIsRunning(false);
-      }
+      if (isRunning) setIsRunning(false);
       setTime(0);
       setPositionHistory([]);
     }
@@ -346,8 +351,8 @@ export const PendulumDynamics = () => {
             </div>
 
             <Card className="h-[60vh] flex flex-col">
-                <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox={viewBox}>
+                <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative bg-muted/20">
+                    <svg width="100%" height="100%" viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`}>
                         <defs>
                             <radialGradient id="bobGradientRed" cx="0.3" cy="0.3" r="0.7">
                                 <stop offset="0%" stopColor="#fca5a5" /> 
@@ -388,6 +393,13 @@ export const PendulumDynamics = () => {
     );
 }
 
+const ComingSoon = ({ experimentName }: { experimentName: string }) => (
+  <Card className="mt-8 flex flex-col items-center justify-center p-12 text-center">
+    <Pencil className="h-16 w-16 text-muted-foreground mb-4" />
+    <CardTitle className="text-2xl mb-2">{experimentName}</CardTitle>
+    <CardDescription>This experiment is currently under construction. Check back soon!</CardDescription>
+  </Card>
+);
 
 export const CircuitBuilder = () => {
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('circuitBuilding');
