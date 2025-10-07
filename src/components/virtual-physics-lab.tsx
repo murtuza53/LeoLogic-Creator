@@ -105,7 +105,7 @@ export const ProjectileMotion = () => {
     };
     
     const { viewBoxWidth, viewBoxHeight, cannonX, cannonY, cannonWidth, cannonHeight, wheelRadius } = useMemo(() => {
-        const fixedWidth = 110;
+        const fixedWidth = 1200;
         const fixedHeight = 200;
         return {
             viewBoxWidth: fixedWidth,
@@ -168,7 +168,7 @@ export const ProjectileMotion = () => {
                             <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.3},${viewBoxHeight * 0.15} ${viewBoxWidth * 0.6},${viewBoxHeight * 0.08} ${viewBoxWidth + 5},${viewBoxHeight * 0.1} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="#dcedc1" />
 
                             {/* House */}
-                             <g transform={`translate(${viewBoxWidth * 0.65}, ${viewBoxHeight * 0.08}) scale(0.2)`}>
+                             <g transform={`translate(${viewBoxWidth * 0.8}, ${viewBoxHeight * 0.1}) scale(0.2)`}>
                                 <rect x="0" y="0" width="100" height="60" fill="#f7d8a3" />
                                 <polygon points="0,60 100,60 50,100" fill="#c0392b" />
                                 <rect x="40" y="10" width="20" height="30" fill="#89cff0" />
