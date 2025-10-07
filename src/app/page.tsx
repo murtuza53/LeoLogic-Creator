@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -14,6 +14,7 @@ import Footer from '@/components/footer';
 import { useAuth, useUser, signOutUser } from '@/firebase';
 import { type Feature } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
+import { cn } from '@/lib/utils';
 
 const tools = [
     { 
@@ -436,6 +437,77 @@ export default function Home() {
                 </div>
             </div>
         </section>
+
+        <section className="w-full py-12 md:py-24 bg-background">
+            <div className="container mx-auto px-4 md:px-6">
+                <div className="flex flex-col items-center justify-center space-y-4 text-center">
+                    <div className="space-y-2">
+                        <h2 className="font-headline text-3xl font-bold tracking-tighter sm:text-4xl">Simple, Transparent Plans</h2>
+                        <p className="mx-auto max-w-[900px] text-muted-foreground md:text-xl/relaxed lg:text-base/relaxed xl:text-xl/relaxed">
+                            Start free, and sign up when you need more power.
+                        </p>
+                    </div>
+                </div>
+                <div className="mx-auto grid max-w-sm gap-8 pt-12 lg:max-w-4xl lg:grid-cols-2">
+                    <Card className="flex flex-col rounded-lg border bg-card text-card-foreground shadow-sm">
+                        <CardContent className="flex-1 p-6 space-y-6">
+                           <div className='space-y-2'>
+                                <h3 className='text-2xl font-bold'>Free</h3>
+                                <p className='text-muted-foreground'>For casual use</p>
+                           </div>
+                           <ul className='space-y-3'>
+                                <li className='flex items-center gap-3'>
+                                    <CheckCircle className='h-5 w-5 text-green-500'/>
+                                    <span>Limited daily usage for all tools</span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckCircle className='h-5 w-5 text-green-500'/>
+                                    <span>Access to all basic features</span>
+                                </li>
+                           </ul>
+                        </CardContent>
+                        <div className='p-6 pt-0'>
+                             <Button asChild className='w-full' variant="outline">
+                                <Link href="/signup">Get Started</Link>
+                            </Button>
+                        </div>
+                    </Card>
+                    <Card className="relative flex flex-col rounded-lg border bg-primary text-primary-foreground shadow-lg">
+                        <div className="absolute top-0 right-4 -translate-y-1/2 rounded-full bg-accent px-3 py-1 text-sm font-semibold text-accent-foreground">Popular</div>
+                        <CardContent className="flex-1 p-6 space-y-6">
+                           <div className='space-y-2'>
+                                <h3 className='text-2xl font-bold'>Pro</h3>
+                                <p className='text-primary-foreground/80'>For power users</p>
+                           </div>
+                           <ul className='space-y-3'>
+                                <li className='flex items-center gap-3'>
+                                    <CheckCircle className='h-5 w-5 text-green-300'/>
+                                    <span>Everything in Free</span>
+                                </li>
+                               <li className='flex items-center gap-3'>
+                                    <CheckCircle className='h-5 w-5 text-green-300'/>
+                                    <span>Unlimited Everything</span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckCircle className='h-5 w-5 text-green-300'/>
+                                    <span>Unlock advanced features</span>
+                                </li>
+                                <li className='flex items-center gap-3'>
+                                    <CheckCircle className='h-5 w-5 text-green-300'/>
+                                    <span>Priority support</span>
+                                </li>
+                           </ul>
+                        </CardContent>
+                         <div className='p-6 pt-0'>
+                             <Button asChild className='w-full bg-primary-foreground text-primary hover:bg-primary-foreground/90'>
+                                <Link href="/signup">Sign Up Now</Link>
+                            </Button>
+                        </div>
+                    </Card>
+                </div>
+            </div>
+        </section>
+
       </main>
       <Footer />
     </div>
