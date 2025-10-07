@@ -42,7 +42,6 @@ const ProjectileMotion = () => {
                 points.push({x, y});
              }
         }
-        // Ensure the last point is at y=0 if the simulation overshot slightly
         if (points.length > 0 && points[points.length-1].y !== 0) {
             const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
             points.push({x: finalX, y: 0});
@@ -55,36 +54,30 @@ const ProjectileMotion = () => {
         let animationFrameId: number;
 
         if (isRunning) {
-            const animate = () => {
-                setTime(t => {
-                    const newTime = t + 0.02;
-                    if (newTime > timeOfFlight) {
-                        setIsRunning(false);
-                        const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
-                        setPath(prevPath => [...prevPath, {x: finalX, y: 0}]);
-                        return timeOfFlight;
-                    }
+            const startTime = performance.now();
+            const animate = (currentTime: number) => {
+                const elapsedTime = (currentTime - startTime) / 1000;
+                setTime(elapsedTime);
 
-                    const x = initialVelocity * Math.cos(angle * Math.PI / 180) * newTime;
-                    const y = initialVelocity * Math.sin(angle * Math.PI / 180) * newTime - 0.5 * GRAVITY * t * t;
-                    
-                    if (y >= 0) {
-                        setPath(prevPath => [...prevPath, {x, y}]);
-                    } else if (path.length > 0 && path[path.length - 1].y > 0) {
-                        // Ensure we land at y=0, not below
-                        const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
-                        setPath(prevPath => [...prevPath, {x: finalX, y: 0}]);
-                    }
+                if (elapsedTime > timeOfFlight) {
+                    setIsRunning(false);
+                    const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
+                    setPath([{x: finalX, y: 0}]); // End at the final point
+                    return;
+                }
 
-                    animationFrameId = requestAnimationFrame(animate);
-                    return newTime;
-                });
+                const x = initialVelocity * Math.cos(angle * Math.PI / 180) * elapsedTime;
+                const y = initialVelocity * Math.sin(angle * Math.PI / 180) * elapsedTime - 0.5 * GRAVITY * elapsedTime * elapsedTime;
+                
+                setPath([{x, y}]);
+
+                animationFrameId = requestAnimationFrame(animate);
             };
             animationFrameId = requestAnimationFrame(animate);
         }
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [isRunning, initialVelocity, angle, timeOfFlight, path]);
+    }, [isRunning, initialVelocity, angle, timeOfFlight]);
 
     const handleLaunch = () => {
         resetSimulation();
@@ -101,7 +94,7 @@ const ProjectileMotion = () => {
         setPath([]);
     };
 
-    const projectilePosition = path[path.length - 1] || { x: 0, y: 0 };
+    const projectilePosition = isRunning && path.length > 0 ? path[0] : null;
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -121,7 +114,7 @@ const ProjectileMotion = () => {
                     <CardHeader>
                         <CardTitle>Controls</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
                         <div className="space-y-2">
                             <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
                             <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} disabled={isRunning} />
@@ -154,7 +147,6 @@ const ProjectileMotion = () => {
                     <CardContent className="p-2 sm:p-6 h-[60vh]">
                          <ResponsiveContainer width="100%" height="100%">
                             <LineChart 
-                                data={fullPath} 
                                 margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -163,22 +155,25 @@ const ProjectileMotion = () => {
                                     dataKey="x" 
                                     name="Distance" 
                                     unit="m" 
-                                    domain={[0, 'dataMax']} 
+                                    domain={[0, 130]} 
                                     label={{ value: 'Distance (m)', position: 'insideBottom', offset: -15 }}
                                     tickFormatter={(val) => val.toFixed(0)}
+                                    allowDataOverflow={true}
                                 />
                                 <YAxis 
                                     type="number" 
                                     dataKey="y" 
                                     name="Height" 
                                     unit="m" 
-                                    domain={[0, 'dataMax']}
+                                    domain={[0, 70]}
                                     label={{ value: 'Height (m)', angle: -90, position: 'insideLeft', offset: 10 }}
                                      tickFormatter={(val) => val.toFixed(0)}
+                                     allowDataOverflow={true}
                                 />
                                 <Tooltip formatter={(value: number) => value.toFixed(2)} />
                                  <ReferenceLine y={0} stroke="#666" strokeWidth={1} />
                                 <Line 
+                                    data={fullPath}
                                     type="monotone" 
                                     dataKey="y" 
                                     stroke="hsl(var(--primary))" 
@@ -186,11 +181,8 @@ const ProjectileMotion = () => {
                                     dot={false}
                                     name="Trajectory"
                                 />
-                                {isRunning && (
-                                     <Line type="monotone" data={path} dataKey="y" stroke="hsl(var(--accent))" strokeWidth={3} dot={false} />
-                                )}
-                                {isRunning && path.length > 0 && (
-                                    <Customized component={
+                                {projectilePosition && (
+                                     <Customized component={
                                         <Dot
                                             r={8}
                                             cx={projectilePosition.x}
@@ -256,4 +248,3 @@ export default function VirtualPhysicsLab() {
     </div>
   );
 }
-
