@@ -15,7 +15,9 @@ import { Lightbulb } from 'lucide-react';
 const evaluateExpression = (expression: string, x: number): number => {
     try {
         const sanitizedExpression = expression
+            .replace(/\s+/g, '') // Remove all whitespace
             .replace(/\^/g, '**')
+            .replace(/(\d+)(x|sin|cos|tan|sqrt|log|ln|pi|e)/g, '$1*$2') // Add multiplication for implicit cases like 2x or 2sin(x)
             .replace(/sin/g, 'Math.sin')
             .replace(/cos/g, 'Math.cos')
             .replace(/tan/g, 'Math.tan')
