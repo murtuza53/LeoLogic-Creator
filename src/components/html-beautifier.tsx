@@ -22,24 +22,30 @@ const HtmlBeautifier = () => {
     }
 
     try {
-        let indentLevel = 0;
-        let result = '';
-        const lines = htmlInput.replace(/>\s*</g, '><').split('\n');
+      let indentLevel = 0;
+      let result = '';
+      const tokens = htmlInput.replace(/>\s+</g, '><').match(/<[^>]+>|[^<]+/g) || [];
 
-        lines.forEach(line => {
-            const trimmedLine = line.trim();
-            if (!trimmedLine) return;
+      tokens.forEach(token => {
+        const trimmedToken = token.trim();
+        if (!trimmedToken) return;
 
-            if (trimmedLine.startsWith('</')) {
-                indentLevel = Math.max(0, indentLevel - 1);
-            }
-            
-            result += '\t'.repeat(indentLevel) + trimmedLine + '\n';
+        // Decrease indent level for closing tags
+        if (trimmedToken.startsWith('</')) {
+            indentLevel = Math.max(0, indentLevel - 1);
+        }
 
-            if (trimmedLine.startsWith('<') && !trimmedLine.startsWith('</') && !trimmedLine.endsWith('/>') && !['<br>', '<img>', '<hr>', '<input>'].some(tag => trimmedLine.startsWith(tag))) {
+        result += '\t'.repeat(indentLevel) + trimmedToken + '\n';
+        
+        // Increase indent level for opening tags (that are not self-closing)
+        if (trimmedToken.startsWith('<') && !trimmedToken.startsWith('</') && !trimmedToken.endsWith('/>')) {
+            // A simple check for common void elements that don't increase indent
+            const voidElements = ['<area', '<base', '<br', '<col', '<embed', '<hr', '<img', '<input', '<link', '<meta', '<param', '<source', '<track', '<wbr'];
+            if (!voidElements.some(tag => trimmedToken.startsWith(tag))) {
                 indentLevel++;
             }
-        });
+        }
+      });
       
       setError(null);
       return result.trim();
