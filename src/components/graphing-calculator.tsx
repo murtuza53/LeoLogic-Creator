@@ -17,7 +17,9 @@ const evaluateExpression = (expression: string, x: number): number => {
         const sanitizedExpression = expression
             .replace(/\s+/g, '') // Remove all whitespace
             .replace(/\^/g, '**')
-            .replace(/(\d+(\.\d+)?)(x|sin|cos|tan|sqrt|log|ln|pi|e)/g, '$1*$3') // Add multiplication for implicit cases like 2x or 2.5sin(x)
+            .replace(/(\d+(\.\d+)?)(x|sin|cos|tan|sqrt|log|ln|pi|e|\()/g, '$1*$3') // Add multiplication for implicit cases like 2x or 2.5sin(x)
+            .replace(/(\))(\w|\()/g, '$1*$2') // Add multiplication after parentheses, e.g. (x+1)(x-1)
+            .replace(/x\(/g, 'x*(') // For x(x+1)
             .replace(/sin/g, 'Math.sin')
             .replace(/cos/g, 'Math.cos')
             .replace(/tan/g, 'Math.tan')
@@ -103,7 +105,7 @@ export default function GraphingCalculator() {
                      <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={data}
-                            margin={{ top: 5, right: 20, left: -10, bottom: 5 }}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" />
                             <XAxis 
@@ -115,15 +117,16 @@ export default function GraphingCalculator() {
                             />
                             <YAxis 
                                 domain={['auto', 'auto']}
-                                tickCount={10}
-                                label={{ value: 'y', position: 'insideTopLeft', offset: -5 }}
+                                tickCount={11}
+                                label={{ value: 'y', position: 'insideTopLeft', offset: -5, angle: -90, dy: -10 }}
                             />
                             <Tooltip 
                                 formatter={(value: number) => value.toFixed(2)}
                                 labelFormatter={(label: number) => `x: ${label}`}
                             />
                             <Legend />
-                            <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeWidth={1} />
+                            <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeWidth={1.5} />
+                            <ReferenceLine x={0} stroke="hsl(var(--foreground))" strokeWidth={1.5} />
                              <Line 
                                 type="monotone" 
                                 dataKey="y" 
