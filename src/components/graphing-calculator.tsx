@@ -5,7 +5,7 @@ import { useState, useMemo, useCallback } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer } from 'recharts';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { useToast } from "@/hooks/use-toast";
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
@@ -99,7 +99,7 @@ export default function GraphingCalculator() {
             </Card>
 
             <Card className="shadow-lg">
-                <CardContent className="p-2 sm:p-6 h-[60vh]">
+                <CardContent className="p-2 sm:p-6 h-[70vh]">
                      <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={data}
@@ -123,6 +123,7 @@ export default function GraphingCalculator() {
                                 labelFormatter={(label: number) => `x: ${label}`}
                             />
                             <Legend />
+                            <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeWidth={1} />
                              <Line 
                                 type="monotone" 
                                 dataKey="y" 
