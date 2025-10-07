@@ -8,7 +8,6 @@ import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
-import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 
@@ -221,27 +220,21 @@ export const PendulumDynamics = () => {
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [positionHistory, setPositionHistory] = useState<{time: number, x: number}[]>([]);
-    const [isMounted, setIsMounted] = useState(false);
-    
-    useEffect(() => {
-        setIsMounted(true);
-    }, []);
 
     const animationFrameId = useRef<number | null>(null);
     const lastTimeRef = useRef<number | null>(null);
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('pendulumDynamics');
     
     useEffect(() => {
-      if (isUserLoading || !isMounted) return;
+      if (isUserLoading) return;
       if (!checkLimit()) return;
       incrementUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isUserLoading, isMounted]);
+    }, [isUserLoading]);
 
     const period = useMemo(() => 2 * Math.PI * Math.sqrt(length / GRAVITY), [length]);
     const angularFrequency = useMemo(() => Math.sqrt(GRAVITY / length), [length]);
     const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
-    const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
     
     const animate = useCallback((timestamp: number) => {
         if (lastTimeRef.current !== null) {
@@ -275,27 +268,37 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const { viewBox, bobX, bobY, bobRadius, cordWidth } = useMemo(() => {
-        if (!isMounted) return { viewBox: "0 0 100 100", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0 };
-    
-        // Determine the maximum possible swing width
-        const maxBobX = length * Math.sin(60 * Math.PI / 180); // Max angle is 60
-        const viewWidth = maxBobX * 2.2;
-        const viewHeight = length * 1.2 + (0.1 * length); // Add space for clock top
-        const scaleFactor = 1 / length;
-    
+    const maxDisplacement = useMemo(() => length * Math.sin(Math.min(60, initialAngle) * Math.PI / 180), [length, initialAngle]);
+
+    const { viewBox, scaleFactor, bobX, bobY, bobRadius, cordWidth, frameWidth, frameHeight, baseHeight, pivotY } = useMemo(() => {
+        const canvasHeight = 100; 
+        const maxVisualLength = canvasHeight * 0.8;
+        const currentScaleFactor = maxVisualLength / length;
+
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
-        const currentBobX = length * Math.sin(currentAngleRad);
-        const currentBobY = length * Math.cos(currentAngleRad);
-    
+        const currentBobX = length * Math.sin(currentAngleRad) * currentScaleFactor;
+        const currentBobY = length * Math.cos(currentAngleRad) * currentScaleFactor;
+
+        const currentFrameWidth = (maxDisplacement * currentScaleFactor * 2) + 40;
+        const currentFrameHeight = length * currentScaleFactor + 20;
+        const currentBaseHeight = 10;
+        const totalHeight = currentFrameHeight + currentBaseHeight;
+        
+        const currentPivotY = 10;
+
         return {
-            viewBox: `${-viewWidth / 2} -${length * 0.1} ${viewWidth} ${viewHeight}`,
+            viewBox: `-${currentFrameWidth / 2} 0 ${currentFrameWidth} ${totalHeight}`,
+            scaleFactor: currentScaleFactor,
             bobX: currentBobX,
-            bobY: currentBobY,
-            bobRadius: Math.max(0.05, 0.1 * Math.cbrt(mass)),
-            cordWidth: Math.max(0.005, 0.01 * scaleFactor),
+            bobY: currentBobY + currentPivotY,
+            bobRadius: Math.max(3, 8 * Math.cbrt(mass)),
+            cordWidth: 1,
+            frameWidth: currentFrameWidth,
+            frameHeight: currentFrameHeight,
+            baseHeight: currentBaseHeight,
+            pivotY: currentPivotY
         };
-    }, [isMounted, length, mass, initialAngle, angularFrequency, time]);
+    }, [length, mass, initialAngle, angularFrequency, time, maxDisplacement]);
 
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
@@ -362,26 +365,33 @@ export const PendulumDynamics = () => {
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
                     <svg width="100%" height="100%" viewBox={viewBox}>
                         <defs>
-                            <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
-                                <stop offset="0%" stopColor="#FFD700" />
-                                <stop offset="100%" stopColor="#B8860B" />
+                            <radialGradient id="bobGradient2" cx="0.3" cy="0.3" r="0.7">
+                                <stop offset="0%" stopColor="#f0f0f0" />
+                                <stop offset="100%" stopColor="#a0a0a0" />
                             </radialGradient>
-                            <linearGradient id="clockBodyGradient" x1="0" y1="0" x2="1" y2="0">
-                                <stop offset="0%" stopColor="#8B4513" />
-                                <stop offset="50%" stopColor="#A0522D" />
-                                <stop offset="100%" stopColor="#8B4513" />
+                             <linearGradient id="standGradient" x1="0.5" y1="0" x2="0.5" y2="1">
+                                <stop offset="0%" stopColor="#d0d0d0" />
+                                <stop offset="100%" stopColor="#b0b0b0" />
                             </linearGradient>
                         </defs>
                         <g>
-                            {/* Top Anchor */}
-                             <rect x={-length * 0.3} y={-length * 0.1} width={length * 0.6} height={length * 0.05} fill="url(#clockBodyGradient)" rx={length * 0.01}/>
-                             <circle cx="0" cy="0" r={cordWidth * 4} fill="#36454F" />
+                             {/* Base */}
+                            <rect x={`-${frameWidth / 2 + 20}`} y={frameHeight} width={frameWidth + 40} height={baseHeight} fill="#c2b280" rx="2" />
+                            <rect x={`-${frameWidth / 2 + 20}`} y={frameHeight + baseHeight - 2} width={frameWidth + 40} height="2" fill="#a08f65" />
 
+                            {/* Frame */}
+                            <rect x={`-${frameWidth / 2}`} y={pivotY} width="5" height={frameHeight - pivotY} fill="url(#standGradient)" rx="1"/>
+                            <rect x={`${frameWidth / 2 - 5}`} y={pivotY} width="5" height={frameHeight - pivotY} fill="url(#standGradient)" rx="1"/>
+                            <rect x={`-${frameWidth / 2}`} y={pivotY - 5} width={frameWidth} height="5" fill="url(#standGradient)" rx="1"/>
+
+                            {/* Pivot */}
+                            <circle cx="0" cy={pivotY} r="3" fill="#555" />
+                            
                             {/* Pendulum Cord */}
-                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="#36454F" strokeWidth={cordWidth} />
+                            <line x1="0" y1={pivotY} x2={bobX} y2={bobY} stroke="#333" strokeWidth={cordWidth} />
 
                             {/* Pendulum Bob */}
-                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="#8B4513" strokeWidth={cordWidth} />
+                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient2)" stroke="#555" strokeWidth={cordWidth / 2} />
                         </g>
                     </svg>
                 </CardContent>
@@ -431,7 +441,4 @@ export const OpticsLab = () => {
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
 
-
-
     
-
