@@ -41,9 +41,10 @@ const evaluateExpression = (expression: string, x: number): number => {
 const MAX_EQUATIONS = 5;
 
 const generateRandomColor = () => {
-  // Generate a hue that is not red (red is around 0/360)
-  // We'll avoid the range 340-360 and 0-20
-  const hue = Math.floor(Math.random() * (320 - 20 + 1)) + 20;
+  const hue = Math.floor(Math.random() * 360);
+  if (hue >= 340 || hue <= 20) {
+    return `hsl(${Math.floor(Math.random() * (320 - 20 + 1)) + 20}, 85%, 57%)`;
+  }
   const saturation = Math.floor(Math.random() * 30) + 70; // 70-100%
   const lightness = Math.floor(Math.random() * 20) + 40; // 40-60%
   return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
@@ -62,16 +63,17 @@ export default function GraphingCalculator() {
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('graphingCalculator');
     const { user } = useUser();
     
-    const [equations, setEquations] = useState<Equation[]>([{ id: 1, value: 'x^2', color: generateRandomColor() }]);
+    const [equations, setEquations] = useState<Equation[]>([{ id: 1, value: 'x^2', color: '#888888' }]);
     const [plottedEquations, setPlottedEquations] = useState<Equation[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [yDomain, setYDomain] = useState<Domain>([-10, 10]);
 
     useEffect(() => {
-        if(plottedEquations.length === 0){
-             setPlottedEquations([{ id: 1, value: 'x^2', color: equations[0].color }]);
-        }
-    }, [])
+        // Set initial random color only on the client to avoid hydration mismatch
+        setEquations(eqs => eqs.map(eq => eq.id === 1 ? { ...eq, color: generateRandomColor() } : eq));
+        setPlottedEquations([{ id: 1, value: 'x^2', color: equations[0].color }]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     const data = useMemo(() => {
         if (plottedEquations.length === 0) return [];
