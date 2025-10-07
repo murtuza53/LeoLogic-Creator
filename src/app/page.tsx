@@ -158,6 +158,16 @@ const tools = [
         icon: Table,
     },
     { 
+        title: 'JSON to Excel', 
+        description: 'Convert JSON files to structured Excel data.', 
+        href: '/json-to-excel', 
+        category: 'Productivity',
+        feature: 'jsonToExcel' as Feature,
+        bgColor: 'bg-green-100',
+        textColor: 'text-green-600',
+        icon: FileSpreadsheet,
+    },
+    { 
         title: 'Image to WebP', 
         description: 'Convert images to the efficient WebP format.', 
         href: '/image-to-webp', 
