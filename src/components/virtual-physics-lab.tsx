@@ -106,12 +106,12 @@ export const ProjectileMotion = () => {
     
     const { viewBoxWidth, viewBoxHeight, cannonX, cannonY, cannonWidth, cannonHeight, wheelRadius } = useMemo(() => {
         const fixedWidth = 1200;
-        const fixedHeight = 200;
+        const fixedHeight = fixedWidth / 4; 
         return {
             viewBoxWidth: fixedWidth,
             viewBoxHeight: fixedHeight,
             cannonX: 10,
-            cannonY: fixedHeight * 0.1, // Positioned on the ground
+            cannonY: fixedHeight * 0.1,
             cannonWidth: 20,
             cannonHeight: 6,
             wheelRadius: 4,
@@ -160,7 +160,7 @@ export const ProjectileMotion = () => {
             </div>
 
             <Card className="p-2 sm:p-4">
-                 <div className="relative aspect-[2/1] w-full bg-blue-100 dark:bg-blue-900/30 rounded-md overflow-hidden border">
+                 <div className="relative aspect-[3/1] w-full bg-blue-100 dark:bg-blue-900/30 rounded-md overflow-hidden border">
                     <svg width="100%" height="100%" viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} preserveAspectRatio="xMidYMax meet">
                         <g transform={`translate(0, ${viewBoxHeight}) scale(1, -1)`}>
                             {/* Background landscape */}
@@ -278,44 +278,36 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const { viewBox, arcPath, bobX, bobY, bobRadius, cordWidth } = useMemo(() => {
-        if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0 };
+    const { viewBox, bobX, bobY, bobRadius, cordWidth, clockSize } = useMemo(() => {
+        if (!isMounted) return { viewBox: "0 0 100 100", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0, clockSize: {width: 0, height: 0, faceRadius: 0} };
         
-        const canvasHeight = 100;
-        const scaleFactor = canvasHeight / (length * 1.2);
-    
-        const scaledLength = length * scaleFactor;
+        const canvasSize = 100;
+        const scaleFactor = canvasSize / (length * 2.5); // Adjust scaling to fit clock
     
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
-        const currentBobX = scaledLength * Math.sin(currentAngleRad);
-        const currentBobY = scaledLength * Math.cos(currentAngleRad);
-    
-        const startAngle = -initialAngle * Math.PI / 180;
-        const endAngle = initialAngle * Math.PI / 180;
-    
-        const startX = scaledLength * Math.sin(startAngle);
-        const startY = scaledLength * Math.cos(startAngle);
-        const endX = scaledLength * Math.sin(endAngle);
-        const endY = scaledLength * Math.cos(endAngle);
-        const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
-        const newArcPath = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
-    
-        const maxDisplacementX = scaledLength * Math.sin(initialAngle * Math.PI / 180);
-        const viewboxWidth = 2.2 * maxDisplacementX;
-        const viewboxHeight = scaledLength * 1.1;
         
-        const vb = `${-viewboxWidth/2} 0 ${viewboxWidth} ${viewboxHeight}`;
+        // Clock dimensions
+        const cSize = { width: 40 * scaleFactor, height: 60 * scaleFactor, faceRadius: 15 * scaleFactor };
+        const pivotY = cSize.faceRadius + 10 * scaleFactor;
 
-        const dynamicBobRadius = 0.05 * scaleFactor * Math.cbrt(mass) * 2;
-        const dynamicCordWidth = 0.005 * scaleFactor * 2;
+        // Pendulum position relative to pivot
+        const scaledLength = length * scaleFactor;
+        const currentBobX = scaledLength * Math.sin(currentAngleRad);
+        const currentBobY = pivotY + scaledLength * Math.cos(currentAngleRad);
+    
+        const dynamicBobRadius = 3 * scaleFactor * Math.cbrt(mass);
+        const dynamicCordWidth = 0.5 * scaleFactor;
+
+        const vbWidth = cSize.width * 1.5;
+        const vbHeight = cSize.height * 1.2;
 
         return {
-            viewBox: vb,
-            arcPath: newArcPath,
+            viewBox: `${-vbWidth/2} 0 ${vbWidth} ${vbHeight}`,
             bobX: currentBobX,
             bobY: currentBobY,
             bobRadius: dynamicBobRadius,
-            cordWidth: dynamicCordWidth
+            cordWidth: dynamicCordWidth,
+            clockSize: cSize,
         };
     }, [isMounted, length, mass, initialAngle, angularFrequency, time]);
 
@@ -385,14 +377,52 @@ export const PendulumDynamics = () => {
                     <svg width="100%" height="100%" viewBox={viewBox}>
                          <defs>
                             <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
-                                <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
-                                <stop offset="100%" stopColor="hsl(var(--primary))" />
+                                <stop offset="0%" stopColor="#d4af37" />
+                                <stop offset="100%" stopColor="#b8860b" />
                             </radialGradient>
+                            <linearGradient id="clockBodyGradient" x1="0" y1="0" x2="1" y2="1">
+                                <stop offset="0%" stopColor="#8B4513" />
+                                <stop offset="100%" stopColor="#A0522D" />
+                            </linearGradient>
                         </defs>
                         <g>
-                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth={0.01 * length} fill="none" />
-                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={cordWidth} />
-                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.005 * length} />
+                            {/* Clock Body */}
+                            <rect 
+                                x={-clockSize.width / 2} 
+                                y="0" 
+                                width={clockSize.width} 
+                                height={clockSize.height} 
+                                rx={clockSize.width * 0.1}
+                                fill="url(#clockBodyGradient)" 
+                                stroke="#5C2E00" 
+                                strokeWidth={cordWidth * 2}
+                            />
+                            
+                            {/* Clock Face */}
+                            <circle cx="0" cy={clockSize.faceRadius + 10 * (clockSize.width/40)} r={clockSize.faceRadius} fill="#F5DEB3" stroke="#5C2E00" strokeWidth={cordWidth * 1.5} />
+                            
+                            {/* Pendulum Cord */}
+                            <line 
+                                x1="0" 
+                                y1={clockSize.faceRadius + 10 * (clockSize.width/40)} 
+                                x2={bobX} 
+                                y2={bobY} 
+                                stroke="#36454F" 
+                                strokeWidth={cordWidth} 
+                            />
+
+                            {/* Pendulum Bob */}
+                            <circle 
+                                cx={bobX} 
+                                cy={bobY} 
+                                r={bobRadius} 
+                                fill="url(#bobGradient)" 
+                                stroke="#8B4513" 
+                                strokeWidth={cordWidth} 
+                            />
+                             {/* Pivot Point */}
+                            <circle cx="0" cy={clockSize.faceRadius + 10 * (clockSize.width/40)} r={cordWidth * 2} fill="#36454F" />
+
                         </g>
                     </svg>
                 </CardContent>
