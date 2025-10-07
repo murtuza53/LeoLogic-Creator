@@ -26,7 +26,8 @@ export type Feature =
   | 'colorCodeGenerator'
   | 'jsonBeautifier'
   | 'cssBeautifier'
-  | 'htmlBeautifier';
+  | 'htmlBeautifier'
+  | 'javascriptBeautifier';
 
 export type ContactMessage = {
   name: string;
