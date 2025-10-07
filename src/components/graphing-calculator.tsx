@@ -38,7 +38,16 @@ const evaluateExpression = (expression: string, x: number): number => {
     }
 }
 
-const lineColors = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
+const MAX_EQUATIONS = 5;
+
+const generateRandomColor = () => {
+  // Generate a hue that is not red (red is around 0/360)
+  // We'll avoid the range 340-360 and 0-20
+  const hue = Math.floor(Math.random() * (320 - 20 + 1)) + 20;
+  const saturation = Math.floor(Math.random() * 30) + 70; // 70-100%
+  const lightness = Math.floor(Math.random() * 20) + 40; // 40-60%
+  return `hsl(${hue}, ${saturation}%, ${lightness}%)`;
+};
 
 type Equation = {
   id: number;
@@ -53,14 +62,14 @@ export default function GraphingCalculator() {
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('graphingCalculator');
     const { user } = useUser();
     
-    const [equations, setEquations] = useState<Equation[]>([{ id: 1, value: 'x^2', color: lineColors[0] }]);
+    const [equations, setEquations] = useState<Equation[]>([{ id: 1, value: 'x^2', color: generateRandomColor() }]);
     const [plottedEquations, setPlottedEquations] = useState<Equation[]>([]);
     const [error, setError] = useState<string | null>(null);
     const [yDomain, setYDomain] = useState<Domain>([-10, 10]);
 
     useEffect(() => {
         if(plottedEquations.length === 0){
-             setPlottedEquations([{ id: 1, value: 'x^2', color: lineColors[0] }]);
+             setPlottedEquations([{ id: 1, value: 'x^2', color: equations[0].color }]);
         }
     }, [])
 
@@ -145,16 +154,16 @@ export default function GraphingCalculator() {
             });
             return;
         }
-        if (equations.length >= lineColors.length) {
+        if (equations.length >= MAX_EQUATIONS) {
             toast({
                 variant: 'destructive',
                 title: 'Maximum functions reached',
-                description: `You can plot up to ${lineColors.length} functions.`
+                description: `You can plot up to ${MAX_EQUATIONS} functions.`
             });
             return;
         }
         const newId = (equations[equations.length - 1]?.id || 0) + 1;
-        setEquations([...equations, { id: newId, value: '', color: lineColors[equations.length % lineColors.length] }]);
+        setEquations([...equations, { id: newId, value: '', color: generateRandomColor() }]);
     };
 
     const removeEquation = (id: number) => {
@@ -192,7 +201,7 @@ export default function GraphingCalculator() {
 
                     <div className='flex justify-between items-center'>
                          <div>
-                            <Button variant="outline" onClick={addEquation} disabled={equations.length >= lineColors.length}>
+                            <Button variant="outline" onClick={addEquation} disabled={equations.length >= MAX_EQUATIONS}>
                                 <PlusCircle className="mr-2" /> Add another function
                             </Button>
                             {!user && <p className='text-xs text-muted-foreground mt-1'><Link href="/signup" className='underline text-primary'>Sign up</Link> to add more functions.</p>}
