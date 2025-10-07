@@ -230,16 +230,17 @@ export const PendulumDynamics = () => {
         const startY = length * Math.cos(startAngle);
         const endX = length * Math.sin(endAngle);
         const endY = length * Math.cos(endAngle);
+        // Correct flag for large arc: use 0 since angle is <= 180
         return `M ${startX} ${startY} A ${length} ${length} 0 0 1 ${endX} ${endY}`;
     }, [initialAngle, length]);
 
     const viewBox = useMemo(() => {
         const padding = 0.2;
         const swingWidth = 2 * length * Math.sin(initialAngle * Math.PI / 180);
-        const swingHeight = length;
+        const swingHeight = length * (1 - Math.cos(initialAngle * Math.PI / 180));
         
         const width = Math.max(swingWidth, 0.5) + padding * 2;
-        const height = swingHeight + padding;
+        const height = length + padding;
         
         return `-${width / 2} 0 ${width} ${height}`;
     }, [length, initialAngle]);
@@ -290,8 +291,8 @@ export const PendulumDynamics = () => {
                         </defs>
                         <g transform="translate(0, 0)">
                              <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
-                             <circle cx={bobX} cy={bobY} r={0.125 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.025" />
+                             <circle cx={bobX} cy={bobY} r={0.015 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                         </g>
                         <line x1="-100" y1="0" x2="100" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
