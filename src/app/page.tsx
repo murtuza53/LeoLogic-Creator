@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -315,6 +315,16 @@ const tools = [
         bgColor: 'bg-fuchsia-100',
         textColor: 'text-fuchsia-600',
         icon: Palette,
+    },
+    { 
+        title: 'Encrypt / Decrypt Text', 
+        description: 'Securely encrypt and decrypt text with a PIN.', 
+        href: '/encrypt-decrypt', 
+        category: 'Productivity',
+        feature: 'encryptDecrypt' as Feature,
+        bgColor: 'bg-amber-100',
+        textColor: 'text-amber-600',
+        icon: Key,
     },
 ];
 
