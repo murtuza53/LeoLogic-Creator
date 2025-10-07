@@ -50,8 +50,8 @@ export const ProjectileMotion = () => {
         return points;
     }, [initialVelocity, angle, timeOfFlight]);
 
-    const domainX = [0, Math.ceil(maxRange / 10) * 10 + 10];
-    const domainY = [0, Math.ceil(maxHeight / 5) * 5 + 5];
+    const domainX = [0, Math.max(10, Math.ceil(maxRange / 10) * 10 + 10)];
+    const domainY = [0, Math.max(10, Math.ceil(maxHeight / 5) * 5 + 5)];
 
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
@@ -269,7 +269,7 @@ export const PendulumDynamics = () => {
 
             <Card className="h-[50vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox="-3.5 -3.5 7 4">
+                    <svg width="100%" height="100%" viewBox="-3 -0.5 6 4">
                          <defs>
                             <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
                                 <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
@@ -278,10 +278,10 @@ export const PendulumDynamics = () => {
                         </defs>
                         <g transform="translate(0, 0)">
                              <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={-bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
-                             <circle cx={bobX} cy={-bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
+                             <circle cx={bobX} cy={bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                         </g>
-                        <line x1="-3.5" y1="0" x2="3.5" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                        <line x1="-3" y1="0" x2="3" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
                 </CardContent>
             </Card>
@@ -329,5 +329,3 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
-
-
