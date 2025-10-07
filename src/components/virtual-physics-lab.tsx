@@ -230,15 +230,14 @@ export const PendulumDynamics = () => {
         const startY = length * Math.cos(startAngle);
         const endX = length * Math.sin(endAngle);
         const endY = length * Math.cos(endAngle);
-        // Correct flag for large arc: use 0 since angle is <= 180
         return `M ${startX} ${startY} A ${length} ${length} 0 0 1 ${endX} ${endY}`;
     }, [initialAngle, length]);
 
     const viewBox = useMemo(() => {
-        const padding = 0.2;
-        const viewWidth = 2 * maxDisplacement + padding * 2;
-        const viewHeight = length + padding * 2;
-        return `-${viewWidth / 2} -${padding} ${viewWidth} ${viewHeight}`;
+        const padding = 0.1;
+        const halfWidth = maxDisplacement + padding;
+        const height = length + padding;
+        return `-${halfWidth} 0 ${halfWidth * 2} ${height}`;
     }, [length, maxDisplacement]);
 
 
@@ -286,11 +285,10 @@ export const PendulumDynamics = () => {
                             </radialGradient>
                         </defs>
                         <g transform="translate(0, 0)">
-                             <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.0125" />
-                             <circle cx={bobX} cy={bobY} r={0.0075 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.01" />
+                             <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.01" fill="none" />
+                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.005" />
+                             <circle cx={bobX} cy={bobY} r={0.05 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.005" />
                         </g>
-                        <line x1="-100" y1="0" x2="100" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
                 </CardContent>
             </Card>
