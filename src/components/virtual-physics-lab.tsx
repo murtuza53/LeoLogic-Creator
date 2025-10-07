@@ -236,14 +236,10 @@ export const PendulumDynamics = () => {
 
     const viewBox = useMemo(() => {
         const padding = 0.2;
-        const swingWidth = 2 * length * Math.sin(initialAngle * Math.PI / 180);
-        const swingHeight = length * (1 - Math.cos(initialAngle * Math.PI / 180));
-        
-        const width = Math.max(swingWidth, 0.5) + padding * 2;
-        const height = length + padding;
-        
-        return `-${width / 2} 0 ${width} ${height}`;
-    }, [length, initialAngle]);
+        const viewWidth = 2 * maxDisplacement + padding * 2;
+        const viewHeight = length + padding * 2;
+        return `-${viewWidth / 2} -${padding} ${viewWidth} ${viewHeight}`;
+    }, [length, maxDisplacement]);
 
 
     return (
@@ -271,7 +267,7 @@ export const PendulumDynamics = () => {
                 <StatCard icon={MoveRight} label="Max Speed" value={maxSpeed.toFixed(2)} unit="m/s" />
             </div>
             
-            <div className="flex justify-center gap-2">
+             <div className="flex justify-center gap-2">
                 <Button onClick={() => setIsRunning(!isRunning)} variant="outline" size="lg">
                     {isRunning ? <><Pause className="mr-2"/> Pause</> : <><Play className="mr-2"/> Start</>}
                 </Button>
@@ -291,8 +287,8 @@ export const PendulumDynamics = () => {
                         </defs>
                         <g transform="translate(0, 0)">
                              <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.025" />
-                             <circle cx={bobX} cy={bobY} r={0.015 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.0125" />
+                             <circle cx={bobX} cy={bobY} r={0.0075 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.01" />
                         </g>
                         <line x1="-100" y1="0" x2="100" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
