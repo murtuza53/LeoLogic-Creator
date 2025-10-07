@@ -4,12 +4,12 @@
 import * as React from 'react';
 import { useState, useEffect, useMemo, useCallback } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
 import { Button } from '@/components/ui/button';
-import { Play, Pause, RefreshCw, MoveUp, MoveRight, Sigma } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, ResponsiveContainer, ReferenceLine, Dot, Customized } from 'recharts';
+import { Play, Pause, RefreshCw, MoveUp, MoveRight } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Dot } from 'recharts';
 import { Input } from '@/components/ui/input';
 
 const GRAVITY = 9.81; // m/s^2
@@ -42,42 +42,48 @@ const ProjectileMotion = () => {
                 points.push({x, y});
              }
         }
-        if (points.length > 0 && points[points.length-1].y !== 0) {
+        if (points.length > 0 && points[points.length-1].y !== 0 && timeOfFlight > 0) {
             const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
             points.push({x: finalX, y: 0});
         }
         return points;
     }, [initialVelocity, angle, timeOfFlight]);
 
+    const domainX = [0, Math.ceil(maxRange * 1.1)];
+    const domainY = [0, Math.ceil(maxHeight * 1.1)];
 
     useEffect(() => {
         let animationFrameId: number;
+        let startTime: number | null = null;
 
-        if (isRunning) {
-            const startTime = performance.now();
-            const animate = (currentTime: number) => {
-                const elapsedTime = (currentTime - startTime) / 1000;
-                setTime(elapsedTime);
+        const animate = (currentTime: number) => {
+            if (!startTime) startTime = currentTime;
+            const elapsedTime = (currentTime - startTime) / 1000;
+            setTime(elapsedTime);
 
-                if (elapsedTime > timeOfFlight) {
-                    setIsRunning(false);
-                    const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
-                    setPath([{x: finalX, y: 0}]); // End at the final point
-                    return;
-                }
+            if (elapsedTime > timeOfFlight) {
+                setIsRunning(false);
+                setPath(fullPath); // Show the full path at the end
+                return;
+            }
 
-                const x = initialVelocity * Math.cos(angle * Math.PI / 180) * elapsedTime;
-                const y = initialVelocity * Math.sin(angle * Math.PI / 180) * elapsedTime - 0.5 * GRAVITY * elapsedTime * elapsedTime;
-                
-                setPath([{x, y}]);
+            const currentPath = fullPath.filter(p => (p.x / (initialVelocity * Math.cos(angle * Math.PI / 180))) <= elapsedTime);
+            setPath(currentPath);
 
-                animationFrameId = requestAnimationFrame(animate);
-            };
             animationFrameId = requestAnimationFrame(animate);
+        };
+        
+        if (isRunning) {
+            animationFrameId = requestAnimationFrame(animate);
+        } else {
+             if (time > 0 && time < timeOfFlight) { // Paused state
+                const currentPath = fullPath.filter(p => (p.x / (initialVelocity * Math.cos(angle * Math.PI / 180))) <= time);
+                setPath(currentPath);
+            }
         }
 
         return () => cancelAnimationFrame(animationFrameId);
-    }, [isRunning, initialVelocity, angle, timeOfFlight]);
+    }, [isRunning, initialVelocity, angle, timeOfFlight, fullPath, time]);
 
     const handleLaunch = () => {
         resetSimulation();
@@ -94,7 +100,7 @@ const ProjectileMotion = () => {
         setPath([]);
     };
 
-    const projectilePosition = isRunning && path.length > 0 ? path[0] : null;
+    const projectilePosition = path.length > 0 ? path[path.length - 1] : null;
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -142,11 +148,16 @@ const ProjectileMotion = () => {
                 </Card>
             </div>
 
-            <div>
+            <div className="space-y-6">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
+                    <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
+                </div>
                  <Card className="h-full">
                     <CardContent className="p-2 sm:p-6 h-[60vh]">
                          <ResponsiveContainer width="100%" height="100%">
                             <LineChart 
+                                data={fullPath}
                                 margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
@@ -155,9 +166,8 @@ const ProjectileMotion = () => {
                                     dataKey="x" 
                                     name="Distance" 
                                     unit="m" 
-                                    domain={[0, 130]} 
+                                    domain={domainX} 
                                     label={{ value: 'Distance (m)', position: 'insideBottom', offset: -15 }}
-                                    tickFormatter={(val) => val.toFixed(0)}
                                     allowDataOverflow={true}
                                 />
                                 <YAxis 
@@ -165,10 +175,9 @@ const ProjectileMotion = () => {
                                     dataKey="y" 
                                     name="Height" 
                                     unit="m" 
-                                    domain={[0, 70]}
+                                    domain={domainY}
                                     label={{ value: 'Height (m)', angle: -90, position: 'insideLeft', offset: 10 }}
-                                     tickFormatter={(val) => val.toFixed(0)}
-                                     allowDataOverflow={true}
+                                    allowDataOverflow={true}
                                 />
                                 <Tooltip formatter={(value: number) => value.toFixed(2)} />
                                  <ReferenceLine y={0} stroke="#666" strokeWidth={1} />
@@ -181,25 +190,26 @@ const ProjectileMotion = () => {
                                     dot={false}
                                     name="Trajectory"
                                 />
+                                <Line 
+                                    data={path}
+                                    type="monotone"
+                                    dataKey="y"
+                                    stroke="hsl(var(--accent))"
+                                    strokeWidth={3}
+                                    dot={false}
+                                    name="Current Path"
+                                />
                                 {projectilePosition && (
-                                     <Customized component={
-                                        <Dot
-                                            r={8}
-                                            cx={projectilePosition.x}
-                                            cy={projectilePosition.y}
-                                            fill="hsl(var(--accent))"
-                                            className="animate-pulse"
-                                        />
-                                    } />
+                                    <Dot
+                                        r={8}
+                                        cx={projectilePosition.x}
+                                        cy={projectilePosition.y}
+                                        fill="hsl(var(--accent))"
+                                        className="animate-pulse"
+                                    />
                                 )}
                             </LineChart>
                         </ResponsiveContainer>
-                    </CardContent>
-                     <CardContent>
-                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                            <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
-                            <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
-                         </div>
                     </CardContent>
                 </Card>
             </div>
