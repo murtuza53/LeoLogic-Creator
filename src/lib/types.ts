@@ -1,4 +1,5 @@
 
+
 export type Feature = 
   | 'smartProduct' 
   | 'aiMath' 
@@ -31,7 +32,8 @@ export type Feature =
   | 'excelToJson'
   | 'jsonToExcel'
   | 'encryptDecrypt'
-  | 'csvToJson';
+  | 'csvToJson'
+  | 'jsonToCsv';
 
 export type ContactMessage = {
   name: string;

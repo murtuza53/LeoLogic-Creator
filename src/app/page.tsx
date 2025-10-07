@@ -178,6 +178,16 @@ const tools = [
         icon: FileUp,
     },
     { 
+        title: 'JSON to CSV', 
+        description: 'Convert JSON files to structured CSV data.', 
+        href: '/json-to-csv', 
+        category: 'Productivity',
+        feature: 'jsonToCsv' as Feature,
+        bgColor: 'bg-green-100',
+        textColor: 'text-green-600',
+        icon: FileUp,
+    },
+    { 
         title: 'Image to WebP', 
         description: 'Convert images to the efficient WebP format.', 
         href: '/image-to-webp', 
