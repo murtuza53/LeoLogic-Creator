@@ -236,12 +236,12 @@ export const PendulumDynamics = () => {
     const viewBox = useMemo(() => {
         const padding = 0.2;
         const swingWidth = 2 * length * Math.sin(initialAngle * Math.PI / 180);
-        const swingHeight = length * (1 - Math.cos(initialAngle * Math.PI / 180));
+        const swingHeight = length;
         
         const width = Math.max(swingWidth, 0.5) + padding * 2;
-        const height = length + padding * 2;
+        const height = swingHeight + padding;
         
-        return `-${width / 2} -${padding} ${width} ${height}`;
+        return `-${width / 2} 0 ${width} ${height}`;
     }, [length, initialAngle]);
 
 
@@ -279,7 +279,7 @@ export const PendulumDynamics = () => {
                 </Button>
             </div>
 
-            <Card className="h-[40vh] flex flex-col">
+            <Card className="h-[60vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
                     <svg width="100%" height="100%" viewBox={viewBox}>
                          <defs>
@@ -291,7 +291,7 @@ export const PendulumDynamics = () => {
                         <g transform="translate(0, 0)">
                              <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
                              <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
-                             <circle cx={bobX} cy={bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                             <circle cx={bobX} cy={bobY} r={0.125 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                         </g>
                         <line x1="-100" y1="0" x2="100" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
