@@ -148,6 +148,10 @@ export const PendulumDynamics = () => {
 
     useEffect(() => {
         setIsMounted(true);
+        // Set state from refs after mount to ensure consistency
+        setLength(initialValues.current.length);
+        setMass(initialValues.current.mass);
+        setInitialAngle(initialValues.current.initialAngle);
     }, []);
 
     const animationFrameId = useRef<number | null>(null);
@@ -230,6 +234,7 @@ export const PendulumDynamics = () => {
     }
     
     const arcPath = useMemo(() => {
+        if (!isMounted) return "";
         const startAngle = -initialAngle * Math.PI / 180;
         const endAngle = initialAngle * Math.PI / 180;
         const startX = length * Math.sin(startAngle);
@@ -237,14 +242,25 @@ export const PendulumDynamics = () => {
         const endX = length * Math.sin(endAngle);
         const endY = length * Math.cos(endAngle);
         return `M ${startX} ${startY} A ${length} ${length} 0 0 1 ${endX} ${endY}`;
-    }, [initialAngle, length]);
+    }, [initialAngle, length, isMounted]);
 
     const viewBox = useMemo(() => {
-        const padding = 0.1;
-        const halfWidth = maxDisplacement + padding;
-        const height = length + padding;
-        return `-${halfWidth} 0 ${halfWidth * 2} ${height}`;
-    }, [length, maxDisplacement]);
+        if (!isMounted) return "0 0 1 1";
+        const padding = 0.2;
+        const xMax = length * Math.sin(initialAngle * Math.PI / 180);
+        const yMin = length * Math.cos(initialAngle * Math.PI / 180);
+        
+        const viewWidth = (xMax + padding) * 2;
+        const viewHeight = (length + padding) - yMin;
+        
+        const vX = -xMax - padding;
+        const vY = yMin - padding;
+
+        const effectiveHeight = length + padding;
+
+        return `${vX} 0 ${viewWidth} ${effectiveHeight}`;
+
+    }, [length, initialAngle, isMounted]);
 
 
     return (
