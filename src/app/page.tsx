@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -56,6 +56,16 @@ const tools = [
         bgColor: 'bg-sky-100',
         textColor: 'text-sky-600',
         icon: Brush,
+    },
+    { 
+        title: 'HTML Beautifier', 
+        description: 'Format and color-code HTML code for readability.', 
+        href: '/html-beautifier', 
+        category: 'Productivity',
+        feature: 'htmlBeautifier' as Feature,
+        bgColor: 'bg-orange-100',
+        textColor: 'text-orange-600',
+        icon: FileCode,
     },
     { 
         title: 'QR Code Generator', 
@@ -547,6 +557,3 @@ export default function Home() {
     </div>
   );
 }
-
-
-

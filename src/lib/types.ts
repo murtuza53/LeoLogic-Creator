@@ -25,7 +25,8 @@ export type Feature =
   | 'pdfToWord'
   | 'colorCodeGenerator'
   | 'jsonBeautifier'
-  | 'cssBeautifier';
+  | 'cssBeautifier'
+  | 'htmlBeautifier';
 
 export type ContactMessage = {
   name: string;
