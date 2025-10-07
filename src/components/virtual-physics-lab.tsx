@@ -104,10 +104,18 @@ export const ProjectileMotion = () => {
         setPathData([]);
     };
     
-    const canvasWidth = 800;
-    const canvasHeight = 400;
-    const scale = Math.min(canvasWidth / (maxRange * 1.1), canvasHeight / (maxHeight * 1.2));
-    const groundY = canvasHeight - 30;
+    const { viewBoxWidth, viewBoxHeight, scale, groundY, cannonX } = useMemo(() => {
+        const vbWidth = maxRange > 0 ? maxRange * 1.1 : 100;
+        const vbHeight = maxHeight > 0 ? maxHeight * 1.2 : 50;
+        return {
+            viewBoxWidth: vbWidth,
+            viewBoxHeight: vbHeight,
+            scale: 1, // We now use viewBox for scaling
+            groundY: vbHeight * 0.9,
+            cannonX: vbWidth * 0.02,
+        };
+    }, [maxRange, maxHeight]);
+
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-3 flex flex-col items-center justify-center text-center">
@@ -150,42 +158,44 @@ export const ProjectileMotion = () => {
             </div>
 
             <Card className="p-2 sm:p-4">
-                <div className="relative aspect-[2/1] w-full bg-blue-50 dark:bg-blue-900/20 rounded-md overflow-hidden border">
-                    <svg width="100%" height="100%" viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}>
-                        {/* Background landscape */}
-                        <path d={`M -5,${groundY} C ${canvasWidth*0.3},${groundY-20} ${canvasWidth*0.6},${groundY+10} ${canvasWidth+5},${groundY-5} L ${canvasWidth+5},${canvasHeight+5} L -5,${canvasHeight+5} Z`} fill="hsl(var(--success))" opacity="0.2"/>
+                 <div className="relative aspect-[2/1] w-full bg-blue-50 dark:bg-blue-900/20 rounded-md overflow-hidden border">
+                    <svg width="100%" height="100%" viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} preserveAspectRatio="xMidYMax meet">
+                        <g transform={`translate(0, ${viewBoxHeight}) scale(1, -1)`}>
+                            {/* Background landscape */}
+                            <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.3},${viewBoxHeight * 0.05} ${viewBoxWidth * 0.6},${viewBoxHeight * 0.15} ${viewBoxWidth + 5},${viewBoxHeight * 0.12} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="hsl(var(--success))" opacity="0.2"/>
 
-                        {/* Ground */}
-                        <line x1="0" y1={groundY} x2={canvasWidth} y2={groundY} stroke="hsl(var(--success-foreground))" strokeWidth="2" />
-                        
-                        {/* Cannon */}
-                        <g transform={`translate(20, ${groundY - 5})`}>
-                            <g transform={`rotate(${-angle})`}>
-                                <rect x="-5" y="-7.5" width="40" height="15" fill="hsl(var(--foreground))" rx="5"/>
+                            {/* Ground */}
+                            <line x1="0" y1={viewBoxHeight * 0.1} x2={viewBoxWidth} y2={viewBoxHeight * 0.1} stroke="hsl(var(--success-foreground))" strokeWidth={viewBoxHeight * 0.005} />
+                            
+                            {/* Cannon */}
+                            <g transform={`translate(${cannonX}, ${viewBoxHeight * 0.1})`}>
+                                <g transform={`rotate(${angle})`}>
+                                    <rect x="-0.5" y={-viewBoxHeight * 0.015} width={viewBoxWidth * 0.05} height={viewBoxHeight * 0.03} fill="hsl(var(--foreground))" rx={viewBoxHeight * 0.01}/>
+                                </g>
+                                <circle cx="0" cy="0" r={viewBoxHeight * 0.04} fill="hsl(var(--foreground))" />
+                                <circle cx={-viewBoxWidth * 0.01} cy={-viewBoxHeight * 0.01} r={viewBoxHeight * 0.02} fill="hsl(var(--muted-foreground))" />
+                                <circle cx={viewBoxWidth * 0.01} cy={-viewBoxHeight * 0.01} r={viewBoxHeight * 0.02} fill="hsl(var(--muted-foreground))" />
                             </g>
-                            <circle cx="0" cy="0" r="15" fill="hsl(var(--foreground))" />
-                            <circle cx="-10" cy="5" r="8" fill="hsl(var(--muted-foreground))" />
-                             <circle cx="10" cy="5" r="8" fill="hsl(var(--muted-foreground))" />
-                        </g>
-                        
-                        {/* Trajectory Path */}
-                        {pathData.length > 1 && (
-                            <path 
-                                d={`M ${20 + pathData[0].x * scale} ${groundY - pathData[0].y * scale} ` + pathData.map(p => `L ${20 + p.x * scale} ${groundY - p.y * scale}`).join(' ')}
-                                fill="none"
-                                stroke="hsl(var(--primary))"
-                                strokeWidth="2"
-                                strokeDasharray="3 3"
-                            />
-                        )}
+                            
+                            {/* Trajectory Path */}
+                            {pathData.length > 1 && (
+                                <path 
+                                    d={`M ${cannonX + pathData[0].x} ${viewBoxHeight * 0.1 + pathData[0].y} ` + pathData.map(p => `L ${cannonX + p.x} ${viewBoxHeight * 0.1 + p.y}`).join(' ')}
+                                    fill="none"
+                                    stroke="hsl(var(--primary))"
+                                    strokeWidth={viewBoxHeight * 0.005}
+                                    strokeDasharray="0.2 0.2"
+                                />
+                            )}
 
-                        {/* Cannonball */}
-                        <circle 
-                            cx={20 + ballPosition.x * scale} 
-                            cy={groundY - ballPosition.y * scale} 
-                            r="5" 
-                            fill="hsl(var(--destructive))" 
-                        />
+                            {/* Cannonball */}
+                            <circle 
+                                cx={cannonX + ballPosition.x} 
+                                cy={viewBoxHeight * 0.1 + ballPosition.y} 
+                                r={viewBoxHeight * 0.015}
+                                fill="hsl(var(--destructive))" 
+                            />
+                        </g>
                     </svg>
                 </div>
             </Card>
@@ -262,8 +272,7 @@ export const PendulumDynamics = () => {
         if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0, scaleFactor: 1 };
     
         const canvasHeight = 100;
-        const maxPossibleLength = 3.0;
-        const dynamicScaleFactor = canvasHeight / maxPossibleLength * 0.9 / length;
+        const dynamicScaleFactor = canvasHeight / (length * 1.2);
     
         const scaledLength = length * dynamicScaleFactor;
     
@@ -281,13 +290,13 @@ export const PendulumDynamics = () => {
         const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
         const newArcPath = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
     
-        const viewboxWidth = Math.max(2.2 * length * Math.sin(initialAngle * Math.PI / 180), 1) * dynamicScaleFactor * 1.1;
-        const viewboxHeight = (length * (1 - Math.cos(initialAngle * Math.PI / 180)) + 0.1 * length) * dynamicScaleFactor * 1.1;
+        const viewboxWidth = 2.2 * scaledLength * Math.sin(initialAngle * Math.PI / 180);
+        const viewboxHeight = scaledLength + (0.1 * scaledLength);
         
-        const vb = `${-viewboxWidth/2} 0 ${viewboxWidth} ${viewboxHeight + 0.5 * Math.cbrt(mass) * dynamicScaleFactor}`;
+        const vb = `${-viewboxWidth/2} 0 ${viewboxWidth} ${viewboxHeight}`;
 
-        const dynamicBobRadius = 0.05 * dynamicScaleFactor * Math.cbrt(mass);
-        const dynamicCordWidth = 0.005 * dynamicScaleFactor;
+        const dynamicBobRadius = 0.05 * dynamicScaleFactor * Math.cbrt(mass) * 2;
+        const dynamicCordWidth = 0.005 * dynamicScaleFactor * 2;
     
         return {
             viewBox: vb,
