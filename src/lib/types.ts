@@ -21,7 +21,8 @@ export type Feature =
   | 'scientificCalculator' 
   | 'unitConverter' 
   | 'resizeImage' 
-  | 'imageToIcon';
+  | 'imageToIcon'
+  | 'pdfToWord';
 
 export type ContactMessage = {
   name: string;

@@ -1,6 +1,7 @@
 
 import { NextResponse } from 'next/server';
 import { compressPdf } from '@/ai/flows/compress-pdf';
+import { convertPdfToWord } from '@/ai/flows/convert-pdf-to-word';
 import { PDFDocument } from 'pdf-lib';
 
 export const config = {
@@ -52,6 +53,13 @@ export async function POST(req: Request) {
         const mergeResult = await mergePdfs(pdfDataUris);
         return NextResponse.json(mergeResult);
 
+      case 'pdf-to-word':
+        if (!pdfDataUri) {
+          throw new Error('pdfDataUri is required.');
+        }
+        const convertResult = await convertPdfToWord({ pdfDataUri });
+        return NextResponse.json(convertResult);
+
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });
     }
@@ -61,4 +69,3 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
-

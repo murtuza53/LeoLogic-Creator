@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -164,6 +164,16 @@ const tools = [
         bgColor: 'bg-sky-100',
         textColor: 'text-sky-600',
         icon: StretchHorizontal,
+    },
+     { 
+        title: 'PDF to Word', 
+        description: 'Convert PDF files to editable Word documents.', 
+        href: '/pdf-to-word', 
+        category: 'PDF',
+        feature: 'pdfToWord' as Feature,
+        bgColor: 'bg-red-100',
+        textColor: 'text-red-600',
+        icon: FileTextIcon,
     },
     { 
         title: 'Merge PDFs', 
