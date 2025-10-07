@@ -24,7 +24,8 @@ export type Feature =
   | 'imageToIcon'
   | 'pdfToWord'
   | 'colorCodeGenerator'
-  | 'jsonBeautifier';
+  | 'jsonBeautifier'
+  | 'cssBeautifier';
 
 export type ContactMessage = {
   name: string;

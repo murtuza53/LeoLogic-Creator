@@ -48,6 +48,16 @@ const tools = [
         icon: FileJson,
     },
     { 
+        title: 'CSS Beautifier', 
+        description: 'Format and color-code CSS data for readability.', 
+        href: '/css-beautifier', 
+        category: 'Productivity',
+        feature: 'cssBeautifier' as Feature,
+        bgColor: 'bg-sky-100',
+        textColor: 'text-sky-600',
+        icon: Brush,
+    },
+    { 
         title: 'QR Code Generator', 
         description: 'Create and customize QR codes for any text or URL.', 
         href: '/qr-generator', 
@@ -537,5 +547,6 @@ export default function Home() {
     </div>
   );
 }
+
 
 
