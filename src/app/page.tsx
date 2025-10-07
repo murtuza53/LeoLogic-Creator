@@ -576,7 +576,7 @@ export default function Home() {
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <CheckCircle className='h-5 w-5 text-green-500'/>
-                                    <span>Access to all basic features</span>
+                                    <span>Access to basic features</span>
                                 </li>
                            </ul>
                         </CardContent>
@@ -627,7 +627,5 @@ export default function Home() {
     </div>
   );
 }
-
-    
 
     
