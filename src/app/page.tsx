@@ -48,6 +48,16 @@ const tools = [
         icon: FileTextIcon,
     },
     { 
+        title: 'Graphing Calculator', 
+        description: 'Visualize functions, plot data, and explore equations.', 
+        href: '/graphing-calculator', 
+        category: 'Education',
+        feature: 'graphingCalculator' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600',
+        icon: Sigma,
+    },
+    { 
         title: 'Projectile Motion', 
         description: 'Simulate projectile trajectories with adjustable parameters.', 
         href: '/virtual-physics-lab?sim=projectile', 
@@ -176,16 +186,6 @@ const tools = [
         bgColor: 'bg-gray-100',
         textColor: 'text-gray-600',
         icon: Calculator,
-    },
-    { 
-        title: 'Graphing Calculator', 
-        description: 'Visualize functions, plot data, and explore equations.', 
-        href: '/graphing-calculator', 
-        category: 'Productivity',
-        feature: 'graphingCalculator' as Feature,
-        bgColor: 'bg-gray-100',
-        textColor: 'text-gray-600',
-        icon: Sigma,
     },
     { 
         title: 'Unit Converter', 
@@ -677,6 +677,8 @@ export default function Home() {
     </div>
   );
 }
+
+    
 
     
 
