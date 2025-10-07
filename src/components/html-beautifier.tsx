@@ -22,27 +22,24 @@ const HtmlBeautifier = () => {
     }
 
     try {
-      let indentLevel = 0;
-      let result = '';
-      const htmlArray = htmlInput.replace(/>\s*</g, '><').split(/(<[^>]+>)/);
+        let indentLevel = 0;
+        let result = '';
+        const lines = htmlInput.replace(/>\s*</g, '><').split('\n');
 
-      htmlArray.forEach(item => {
-        if (!item || item.trim() === '') return;
+        lines.forEach(line => {
+            const trimmedLine = line.trim();
+            if (!trimmedLine) return;
 
-        if (item.startsWith('</')) {
-            indentLevel = Math.max(0, indentLevel - 1);
-            result += '\t'.repeat(indentLevel) + item.trim() + '\n';
-        } else if (item.startsWith('<')) {
-            // Check for self-closing tags
-            const isSelfClosing = item.endsWith('/>') || ['<br>', '<img>', '<hr>', '<input>'].some(tag => item.startsWith(tag));
-            result += '\t'.repeat(indentLevel) + item.trim() + '\n';
-            if (!isSelfClosing) {
+            if (trimmedLine.startsWith('</')) {
+                indentLevel = Math.max(0, indentLevel - 1);
+            }
+            
+            result += '\t'.repeat(indentLevel) + trimmedLine + '\n';
+
+            if (trimmedLine.startsWith('<') && !trimmedLine.startsWith('</') && !trimmedLine.endsWith('/>') && !['<br>', '<img>', '<hr>', '<input>'].some(tag => trimmedLine.startsWith(tag))) {
                 indentLevel++;
             }
-        } else {
-            result += '\t'.repeat(indentLevel) + item.trim() + '\n';
-        }
-      });
+        });
       
       setError(null);
       return result.trim();
