@@ -169,6 +169,9 @@ export const PendulumDynamics = () => {
     const angularFrequency = useMemo(() => Math.sqrt(GRAVITY / length), [length]);
     const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
     const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
+    
+    // Scale factor to fit pendulum in view
+    const scaleFactor = 100 / (length * 1.5);
 
     const animate = useCallback((timestamp: number) => {
         if (lastTimeRef.current !== null) {
@@ -204,8 +207,8 @@ export const PendulumDynamics = () => {
     }, [isRunning, animate]);
 
     const currentAngleRad = isMounted ? (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time) : 0;
-    const bobX = isMounted ? length * Math.sin(currentAngleRad) : 0;
-    const bobY = isMounted ? length * Math.cos(currentAngleRad) : 0;
+    const bobX = isMounted ? scaleFactor * length * Math.sin(currentAngleRad) : 0;
+    const bobY = isMounted ? scaleFactor * length * Math.cos(currentAngleRad) : 0;
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -237,31 +240,13 @@ export const PendulumDynamics = () => {
         if (!isMounted) return "";
         const startAngle = -initialAngle * Math.PI / 180;
         const endAngle = initialAngle * Math.PI / 180;
-        const startX = length * Math.sin(startAngle);
-        const startY = length * Math.cos(startAngle);
-        const endX = length * Math.sin(endAngle);
-        const endY = length * Math.cos(endAngle);
-        return `M ${startX} ${startY} A ${length} ${length} 0 0 1 ${endX} ${endY}`;
-    }, [initialAngle, length, isMounted]);
-
-    const viewBox = useMemo(() => {
-        if (!isMounted) return "0 0 1 1";
-        const padding = 0.2;
-        const xMax = length * Math.sin(initialAngle * Math.PI / 180);
-        const yMin = length * Math.cos(initialAngle * Math.PI / 180);
-        
-        const viewWidth = (xMax + padding) * 2;
-        const viewHeight = (length + padding) - yMin;
-        
-        const vX = -xMax - padding;
-        const vY = yMin - padding;
-
-        const effectiveHeight = length + padding;
-
-        return `${vX} 0 ${viewWidth} ${effectiveHeight}`;
-
-    }, [length, initialAngle, isMounted]);
-
+        const scaledLength = length * scaleFactor;
+        const startX = scaledLength * Math.sin(startAngle);
+        const startY = scaledLength * Math.cos(startAngle);
+        const endX = scaledLength * Math.sin(endAngle);
+        const endY = scaledLength * Math.cos(endAngle);
+        return `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 0 1 ${endX} ${endY}`;
+    }, [initialAngle, length, isMounted, scaleFactor]);
 
     return (
         <div className="mt-8 space-y-6">
@@ -299,17 +284,17 @@ export const PendulumDynamics = () => {
 
             <Card className="h-[60vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox={viewBox}>
+                    <svg width="100%" height="100%" viewBox="-120 -10 240 140">
                          <defs>
                             <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
                                 <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
                                 <stop offset="100%" stopColor="hsl(var(--primary))" />
                             </radialGradient>
                         </defs>
-                        <g transform="translate(0, 0)">
-                             <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.01" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.005" />
-                             <circle cx={bobX} cy={bobY} r={0.05 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.005" />
+                        <g>
+                             <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="2 2" strokeWidth="0.5" fill="none" />
+                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
+                             <circle cx={bobX} cy={bobY} r={3 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.5" />
                         </g>
                     </svg>
                 </CardContent>
