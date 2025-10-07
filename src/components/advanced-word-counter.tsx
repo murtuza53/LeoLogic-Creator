@@ -22,6 +22,7 @@ type DetailedStats = {
   uppercase: number;
   numbers: number;
   specialChars: number;
+  charactersNoSpaces: number;
 
   // Word Analysis
   words: number;
@@ -56,6 +57,13 @@ const getReadingLevel = (words: number, sentences: number, complexWords: number)
     return 'Very Difficult (Graduate)';
 }
 
+const RealTimeStat = ({ label, value }: { label: string; value: string | number }) => (
+  <div className="flex flex-col items-center">
+    <span className="text-sm text-muted-foreground">{label}</span>
+    <span className="text-lg font-bold">{value}</span>
+  </div>
+);
+
 export default function AdvancedWordCounter() {
   const [text, setText] = useState('');
   const [copied, setCopied] = useState(false);
@@ -69,12 +77,13 @@ export default function AdvancedWordCounter() {
     const characters = text.length;
     
     const spaces = text.split(' ').length - 1;
+    const charactersNoSpaces = characters - spaces;
     const lowercase = (text.match(/[a-z]/g) || []).length;
     const uppercase = (text.match(/[A-Z]/g) || []).length;
     const numbers = (text.match(/[0-9]/g) || []).length;
     const specialChars = characters - (lowercase + uppercase + numbers + spaces);
     
-    const sentences = (text.match(/[\w|)][.?!]+(\s|$)/g) || (words > 0 ? 1 : 0));
+    const sentences = (text.match(/[\w|)][.?!]+(\s|$)/g) || []).length || (words > 0 ? 1 : 0);
     const paragraphs = text.split(/\n+/).filter(p => p.trim() !== '').length;
     
     const readingTime = Math.round((words / 200) * 60) ; // at 200 WPM
@@ -121,6 +130,7 @@ export default function AdvancedWordCounter() {
     return { 
         words, 
         characters,
+        charactersNoSpaces,
         spaces,
         lowercase,
         uppercase,
@@ -159,17 +169,32 @@ export default function AdvancedWordCounter() {
       setShowAnalysis(true);
   }
 
+  const formatTime = (seconds: number) => {
+      if (seconds < 60) return `${seconds} sec`;
+      const minutes = Math.floor(seconds / 60);
+      const remainingSeconds = seconds % 60;
+      return `${minutes} min ${remainingSeconds} sec`;
+  }
+
   return (
     <div className="mt-8 space-y-6">
       <Card className="shadow-lg">
-        <CardContent className="p-6">
+        <CardContent className="p-0">
           <Textarea
             value={text}
             onChange={(e) => setText(e.target.value)}
             placeholder="Start typing or paste your text here..."
-            className="h-64 text-base resize-y"
+            className="h-64 text-base resize-y border-0 focus-visible:ring-0 focus-visible:ring-offset-0"
           />
-          <div className="mt-6 flex flex-wrap justify-between items-center gap-4">
+           <div className="border-t p-4 flex flex-wrap justify-around items-center gap-4 bg-muted/50">
+              <RealTimeStat label="Words" value={stats.words} />
+              <RealTimeStat label="Characters" value={stats.characters} />
+              <RealTimeStat label="Characters (no spaces)" value={stats.charactersNoSpaces} />
+              <RealTimeStat label="Sentences" value={stats.sentences} />
+              <RealTimeStat label="Paragraphs" value={stats.paragraphs} />
+              <RealTimeStat label="Reading Time" value={formatTime(stats.readingTime)} />
+          </div>
+          <div className="p-6 pt-4 border-t flex flex-wrap justify-between items-center gap-4">
             <Button onClick={handleAnalyze}>
                 <BarChart className="mr-2 h-4 w-4" /> Show Detailed Analysis
             </Button>
@@ -189,19 +214,23 @@ export default function AdvancedWordCounter() {
       
       {showAnalysis && (
         <Card className="shadow-lg animate-in fade-in-50">
+             <CardHeader>
+                <CardTitle>Detailed Text Analysis</CardTitle>
+             </CardHeader>
             <CardContent className='p-6 space-y-8'>
                 <section>
-                    <CardTitle className='flex items-center gap-2 mb-4'><Clock className='text-accent'/> Time Metrics</CardTitle>
+                    <CardTitle className='flex items-center gap-2 mb-4 text-xl'><Clock className='text-accent'/> Time Metrics</CardTitle>
                     <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
-                        <StatCard title="Reading Time" value={stats.readingTime} unit="sec" />
-                        <StatCard title="Speaking Time" value={stats.speakingTime} unit="sec" />
+                        <StatCard title="Reading Time" value={formatTime(stats.readingTime)} />
+                        <StatCard title="Speaking Time" value={formatTime(stats.speakingTime)} />
                         <StatCard title="Reading Level" value={stats.readingLevel.split(' ')[0]} unit={stats.readingLevel.split(' ').slice(1).join(' ')} />
                     </div>
                 </section>
                 <section>
-                    <CardTitle className='flex items-center gap-2 mb-4'><CaseSensitive className='text-accent'/> Character Breakdown</CardTitle>
+                    <CardTitle className='flex items-center gap-2 mb-4 text-xl'><CaseSensitive className='text-accent'/> Character Breakdown</CardTitle>
                     <div className='grid grid-cols-2 md:grid-cols-5 gap-4'>
                         <StatCard title="Characters" value={stats.characters} />
+                        <StatCard title="Characters (no spaces)" value={stats.charactersNoSpaces} />
                         <StatCard title="Spaces" value={stats.spaces} />
                         <StatCard title="Lowercase" value={stats.lowercase} />
                         <StatCard title="Uppercase" value={stats.uppercase} />
@@ -213,7 +242,7 @@ export default function AdvancedWordCounter() {
                     </div>
                 </section>
                  <section>
-                    <CardTitle className='flex items-center gap-2 mb-4'><SortAsc className='text-accent'/> Word Analysis</CardTitle>
+                    <CardTitle className='flex items-center gap-2 mb-4 text-xl'><SortAsc className='text-accent'/> Word Analysis</CardTitle>
                      <div className='grid grid-cols-2 md:grid-cols-3 gap-4'>
                         <StatCard title="Average Word Length" value={stats.averageWordLength} />
                         <StatCard title="Longest Word" value={stats.longestWord || 'N/A'} />
@@ -221,7 +250,7 @@ export default function AdvancedWordCounter() {
                     </div>
                 </section>
                  <section>
-                    <CardTitle className='flex items-center gap-2 mb-4'><Pilcrow className='text-accent'/> Top Keywords (Keyword Density)</CardTitle>
+                    <CardTitle className='flex items-center gap-2 mb-4 text-xl'><Pilcrow className='text-accent'/> Top Keywords (Keyword Density)</CardTitle>
                      <div className='space-y-4'>
                         {stats.keywordDensity.length > 0 ? stats.keywordDensity.map((kw, index) => (
                            <div key={index} className="flex items-center gap-4">
