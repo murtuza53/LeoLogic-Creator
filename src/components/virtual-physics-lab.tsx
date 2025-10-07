@@ -105,7 +105,7 @@ export const ProjectileMotion = () => {
     };
     
     const { viewBoxWidth, viewBoxHeight, cannonX, cannonY, cannonWidth, cannonHeight, wheelRadius } = useMemo(() => {
-        const fixedWidth = 400;
+        const fixedWidth = 110;
         const fixedHeight = 200;
         return {
             viewBoxWidth: fixedWidth,
@@ -168,7 +168,7 @@ export const ProjectileMotion = () => {
                             <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.3},${viewBoxHeight * 0.15} ${viewBoxWidth * 0.6},${viewBoxHeight * 0.08} ${viewBoxWidth + 5},${viewBoxHeight * 0.1} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="#dcedc1" />
 
                             {/* House */}
-                             <g transform={`translate(${viewBoxWidth * 0.65}, ${viewBoxHeight * 0.08}) scale(0.025)`}>
+                             <g transform={`translate(${viewBoxWidth * 0.65}, ${viewBoxHeight * 0.08}) scale(0.2)`}>
                                 <rect x="0" y="0" width="100" height="60" fill="#f7d8a3" />
                                 <polygon points="0,60 100,60 50,100" fill="#c0392b" />
                                 <rect x="40" y="10" width="20" height="30" fill="#89cff0" />
@@ -278,13 +278,13 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const { viewBox, arcPath, bobX, bobY, bobRadius, cordWidth, scaleFactor } = useMemo(() => {
-        if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0, scaleFactor: 1 };
-    
+    const { viewBox, arcPath, bobX, bobY, bobRadius, cordWidth } = useMemo(() => {
+        if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0 };
+        
         const canvasHeight = 100;
-        const dynamicScaleFactor = canvasHeight / (length * 1.2);
+        const scaleFactor = canvasHeight / (length * 1.2);
     
-        const scaledLength = length * dynamicScaleFactor;
+        const scaledLength = length * scaleFactor;
     
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
         const currentBobX = scaledLength * Math.sin(currentAngleRad);
@@ -300,22 +300,22 @@ export const PendulumDynamics = () => {
         const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
         const newArcPath = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
     
-        const viewboxWidth = 2.2 * scaledLength * Math.sin(initialAngle * Math.PI / 180);
-        const viewboxHeight = scaledLength + (0.1 * scaledLength);
+        const maxDisplacementX = scaledLength * Math.sin(initialAngle * Math.PI / 180);
+        const viewboxWidth = 2.2 * maxDisplacementX;
+        const viewboxHeight = scaledLength * 1.1;
         
         const vb = `${-viewboxWidth/2} 0 ${viewboxWidth} ${viewboxHeight}`;
 
-        const dynamicBobRadius = 0.05 * dynamicScaleFactor * Math.cbrt(mass) * 2;
-        const dynamicCordWidth = 0.005 * dynamicScaleFactor * 2;
-    
+        const dynamicBobRadius = 0.05 * scaleFactor * Math.cbrt(mass) * 2;
+        const dynamicCordWidth = 0.005 * scaleFactor * 2;
+
         return {
             viewBox: vb,
             arcPath: newArcPath,
             bobX: currentBobX,
             bobY: currentBobY,
             bobRadius: dynamicBobRadius,
-            cordWidth: dynamicCordWidth,
-            scaleFactor: dynamicScaleFactor,
+            cordWidth: dynamicCordWidth
         };
     }, [isMounted, length, mass, initialAngle, angularFrequency, time]);
 
@@ -390,9 +390,9 @@ export const PendulumDynamics = () => {
                             </radialGradient>
                         </defs>
                         <g>
-                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth={0.01 * scaleFactor} fill="none" />
+                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth={0.01 * length} fill="none" />
                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={cordWidth} />
-                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.005 * scaleFactor} />
+                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.005 * length} />
                         </g>
                     </svg>
                 </CardContent>
@@ -442,3 +442,6 @@ export const OpticsLab = () => {
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
 
+
+
+    
