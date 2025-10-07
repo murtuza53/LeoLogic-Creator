@@ -3,23 +3,18 @@
 
 import * as React from 'react';
 import { useState, useMemo, useEffect, useRef, useCallback } from 'react';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer } from 'lucide-react';
+import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer, Pencil, Minus, Plus } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine } from 'recharts';
 import { Button } from './ui/button';
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
+import { ToggleGroup, ToggleGroupItem } from './ui/toggle-group';
+import { Checkbox } from './ui/checkbox';
+import { cn } from '@/lib/utils';
 
 const GRAVITY = 9.81; // m/s^2
-
-export const ComingSoon = ({ experimentName }: { experimentName: string }) => (
-    <div className="flex flex-col items-center justify-center h-full text-center p-8 border-2 border-dashed rounded-lg bg-muted/50 mt-8">
-      <h3 className="text-2xl font-semibold mb-2">{experimentName}</h3>
-      <p className="text-muted-foreground">This feature is coming soon. Stay tuned!</p>
-    </div>
-);
-
 
 export const ProjectileMotion = () => {
     const [initialVelocity, setInitialVelocity] = useState(35);
@@ -270,28 +265,22 @@ export const PendulumDynamics = () => {
 
     const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
 
-    const { viewBox, scale, pivotX, pivotY, bobX, bobY, bobRadius, stringLength } = useMemo(() => {
+    const { viewBox, bobX, bobY, bobRadius, stringLength, pivotX, pivotY } = useMemo(() => {
         const canvasSize = 500;
-        const maxSwingWidth = length * Math.sin(60 * Math.PI / 180) * 2;
-        const requiredHeight = length * 1.1; 
-        const requiredWidth = Math.max(maxSwingWidth, length) * 1.1;
-
-        const effectiveSize = Math.max(requiredWidth, requiredHeight);
-        const dynamicScale = canvasSize / effectiveSize;
-
-        const pivot = { x: canvasSize / 2, y: 20 };
+        const scaleFactor = canvasSize / 4 / length; 
+        const pX = canvasSize / 2;
+        const pY = 20;
 
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
         
         return {
             viewBox: `0 0 ${canvasSize} ${canvasSize}`,
-            scale: dynamicScale,
-            pivotX: pivot.x,
-            pivotY: pivot.y,
-            stringLength: length * dynamicScale,
-            bobX: pivot.x + (length * dynamicScale * Math.sin(currentAngleRad)),
-            bobY: pivot.y + (length * dynamicScale * Math.cos(currentAngleRad)),
-            bobRadius: Math.max(5, 10 * Math.cbrt(mass)),
+            pivotX: pX,
+            pivotY: pY,
+            stringLength: length * scaleFactor,
+            bobX: pX + (length * scaleFactor * Math.sin(currentAngleRad)),
+            bobY: pY + (length * scaleFactor * Math.cos(currentAngleRad)),
+            bobRadius: Math.max(8, 12 * Math.cbrt(mass)),
         };
     }, [length, mass, initialAngle, angularFrequency, time]);
 
@@ -360,25 +349,19 @@ export const PendulumDynamics = () => {
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
                     <svg width="100%" height="100%" viewBox={viewBox}>
                         <defs>
-                            <radialGradient id="bobGradient" cx="0.3" cy="0.3" r="0.7">
-                                <stop offset="0%" stopColor="#ef4444" /> 
+                            <radialGradient id="bobGradientRed" cx="0.3" cy="0.3" r="0.7">
+                                <stop offset="0%" stopColor="#fca5a5" /> 
                                 <stop offset="100%" stopColor="#b91c1c" /> 
                             </radialGradient>
                         </defs>
-                        <g>
-                            {/* Rigid Support */}
-                            <rect x={pivotX - 100} y={pivotY - 10} width="200" height="10" fill="#a16207" rx="2" />
-                            <path d={`M ${pivotX - 100} ${pivotY - 5} L ${pivotX + 100} ${pivotY - 5}`} stroke="#ca8a04" strokeWidth="2"/>
-
-                            {/* Dotted vertical line for equilibrium */}
-                            <line x1={pivotX} y1={pivotY} x2={pivotX} y2={pivotY + stringLength} stroke="hsl(var(--muted-foreground))" strokeWidth="2" strokeDasharray="4 4" />
-                            
-                            {/* String */}
-                            <line x1={pivotX} y1={pivotY} x2={bobX} y2={bobY} stroke="hsl(var(--foreground))" strokeWidth="2" />
-                            
-                            {/* Bob */}
-                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" />
-                        </g>
+                        {/* Rigid Support */}
+                        <rect x={pivotX - 100} y={pivotY - 5} width="200" height="10" fill="hsl(var(--muted))" rx="3" />
+                        {/* String */}
+                        <line x1={pivotX} y1={pivotY} x2={bobX} y2={bobY} stroke="hsl(var(--foreground))" strokeWidth="2" />
+                        {/* Bob */}
+                        <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradientRed)" />
+                        {/* Pivot */}
+                        <circle cx={pivotX} cy={pivotY} r="5" fill="hsl(var(--foreground))" />
                     </svg>
                 </CardContent>
             </Card>
@@ -416,13 +399,184 @@ export const CircuitBuilder = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Circuit Building" />;
 }
+
 export const OpticsLab = () => {
-    const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('opticsLab');
-    useEffect(() => {
-        if (isUserLoading) return;
-        if (!checkLimit()) return;
-        incrementUsage();
+  const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('opticsLab');
+  
+  useEffect(() => {
+    if (!isUserLoading) {
+      if (!checkLimit()) return;
+      incrementUsage();
+    }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isUserLoading]);
-    return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
-}
+  }, [isUserLoading]);
+
+  // State variables for the simulation
+  const [lensType, setLensType] = useState<'convex' | 'concave'>('convex');
+  const [radius, setRadius] = useState(80);
+  const [refractiveIndex, setRefractiveIndex] = useState(1.50);
+  const [diameter, setDiameter] = useState(80);
+  const [objectPosition, setObjectPosition] = useState(-120); // cm
+  const [showFocalPoints, setShowFocalPoints] = useState(true);
+  
+  const objectHeight = 20; // Fixed object height
+
+  // SVG dimensions and scaling
+  const svgWidth = 800;
+  const svgHeight = 400;
+  const scale = 1.5; // pixels per cm
+  const axisY = svgHeight / 2;
+  const lensPositionX = svgWidth / 2;
+
+  // Physics calculations
+  const focalLength = useMemo(() => {
+    if (radius === 0) return lensType === 'convex' ? Infinity : -Infinity;
+    // Lensmaker's equation for a thin biconvex/biconcave lens
+    const f = (radius * scale) / (2 * (refractiveIndex - 1));
+    return lensType === 'convex' ? f : -f;
+  }, [radius, refractiveIndex, lensType]);
+
+  const { imagePosition, imageHeight, isVirtual } = useMemo(() => {
+    const u = objectPosition * scale; // object distance
+    if (u === 0) return { imagePosition: 0, imageHeight: 0, isVirtual: false };
+    
+    // Thin lens equation: 1/f = 1/v - 1/u
+    const v = 1 / (1 / focalLength + 1 / u); // image distance
+    const magnification = v / u;
+    
+    return {
+      imagePosition: v / scale,
+      imageHeight: magnification * objectHeight,
+      isVirtual: (lensType === 'convex' && u > -focalLength) || lensType === 'concave',
+    };
+  }, [objectPosition, focalLength, lensType]);
+
+  // Draggable object logic
+  const svgRef = useRef<SVGSVGElement>(null);
+  const [isDragging, setIsDragging] = useState(false);
+
+  const handleMouseDown = (e: React.MouseEvent) => {
+    setIsDragging(true);
+  };
+  const handleMouseUp = (e: React.MouseEvent) => {
+    setIsDragging(false);
+  };
+  const handleMouseMove = (e: React.MouseEvent) => {
+    if (!isDragging || !svgRef.current) return;
+    const CTM = svgRef.current.getScreenCTM();
+    if (!CTM) return;
+    const newX = (e.clientX - CTM.e) / CTM.a;
+    const newObjectPosCm = (newX - lensPositionX) / scale;
+    setObjectPosition(Math.max(-250, Math.min(-10, newObjectPosCm)));
+  };
+
+  const objX = lensPositionX + objectPosition * scale;
+  const imgX = lensPositionX + imagePosition * scale;
+
+  return (
+    <div className="mt-8 space-y-4">
+      <Card>
+        <CardContent 
+            className="p-2 sm:p-4"
+            onMouseMove={handleMouseMove} 
+            onMouseUp={handleMouseUp} 
+            onMouseLeave={handleMouseUp}
+        >
+          <svg ref={svgRef} width="100%" viewBox={`0 0 ${svgWidth} ${svgHeight}`}>
+            {/* Principal Axis */}
+            <line x1="0" y1={axisY} x2={svgWidth} y2={axisY} stroke="hsl(var(--muted-foreground))" strokeDasharray="4 4" />
+            
+            {/* Ruler */}
+            <g transform={`translate(${lensPositionX}, ${axisY + 40})`}>
+              <rect x={-250*scale} y="0" width={500*scale} height="20" fill="#f0e6d2" stroke="#b3a284"/>
+              {Array.from({ length: 51 }).map((_, i) => {
+                const x = (i * 10 - 250) * scale;
+                const isMajor = i % 5 === 0;
+                return <g key={i}>
+                  <line x1={x} y1="0" x2={x} y2={isMajor ? 10 : 5} stroke="#333" />
+                  {isMajor && <text x={x} y="18" textAnchor="middle" fontSize="10">{i*10 - 250}</text>}
+                </g>
+              })}
+            </g>
+
+            {/* Object (Pencil) */}
+            <g transform={`translate(${objX}, ${axisY - objectHeight})`} onMouseDown={handleMouseDown} style={{cursor: isDragging ? 'grabbing': 'grab'}}>
+                <rect x="-10" y="-5" width="20" height={objectHeight+10} fill='transparent' />
+                <Pencil transform={`translate(0, ${objectHeight}) scale(1, -1)`} height={objectHeight} width={objectHeight/2} strokeWidth={1.5}/>
+            </g>
+            
+            {/* Lens */}
+            <path
+              d={`M ${lensPositionX} ${axisY - diameter / 2}
+                  C ${lensPositionX + (lensType === 'convex' ? 20 : -20)} ${axisY - diameter / 4},
+                    ${lensPositionX + (lensType === 'convex' ? 20 : -20)} ${axisY + diameter / 4},
+                    ${lensPositionX} ${axisY + diameter / 2}
+                  C ${lensPositionX + (lensType === 'convex' ? -20 : 20)} ${axisY + diameter / 4},
+                    ${lensPositionX + (lensType === 'convex' ? -20 : 20)} ${axisY - diameter / 4},
+                    ${lensPositionX} ${axisY - diameter / 2}
+                 `}
+              fill="rgba(150, 180, 255, 0.5)"
+              stroke="rgba(100, 120, 200, 0.8)"
+              strokeWidth="2"
+            />
+            <line x1={lensPositionX} y1={axisY-diameter/2-5} x2={lensPositionX} y2={axisY+diameter/2+5} stroke="rgba(100,120,200,0.5)" />
+
+            {/* Rays */}
+            <g strokeWidth="1" stroke="black" fill="none">
+              {/* Ray 1: Parallel -> Focal Point */}
+              <line x1={objX} y1={axisY - objectHeight} x2={lensPositionX} y2={axisY - objectHeight} />
+              <line x1={lensPositionX} y1={axisY - objectHeight} x2={imgX} y2={axisY - imageHeight} strokeDasharray={isVirtual ? "5 5" : "0"} />
+              {/* Ray 2: Center -> Undeflected */}
+              <line x1={objX} y1={axisY - objectHeight} x2={imgX} y2={axisY - imageHeight} />
+              {/* Ray 3: Focal Point -> Parallel */}
+              <line x1={objX} y1={axisY - objectHeight} x2={lensPositionX} y2={axisY - imageHeight*objectPosition*scale/focalLength} />
+              <line x1={lensPositionX} y1={axisY - imageHeight*objectPosition*scale/focalLength} x2={imgX} y2={axisY - imageHeight} strokeDasharray={isVirtual ? "5 5" : "0"} />
+            </g>
+            
+            {/* Image (Pencil) */}
+            <g opacity={isVirtual ? 0.5 : 1}>
+                <Pencil transform={`translate(${imgX}, ${axisY - imageHeight}) scale(1, -1)`} height={Math.abs(imageHeight)} width={Math.abs(imageHeight)/2} strokeWidth={1.5} />
+            </g>
+            
+            {/* Focal Points */}
+            {showFocalPoints && <>
+              <circle cx={lensPositionX + focalLength} cy={axisY} r="5" fill="yellow" stroke="black"/>
+              <circle cx={lensPositionX - focalLength} cy={axisY} r="5" fill="yellow" stroke="black"/>
+              <text x={lensPositionX + focalLength + 8} y={axisY + 5} fontSize="12">F</text>
+              <text x={lensPositionX - focalLength - 18} y={axisY + 5} fontSize="12">F</text>
+            </>}
+
+          </svg>
+        </CardContent>
+      </Card>
+      
+      <Card>
+        <CardContent className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 p-4">
+            <div className="space-y-2">
+                <Label>Lens Type</Label>
+                 <ToggleGroup type="single" value={lensType} onValueChange={(v: 'convex' | 'concave') => v && setLensType(v)} className="w-full grid grid-cols-2">
+                    <ToggleGroupItem value="convex">Convex</ToggleGroupItem>
+                    <ToggleGroupItem value="concave">Concave</ToggleGroupItem>
+                </ToggleGroup>
+            </div>
+            <div className="space-y-2">
+                <Label>Radius of Curvature ({radius} cm)</Label>
+                <Slider min={10} max={200} step={5} value={[radius]} onValueChange={(v) => setRadius(v[0])} />
+            </div>
+            <div className="space-y-2">
+                <Label>Index of Refraction ({refractiveIndex.toFixed(2)})</Label>
+                <Slider min={1.1} max={2.5} step={0.01} value={[refractiveIndex]} onValueChange={(v) => setRefractiveIndex(v[0])} />
+            </div>
+            <div className="space-y-2">
+                <Label>Diameter ({diameter} cm)</Label>
+                <Slider min={20} max={150} step={5} value={[diameter]} onValueChange={(v) => setDiameter(v[0])} />
+            </div>
+            <div className="lg:col-span-4 flex items-center space-x-4">
+                <Checkbox id="focal-points" checked={showFocalPoints} onCheckedChange={(c) => setShowFocalPoints(c as boolean)} />
+                <Label htmlFor="focal-points">Show Focal Points (F)</Label>
+            </div>
+        </CardContent>
+      </Card>
+    </div>
+  );
+};
