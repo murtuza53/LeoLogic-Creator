@@ -71,7 +71,7 @@ export const ProjectileMotion = () => {
 
     return (
         <div className="mt-8 space-y-6">
-            <Card>
+             <Card>
                 <CardHeader>
                     <CardTitle>Controls</CardTitle>
                 </CardHeader>
@@ -90,10 +90,12 @@ export const ProjectileMotion = () => {
                     </div>
                 </CardContent>
             </Card>
+
              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
                 <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
             </div>
+
             <Card className="h-[60vh]">
                 <CardContent className="p-2 sm:p-6 h-full">
                      <ResponsiveContainer width="100%" height="100%">
@@ -235,6 +237,15 @@ export const PendulumDynamics = () => {
                 <StatCard icon={MoveRight} label="Max Speed" value={maxSpeed.toFixed(2)} unit="m/s" />
             </div>
 
+            <div className="flex justify-center gap-2 my-4">
+                <Button onClick={() => setIsRunning(!isRunning)} variant="outline" size="lg">
+                    {isRunning ? <><Pause className="mr-2"/> Pause</> : <><Play className="mr-2"/> Start</>}
+                </Button>
+                <Button onClick={() => { setIsRunning(false); setTime(0); }} variant="outline" size="lg">
+                    <RotateCcw className="mr-2"/> Reset
+                </Button>
+            </div>
+
             <Card className="h-[60vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
                     <svg width="100%" height="100%" viewBox="-3 -0.5 6 4">
@@ -242,14 +253,6 @@ export const PendulumDynamics = () => {
                         <circle cx={bobX} cy={-bobY} r={0.2 * Math.sqrt(mass)} fill="hsl(var(--primary))" />
                         <line x1="-3" y1="0" x2="3" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.1" />
                     </svg>
-                    <div className="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-                        <Button onClick={() => setIsRunning(!isRunning)} variant="outline" size="lg">
-                            {isRunning ? <><Pause className="mr-2"/> Pause</> : <><Play className="mr-2"/> Start</>}
-                        </Button>
-                        <Button onClick={() => { setIsRunning(false); setTime(0); }} variant="outline" size="lg">
-                            <RotateCcw className="mr-2"/> Reset
-                        </Button>
-                    </div>
                 </CardContent>
             </Card>
         </div>
@@ -276,5 +279,3 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
-
-    
