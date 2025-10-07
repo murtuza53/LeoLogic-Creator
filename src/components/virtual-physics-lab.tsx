@@ -7,7 +7,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { MoveUp, MoveRight, Timer, Play, Pause, RotateCcw } from 'lucide-react';
+import { MoveUp, MoveRight, Play, Pause, RotateCcw, Timer } from 'lucide-react';
 import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
 import { Button } from './ui/button';
@@ -141,6 +141,8 @@ const PendulumDynamics = () => {
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const animationFrameId = useRef<number | null>(null);
+    const lastTimeRef = useRef<number | null>(null);
+
 
     // Calculate physics properties
     const period = useMemo(() => 2 * Math.PI * Math.sqrt(length / GRAVITY), [length]);
@@ -148,17 +150,24 @@ const PendulumDynamics = () => {
     const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
 
     const animate = useCallback((timestamp: number) => {
-        setTime(prevTime => prevTime + 16 / 1000); // approx 60fps
+        if (lastTimeRef.current !== null) {
+            const deltaTime = (timestamp - lastTimeRef.current) / 1000;
+            setTime(prevTime => prevTime + deltaTime);
+        }
+        lastTimeRef.current = timestamp;
         animationFrameId.current = requestAnimationFrame(animate);
     }, []);
     
     useEffect(() => {
         if (isRunning) {
+            lastTimeRef.current = performance.now();
             animationFrameId.current = requestAnimationFrame(animate);
         } else {
             if (animationFrameId.current) {
                 cancelAnimationFrame(animationFrameId.current);
+                animationFrameId.current = null;
             }
+            lastTimeRef.current = null;
         }
         return () => {
             if (animationFrameId.current) {
@@ -182,6 +191,14 @@ const PendulumDynamics = () => {
         </Card>
     );
 
+    const handleInitialAngleChange = (v: number[]) => {
+      setInitialAngle(v[0]);
+      if (isRunning) {
+        setIsRunning(false);
+      }
+      setTime(0);
+    }
+
     return (
         <div className="grid md:grid-cols-1 gap-6 h-full">
             <Card>
@@ -197,7 +214,7 @@ const PendulumDynamics = () => {
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="angle">Initial Angle ({initialAngle.toFixed(1)}°)</Label>
-                        <Slider id="angle" min={1} max={60} step={1} value={[initialAngle]} onValueChange={(v) => { setInitialAngle(v[0]); setTime(0); }} />
+                        <Slider id="angle" min={1} max={60} step={1} value={[initialAngle]} onValueChange={handleInitialAngleChange} />
                     </div>
                 </CardContent>
             </Card>
