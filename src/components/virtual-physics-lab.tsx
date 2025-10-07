@@ -231,14 +231,14 @@ export const PendulumDynamics = () => {
         const endX = length * Math.sin(endAngle);
         const endY = length * Math.cos(endAngle);
         // Sweep flag should be 0 for arcs less than 180 degrees
-        return `M ${startX} ${startY} A ${length} ${length} 0 0 0 ${endX} ${endY}`;
+        return `M ${startX} ${startY} A ${length} ${length} 0 0 1 ${endX} ${endY}`;
     }, [initialAngle, length]);
 
     const viewBox = useMemo(() => {
-        const padding = 0.5;
+        const padding = 0.2;
         const width = (length + padding) * 2;
         const height = length + padding;
-        return `-${width / 2} -${padding} ${width} ${height}`;
+        return `-${width / 2} 0 ${width} ${height}`;
     }, [length]);
 
 
@@ -276,7 +276,7 @@ export const PendulumDynamics = () => {
                 </Button>
             </div>
 
-            <Card className="h-[50vh] flex flex-col">
+            <Card className="h-[40vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
                     <svg width="100%" height="100%" viewBox={viewBox}>
                          <defs>
