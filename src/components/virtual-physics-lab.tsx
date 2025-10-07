@@ -145,7 +145,7 @@ export const PendulumDynamics = () => {
     const [isRunning, setIsRunning] = useState(false);
     const [positionHistory, setPositionHistory] = useState<{time: number, x: number}[]>([]);
     const [isMounted, setIsMounted] = useState(false);
-
+    
     useEffect(() => {
         setIsMounted(true);
         // Set state from refs after mount to ensure consistency
@@ -236,8 +236,14 @@ export const PendulumDynamics = () => {
         setPositionHistory([]);
     }
     
-    const arcPath = useMemo(() => {
-        if (!isMounted) return "";
+    const { viewBox, viewBoxWidth, arcPath } = useMemo(() => {
+        if (!isMounted) return { viewBox: "0 0 100 100", viewBoxWidth: 100, arcPath: "" };
+        const maxSwingWidth = Math.abs(2 * length * scaleFactor * Math.sin(initialAngle * Math.PI / 180));
+        const height = length * scaleFactor * 1.2;
+        const width = Math.max(maxSwingWidth * 1.2, height * 0.5); // Ensure a minimum width
+
+        const vb = `0 0 ${width} ${height}`;
+
         const startAngle = -initialAngle * Math.PI / 180;
         const endAngle = initialAngle * Math.PI / 180;
         const scaledLength = length * scaleFactor;
@@ -245,8 +251,10 @@ export const PendulumDynamics = () => {
         const startY = scaledLength * Math.cos(startAngle);
         const endX = scaledLength * Math.sin(endAngle);
         const endY = scaledLength * Math.cos(endAngle);
-        return `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 0 1 ${endX} ${endY}`;
-    }, [initialAngle, length, isMounted, scaleFactor]);
+        const path = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 0 1 ${endX} ${endY}`;
+
+        return { viewBox: vb, viewBoxWidth: width, arcPath: path };
+    }, [isMounted, length, initialAngle, scaleFactor]);
 
     return (
         <div className="mt-8 space-y-6">
@@ -284,17 +292,21 @@ export const PendulumDynamics = () => {
 
             <Card className="h-[60vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox="-120 -10 240 140">
+                    <svg width="100%" height="100%" viewBox={viewBox}>
                          <defs>
                             <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
                                 <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
                                 <stop offset="100%" stopColor="hsl(var(--primary))" />
                             </radialGradient>
                         </defs>
-                        <g>
-                             <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="2 2" strokeWidth="0.5" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.5" />
-                             <circle cx={bobX} cy={bobY} r={3 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.5" />
+                        <g transform={`translate(${viewBoxWidth / 2}, 0)`}>
+                            {/* Visual Anchor */}
+                            <line x1="-10" y1="0" x2="10" y2="0" stroke="hsl(var(--foreground))" strokeWidth={0.5} />
+                            <circle cx="0" cy="0" r="1.5" fill="hsl(var(--foreground))" />
+
+                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="2 2" strokeWidth={0.5} fill="none" />
+                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={0.25} />
+                             <circle cx={bobX} cy={bobY} r={1.5 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.25" />
                         </g>
                     </svg>
                 </CardContent>
