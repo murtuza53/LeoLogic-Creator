@@ -137,23 +137,29 @@ export const ProjectileMotion = () => {
 }
 
 export const PendulumDynamics = () => {
-    const [length, setLength] = useState(1.5); // meters
-    const [mass, setMass] = useState(1); // kg
-    const [initialAngle, setInitialAngle] = useState(30); // degrees
+    const initialValues = useRef({ length: 1.5, mass: 1, initialAngle: 30 });
+    const [length, setLength] = useState(initialValues.current.length);
+    const [mass, setMass] = useState(initialValues.current.mass);
+    const [initialAngle, setInitialAngle] = useState(initialValues.current.initialAngle);
     const [time, setTime] = useState(0);
     const [isRunning, setIsRunning] = useState(false);
     const [positionHistory, setPositionHistory] = useState<{time: number, x: number}[]>([]);
+    const [isMounted, setIsMounted] = useState(false);
+
+    useEffect(() => {
+        setIsMounted(true);
+    }, []);
 
     const animationFrameId = useRef<number | null>(null);
     const lastTimeRef = useRef<number | null>(null);
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('pendulumDynamics');
     
     useEffect(() => {
-      if (isUserLoading) return;
+      if (isUserLoading || !isMounted) return;
       if (!checkLimit()) return;
       incrementUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [isUserLoading]);
+    }, [isUserLoading, isMounted]);
 
     const period = useMemo(() => 2 * Math.PI * Math.sqrt(length / GRAVITY), [length]);
     const angularFrequency = useMemo(() => Math.sqrt(GRAVITY / length), [length]);
@@ -193,9 +199,9 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
-    const bobX = length * Math.sin(currentAngleRad);
-    const bobY = length * Math.cos(currentAngleRad);
+    const currentAngleRad = isMounted ? (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time) : 0;
+    const bobX = isMounted ? length * Math.sin(currentAngleRad) : 0;
+    const bobY = isMounted ? length * Math.cos(currentAngleRad) : 0;
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
