@@ -118,7 +118,7 @@ export default function GraphingCalculator() {
                             <YAxis 
                                 domain={['auto', 'auto']}
                                 tickCount={11}
-                                label={{ value: 'y', position: 'insideTopLeft', offset: -5, angle: -90, dy: -10 }}
+                                label={{ value: 'y', position: 'insideTopLeft', offset: -5 }}
                             />
                             <Tooltip 
                                 formatter={(value: number) => value.toFixed(2)}
