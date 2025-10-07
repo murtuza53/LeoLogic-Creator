@@ -23,7 +23,8 @@ export type Feature =
   | 'resizeImage' 
   | 'imageToIcon'
   | 'pdfToWord'
-  | 'colorCodeGenerator';
+  | 'colorCodeGenerator'
+  | 'jsonBeautifier';
 
 export type ContactMessage = {
   name: string;

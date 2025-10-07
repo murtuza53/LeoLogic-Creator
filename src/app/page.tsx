@@ -38,6 +38,16 @@ const tools = [
         icon: Sigma,
     },
     { 
+        title: 'JSON Beautifier', 
+        description: 'Format and color-code JSON data for readability.', 
+        href: '/json-beautifier', 
+        category: 'Productivity',
+        feature: 'jsonBeautifier' as Feature,
+        bgColor: 'bg-indigo-100',
+        textColor: 'text-indigo-600',
+        icon: FileJson,
+    },
+    { 
         title: 'QR Code Generator', 
         description: 'Create and customize QR codes for any text or URL.', 
         href: '/qr-generator', 
@@ -527,4 +537,5 @@ export default function Home() {
     </div>
   );
 }
+
 
