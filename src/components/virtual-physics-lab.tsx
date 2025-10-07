@@ -270,25 +270,26 @@ export const PendulumDynamics = () => {
 
     const maxDisplacement = useMemo(() => length * Math.sin(Math.min(60, initialAngle) * Math.PI / 180), [length, initialAngle]);
 
-    const { viewBox, scaleFactor, bobX, bobY, bobRadius, cordWidth, frameWidth, frameHeight, baseHeight, pivotY } = useMemo(() => {
-        const canvasHeight = 100; 
-        const maxVisualLength = canvasHeight * 0.8;
-        const currentScaleFactor = maxVisualLength / length;
+    const { viewBox, bobX, bobY, bobRadius, cordWidth, frameWidth, frameHeight, baseHeight, pivotY } = useMemo(() => {
+        const canvasHeight = 100;
+        const scaleFactor = canvasHeight / (length + 2); // Ensure length fits with padding
 
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
-        const currentBobX = length * Math.sin(currentAngleRad) * currentScaleFactor;
-        const currentBobY = length * Math.cos(currentAngleRad) * currentScaleFactor;
-
-        const currentFrameWidth = (maxDisplacement * currentScaleFactor * 2) + 40;
-        const currentFrameHeight = length * currentScaleFactor + 20;
+        const currentBobX = length * Math.sin(currentAngleRad) * scaleFactor;
+        const currentBobY = length * Math.cos(currentAngleRad) * scaleFactor;
+        
+        const currentFrameWidth = (maxDisplacement * scaleFactor * 2) + 40;
+        const currentFrameHeight = length * scaleFactor + 20;
         const currentBaseHeight = 10;
         const totalHeight = currentFrameHeight + currentBaseHeight;
-        
+
         const currentPivotY = 10;
 
+        const viewHeight = totalHeight;
+        const viewWidth = currentFrameWidth;
+
         return {
-            viewBox: `-${currentFrameWidth / 2} 0 ${currentFrameWidth} ${totalHeight}`,
-            scaleFactor: currentScaleFactor,
+            viewBox: `-${viewWidth / 2} 0 ${viewWidth} ${viewHeight}`,
             bobX: currentBobX,
             bobY: currentBobY + currentPivotY,
             bobRadius: Math.max(3, 8 * Math.cbrt(mass)),
@@ -299,7 +300,6 @@ export const PendulumDynamics = () => {
             pivotY: currentPivotY
         };
     }, [length, mass, initialAngle, angularFrequency, time, maxDisplacement]);
-
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -376,8 +376,8 @@ export const PendulumDynamics = () => {
                         </defs>
                         <g>
                              {/* Base */}
-                            <rect x={`-${frameWidth / 2 + 20}`} y={frameHeight} width={frameWidth + 40} height={baseHeight} fill="#c2b280" rx="2" />
-                            <rect x={`-${frameWidth / 2 + 20}`} y={frameHeight + baseHeight - 2} width={frameWidth + 40} height="2" fill="#a08f65" />
+                            <rect x={`-${frameWidth / 2 - 20}`} y={frameHeight} width={frameWidth} height={baseHeight} fill="#c2b280" rx="2" />
+                            <rect x={`-${frameWidth / 2 - 20}`} y={frameHeight + baseHeight - 2} width={frameWidth} height="2" fill="#a08f65" />
 
                             {/* Frame */}
                             <rect x={`-${frameWidth / 2}`} y={pivotY} width="5" height={frameHeight - pivotY} fill="url(#standGradient)" rx="1"/>
@@ -440,5 +440,3 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
-
-    
