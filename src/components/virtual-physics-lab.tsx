@@ -42,6 +42,11 @@ const ProjectileMotion = () => {
                 points.push({x, y});
              }
         }
+        // Ensure the last point is at y=0 if the simulation overshot slightly
+        if (points.length > 0 && points[points.length-1].y !== 0) {
+            const finalX = initialVelocity * Math.cos(angle * Math.PI / 180) * timeOfFlight;
+            points.push({x: finalX, y: 0});
+        }
         return points;
     }, [initialVelocity, angle, timeOfFlight]);
 
@@ -61,7 +66,7 @@ const ProjectileMotion = () => {
                     }
 
                     const x = initialVelocity * Math.cos(angle * Math.PI / 180) * newTime;
-                    const y = initialVelocity * Math.sin(angle * Math.PI / 180) * newTime - 0.5 * GRAVITY * newTime * newTime;
+                    const y = initialVelocity * Math.sin(angle * Math.PI / 180) * newTime - 0.5 * GRAVITY * t * t;
                     
                     if (y >= 0) {
                         setPath(prevPath => [...prevPath, {x, y}]);
@@ -110,13 +115,13 @@ const ProjectileMotion = () => {
     );
 
     return (
-        <div className="grid md:grid-cols-3 gap-6 h-full">
-            <div className="md:col-span-1 space-y-6">
-                <Card>
+        <div className="grid md:grid-cols-1 gap-6 h-full">
+            <div className="space-y-6">
+                 <Card>
                     <CardHeader>
                         <CardTitle>Controls</CardTitle>
                     </CardHeader>
-                    <CardContent className="space-y-4">
+                    <CardContent className="grid sm:grid-cols-2 md:grid-cols-4 gap-4">
                         <div className="space-y-2">
                             <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
                             <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} disabled={isRunning} />
@@ -129,32 +134,28 @@ const ProjectileMotion = () => {
                             <Label htmlFor="gravity">Gravity</Label>
                             <Input id="gravity" value={`${GRAVITY} m/s²`} disabled />
                         </div>
+                         <div className="flex items-end gap-2">
+                            <Button onClick={handleLaunch} disabled={isRunning} className="bg-green-600 hover:bg-green-700 w-full">
+                                <Play className="mr-2" /> Launch
+                            </Button>
+                            <Button onClick={handlePause} variant="outline" className="w-full">
+                                {isRunning ? <><Pause className="mr-2" /> Pause</> : <><Play className="mr-2" /> Resume</>}
+                            </Button>
+                            <Button onClick={resetSimulation} variant="destructive" className="w-full">
+                                <RefreshCw className="mr-2" /> Reset
+                            </Button>
+                        </div>
                     </CardContent>
                 </Card>
-                <div className="grid grid-cols-3 gap-2">
-                    <Button onClick={handleLaunch} disabled={isRunning} className="bg-green-600 hover:bg-green-700">
-                        <Play className="mr-2" /> Launch
-                    </Button>
-                    <Button onClick={handlePause} variant="outline">
-                        {isRunning ? <><Pause className="mr-2" /> Pause</> : <><Play className="mr-2" /> Resume</>}
-                    </Button>
-                    <Button onClick={resetSimulation} variant="destructive">
-                        <RefreshCw className="mr-2" /> Reset
-                    </Button>
-                </div>
-                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
-                    <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
-                 </div>
             </div>
 
-            <div className="md:col-span-2">
+            <div>
                  <Card className="h-full">
-                    <CardContent className="p-2 sm:p-6 h-[70vh]">
+                    <CardContent className="p-2 sm:p-6 h-[60vh]">
                          <ResponsiveContainer width="100%" height="100%">
                             <LineChart 
                                 data={fullPath} 
-                                margin={{ top: 20, right: 30, left: 20, bottom: 20 }}
+                                margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
                             >
                                 <CartesianGrid strokeDasharray="3 3" />
                                 <XAxis 
@@ -164,6 +165,7 @@ const ProjectileMotion = () => {
                                     unit="m" 
                                     domain={[0, 'dataMax']} 
                                     label={{ value: 'Distance (m)', position: 'insideBottom', offset: -15 }}
+                                    tickFormatter={(val) => val.toFixed(0)}
                                 />
                                 <YAxis 
                                     type="number" 
@@ -172,8 +174,10 @@ const ProjectileMotion = () => {
                                     unit="m" 
                                     domain={[0, 'dataMax']}
                                     label={{ value: 'Height (m)', angle: -90, position: 'insideLeft', offset: 10 }}
+                                     tickFormatter={(val) => val.toFixed(0)}
                                 />
                                 <Tooltip formatter={(value: number) => value.toFixed(2)} />
+                                 <ReferenceLine y={0} stroke="#666" strokeWidth={1} />
                                 <Line 
                                     type="monotone" 
                                     dataKey="y" 
@@ -198,6 +202,12 @@ const ProjectileMotion = () => {
                                 )}
                             </LineChart>
                         </ResponsiveContainer>
+                    </CardContent>
+                     <CardContent>
+                         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
+                            <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
+                         </div>
                     </CardContent>
                 </Card>
             </div>
@@ -246,3 +256,4 @@ export default function VirtualPhysicsLab() {
     </div>
   );
 }
+
