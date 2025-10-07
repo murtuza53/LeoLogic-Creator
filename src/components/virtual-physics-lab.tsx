@@ -158,14 +158,22 @@ export const ProjectileMotion = () => {
             </div>
 
             <Card className="p-2 sm:p-4">
-                 <div className="relative aspect-[2/1] w-full bg-blue-50 dark:bg-blue-900/20 rounded-md overflow-hidden border">
+                 <div className="relative aspect-[2/1] w-full bg-blue-100 dark:bg-blue-900/30 rounded-md overflow-hidden border">
                     <svg width="100%" height="100%" viewBox={`0 0 ${viewBoxWidth} ${viewBoxHeight}`} preserveAspectRatio="xMidYMax meet">
                         <g transform={`translate(0, ${viewBoxHeight}) scale(1, -1)`}>
                             {/* Background landscape */}
-                            <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.3},${viewBoxHeight * 0.05} ${viewBoxWidth * 0.6},${viewBoxHeight * 0.15} ${viewBoxWidth + 5},${viewBoxHeight * 0.12} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="hsl(var(--success))" opacity="0.2"/>
+                            <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.2},${viewBoxHeight * 0.2} ${viewBoxWidth * 0.5},${viewBoxHeight * 0.05} ${viewBoxWidth + 5},${viewBoxHeight * 0.15} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="#a8e6cf" />
+                            <path d={`M -5,${viewBoxHeight * 0.1} C ${viewBoxWidth * 0.3},${viewBoxHeight * 0.15} ${viewBoxWidth * 0.6},${viewBoxHeight * 0.08} ${viewBoxWidth + 5},${viewBoxHeight * 0.1} L ${viewBoxWidth + 5},0 L -5,0 Z`} fill="#dcedc1" />
+
+                            {/* House */}
+                             <g transform={`translate(${viewBoxWidth * 0.65}, ${viewBoxHeight * 0.08}) scale(0.005)`}>
+                                <rect x="0" y="0" width="100" height="60" fill="#f7d8a3" />
+                                <polygon points="0,60 100,60 50,100" fill="#c0392b" />
+                                <rect x="40" y="10" width="20" height="30" fill="#89cff0" />
+                            </g>
 
                             {/* Ground */}
-                            <line x1="0" y1={viewBoxHeight * 0.1} x2={viewBoxWidth} y2={viewBoxHeight * 0.1} stroke="hsl(var(--success-foreground))" strokeWidth={viewBoxHeight * 0.005} />
+                            <line x1="0" y1={viewBoxHeight * 0.1} x2={viewBoxWidth} y2={viewBoxHeight * 0.1} stroke="#6B8E23" strokeWidth={viewBoxHeight * 0.005} />
                             
                             {/* Cannon */}
                             <g transform={`translate(${cannonX}, ${viewBoxHeight * 0.1})`}>
