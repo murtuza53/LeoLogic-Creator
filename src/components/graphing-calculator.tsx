@@ -9,7 +9,9 @@ import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, Legend, Responsi
 import { useToast } from "@/hooks/use-toast";
 import { useUsageLimiter } from '@/hooks/use-usage-limiter.tsx';
 import { Alert, AlertDescription, AlertTitle } from './ui/alert';
-import { Lightbulb } from 'lucide-react';
+import { Lightbulb, PlusCircle, Trash2 } from 'lucide-react';
+import Link from 'next/link';
+import { useUser } from '@/firebase';
 
 // Basic math expression parser. Supports +, -, *, /, ^, sin, cos, tan
 const evaluateExpression = (expression: string, x: number): number => {
@@ -17,9 +19,9 @@ const evaluateExpression = (expression: string, x: number): number => {
         const sanitizedExpression = expression
             .replace(/\s+/g, '') // Remove all whitespace
             .replace(/\^/g, '**')
-            .replace(/(\d+(\.\d+)?)(x|sin|cos|tan|sqrt|log|ln|pi|e|\()/g, '$1*$3') // Add multiplication for implicit cases like 2x or 2.5sin(x)
-            .replace(/(\))(\w|\()/g, '$1*$2') // Add multiplication after parentheses, e.g. (x+1)(x-1)
-            .replace(/x\(/g, 'x*(') // For x(x+1)
+            .replace(/(\d+(\.\d+)?)(x|sin|cos|tan|sqrt|log|ln|pi|e|\()/g, '$1*$3')
+            .replace(/(\))(\w|\()/g, '$1*$2')
+            .replace(/x\(/g, 'x*(')
             .replace(/sin/g, 'Math.sin')
             .replace(/cos/g, 'Math.cos')
             .replace(/tan/g, 'Math.tan')
@@ -28,33 +30,50 @@ const evaluateExpression = (expression: string, x: number): number => {
             .replace(/ln/g, 'Math.log')
             .replace(/pi/g, 'Math.PI')
             .replace(/e/g, 'Math.E')
-            .replace(/x/g, `(${x})`); // Wrap x in parentheses to handle negative numbers
+            .replace(/x/g, `(${x})`);
 
-        // Use a Function constructor for safer evaluation than eval()
         return new Function('return ' + sanitizedExpression)();
     } catch (e) {
-        return NaN; // Return NaN on parsing error
+        return NaN;
     }
 }
+
+const lineColors = ["hsl(var(--chart-1))", "hsl(var(--chart-2))", "hsl(var(--chart-3))", "hsl(var(--chart-4))", "hsl(var(--chart-5))"];
+
+type Equation = {
+  id: number;
+  value: string;
+  color: string;
+};
 
 export default function GraphingCalculator() {
     const { toast } = useToast();
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('graphingCalculator');
-    const [expression, setExpression] = useState('x^2');
-    const [inputExpression, setInputExpression] = useState('x^2');
+    const { user } = useUser();
+    
+    const [equations, setEquations] = useState<Equation[]>([{ id: 1, value: 'x^2', color: lineColors[0] }]);
+    const [plottedEquations, setPlottedEquations] = useState<Equation[]>(equations);
     const [error, setError] = useState<string | null>(null);
 
     const data = useMemo(() => {
-        if (!expression) return [];
+        if (plottedEquations.length === 0) return [];
         const points = [];
         for (let i = -10; i <= 10; i += 0.25) {
-            const y = evaluateExpression(expression, i);
-            if (!isNaN(y) && isFinite(y)) {
-                points.push({ x: i, y });
+            const point: { [key: string]: number } = { x: i };
+            let hasValidY = false;
+            plottedEquations.forEach(eq => {
+                const y = evaluateExpression(eq.value, i);
+                if (!isNaN(y) && isFinite(y)) {
+                    point[`y${eq.id}`] = y;
+                    hasValidY = true;
+                }
+            });
+            if(hasValidY) {
+                points.push(point);
             }
         }
         return points;
-    }, [expression]);
+    }, [plottedEquations]);
 
     const handlePlot = useCallback(() => {
         if (isUserLoading) {
@@ -65,36 +84,91 @@ export default function GraphingCalculator() {
         incrementUsage();
         
         setError(null);
-        // Test with a sample point to see if the expression is valid
-        const testY = evaluateExpression(inputExpression, 1);
-        if (isNaN(testY)) {
-            setError("Invalid function. Please check your expression.");
+        let isValid = true;
+        equations.forEach(eq => {
+            const testY = evaluateExpression(eq.value, 1);
+            if (isNaN(testY)) {
+                setError(`Invalid function in equation: "${eq.value}". Please check your expression.`);
+                toast({
+                    variant: 'destructive',
+                    title: 'Invalid Expression',
+                    description: `Could not plot function: "${eq.value}". Please check your syntax.`
+                });
+                isValid = false;
+            }
+        });
+        
+        if (isValid) {
+            setPlottedEquations([...equations]);
+        }
+    }, [equations, isUserLoading, checkLimit, incrementUsage, toast]);
+
+    const handleEquationChange = (id: number, value: string) => {
+        setEquations(equations.map(eq => eq.id === id ? { ...eq, value } : eq));
+    };
+
+    const addEquation = () => {
+        if (!user) {
+             toast({
+                title: "Feature Locked",
+                description: "Sign up for a free account to plot multiple functions.",
+                action: <Button asChild><Link href="/signup">Sign Up</Link></Button>
+            });
+            return;
+        }
+        if (equations.length >= lineColors.length) {
             toast({
                 variant: 'destructive',
-                title: 'Invalid Expression',
-                description: "Could not plot the function. Please check your syntax."
-            })
-        } else {
-            setExpression(inputExpression);
+                title: 'Maximum functions reached',
+                description: `You can plot up to ${lineColors.length} functions.`
+            });
+            return;
         }
-    }, [inputExpression, isUserLoading, checkLimit, incrementUsage, toast]);
+        const newId = (equations[equations.length - 1]?.id || 0) + 1;
+        setEquations([...equations, { id: newId, value: '', color: lineColors[equations.length % lineColors.length] }]);
+    };
+
+    const removeEquation = (id: number) => {
+        if (equations.length === 1) return;
+        setEquations(equations.filter(eq => eq.id !== id));
+    };
+
 
     return (
         <div className="mt-8 space-y-8">
             <Card className="shadow-lg">
                 <CardHeader>
-                    <CardTitle>Enter Function</CardTitle>
-                    <CardDescription>Enter a function of 'x' to plot it on the graph below.</CardDescription>
+                    <CardTitle>Enter Functions</CardTitle>
+                    <CardDescription>Enter one or more functions of 'x' to plot on the graph.</CardDescription>
                 </CardHeader>
-                <CardContent>
-                    <div className="flex gap-4">
-                        <Input
-                            placeholder="e.g., x^2, sin(x), 2*x + 1"
-                            value={inputExpression}
-                            onChange={(e) => setInputExpression(e.target.value)}
-                            onKeyPress={(e) => e.key === 'Enter' && handlePlot()}
-                        />
-                        <Button onClick={handlePlot}>Plot Function</Button>
+                <CardContent className="space-y-4">
+                    <div className='space-y-3'>
+                        {equations.map((eq, index) => (
+                            <div key={eq.id} className="flex gap-2 items-center">
+                                <div className='w-2 h-8 rounded-full' style={{backgroundColor: eq.color}} />
+                                <Input
+                                    placeholder={`e.g., x^2, sin(x), 2*x + 1`}
+                                    value={eq.value}
+                                    onChange={(e) => handleEquationChange(eq.id, e.target.value)}
+                                    onKeyPress={(e) => e.key === 'Enter' && handlePlot()}
+                                />
+                                {equations.length > 1 && (
+                                     <Button variant="ghost" size="icon" onClick={() => removeEquation(eq.id)}>
+                                        <Trash2 className="text-destructive h-4 w-4" />
+                                     </Button>
+                                )}
+                            </div>
+                        ))}
+                    </div>
+
+                    <div className='flex justify-between items-center'>
+                         <div>
+                            <Button variant="outline" onClick={addEquation} disabled={equations.length >= lineColors.length}>
+                                <PlusCircle className="mr-2" /> Add another function
+                            </Button>
+                            {!user && <p className='text-xs text-muted-foreground mt-1'><Link href="/signup" className='underline text-primary'>Sign up</Link> to add more functions.</p>}
+                         </div>
+                        <Button onClick={handlePlot}>Plot Functions</Button>
                     </div>
                      {error && <p className="mt-2 text-sm text-destructive">{error}</p>}
                 </CardContent>
@@ -105,7 +179,7 @@ export default function GraphingCalculator() {
                      <ResponsiveContainer width="100%" height="100%">
                         <LineChart
                             data={data}
-                            margin={{ top: 5, right: 30, left: 20, bottom: 5 }}
+                            margin={{ top: 5, right: 30, left: 20, bottom: 20 }}
                         >
                             <CartesianGrid strokeDasharray="3 3" stroke="rgba(255, 0, 0, 0.2)" />
                             <XAxis 
@@ -113,28 +187,30 @@ export default function GraphingCalculator() {
                                 type="number" 
                                 domain={[-10, 10]} 
                                 ticks={[-10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10]}
-                                label={{ value: 'x', position: 'insideBottomRight', offset: 0 }}
+                                label={{ value: 'x', position: 'insideBottomRight', offset: -10 }}
                             />
                             <YAxis 
-                                domain={['auto', 'auto']}
                                 tickCount={11}
                                 label={{ value: 'y', position: 'insideTopLeft', offset: -5 }}
                             />
                             <Tooltip 
-                                formatter={(value: number) => value.toFixed(2)}
-                                labelFormatter={(label: number) => `x: ${label}`}
+                                formatter={(value: number, name: string) => [value.toFixed(2), plottedEquations.find(eq => `y${eq.id}` === name)?.value]}
+                                labelFormatter={(label: number) => `x: ${label.toFixed(2)}`}
                             />
                             <Legend />
                             <ReferenceLine y={0} stroke="hsl(var(--destructive))" strokeWidth={1.5} />
                             <ReferenceLine x={0} stroke="hsl(var(--destructive))" strokeWidth={1.5} />
-                             <Line 
-                                type="monotone" 
-                                dataKey="y" 
-                                stroke="hsl(var(--primary))" 
-                                strokeWidth={2} 
-                                dot={false} 
-                                name={expression}
-                            />
+                            {plottedEquations.map(eq => (
+                                <Line 
+                                    key={eq.id}
+                                    type="monotone" 
+                                    dataKey={`y${eq.id}`}
+                                    stroke={eq.color}
+                                    strokeWidth={2} 
+                                    dot={false} 
+                                    name={eq.value}
+                                />
+                            ))}
                         </LineChart>
                     </ResponsiveContainer>
                 </CardContent>
