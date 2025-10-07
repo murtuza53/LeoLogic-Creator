@@ -138,6 +138,16 @@ const tools = [
         icon: Calculator,
     },
     { 
+        title: 'Graphing Calculator', 
+        description: 'Visualize functions, plot data, and explore equations.', 
+        href: '/graphing-calculator', 
+        category: 'Productivity',
+        feature: 'graphingCalculator' as Feature,
+        bgColor: 'bg-gray-100',
+        textColor: 'text-gray-600',
+        icon: Sigma,
+    },
+    { 
         title: 'Unit Converter', 
         description: 'Convert between various units of measurement.', 
         href: '/unit-converter', 

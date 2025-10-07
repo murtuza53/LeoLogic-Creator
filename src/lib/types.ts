@@ -34,7 +34,8 @@ export type Feature =
   | 'encryptDecrypt'
   | 'csvToJson'
   | 'jsonToCsv'
-  | 'advancedWordCounter';
+  | 'advancedWordCounter'
+  | 'graphingCalculator';
 
 export type ContactMessage = {
   name: string;
