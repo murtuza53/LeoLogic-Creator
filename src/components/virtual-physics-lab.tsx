@@ -269,7 +269,7 @@ export const PendulumDynamics = () => {
 
             <Card className="h-[50vh] flex flex-col">
                 <CardContent className="p-2 sm:p-6 flex-1 flex flex-col items-center justify-center relative">
-                    <svg width="100%" height="100%" viewBox="-3.5 -0.5 7 4">
+                    <svg width="100%" height="100%" viewBox="-3.5 -3.5 7 4">
                          <defs>
                             <radialGradient id="bobGradient" cx="0.4" cy="0.4" r="0.6">
                                 <stop offset="0%" stopColor="hsl(var(--primary-foreground))" />
@@ -278,8 +278,8 @@ export const PendulumDynamics = () => {
                         </defs>
                         <g transform="translate(0, 0)">
                              <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth="0.02" fill="none" />
-                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
-                             <circle cx={bobX} cy={bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
+                             <line x1="0" y1="0" x2={bobX} y2={-bobY} stroke="hsl(var(--muted-foreground))" strokeWidth="0.05" />
+                             <circle cx={bobX} cy={-bobY} r={0.2 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                         </g>
                         <line x1="-3.5" y1="0" x2="3.5" y2="0" stroke="hsl(var(--foreground))" strokeWidth="0.02" />
                     </svg>
@@ -294,7 +294,7 @@ export const PendulumDynamics = () => {
                      <ResponsiveContainer width="100%" height="100%">
                         <LineChart data={positionHistory}>
                             <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis dataKey="time" type="number" domain={[0, 'dataMax']} unit="s" name="Time" />
+                            <XAxis dataKey="time" type="number" domain={[0, 'dataMax']} unit="s" name="Time" tickFormatter={(tick) => tick.toFixed(1)} />
                             <YAxis domain={[-maxDisplacement * 1.1, maxDisplacement * 1.1]} unit="m" name="Position" />
                             <Tooltip formatter={(value: number) => value.toFixed(3)} labelFormatter={(label: number) => `Time: ${label.toFixed(2)}s`} />
                             <ReferenceLine y={0} stroke="hsl(var(--border))" />
@@ -329,4 +329,5 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
+
 
