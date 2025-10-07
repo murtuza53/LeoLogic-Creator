@@ -26,7 +26,7 @@ const CssBeautifier = () => {
       let formatted = cssInput
         .replace(/\s*([{};])\s*/g, '$1') // Normalize spaces around brackets, semicolons
         .replace(/;}/g, '}') // Remove trailing semicolons
-        .replace(/([:;,])\s*/g, '$1')
+        .replace(/([:;,])\s*/g, '$1 ') // Add space after colons, semicolons, commas
         .replace(/\s+([!{])/g, '$1')
         .replace(/, /g, ',');
       
@@ -70,7 +70,7 @@ const CssBeautifier = () => {
         }
       }
       setError(null);
-      return result.trim();
+      return result.trim().replace(/;\s*/g, ';\n'); // Ensure newlines after every semicolon for clarity
     } catch (e) {
       setError('Could not format CSS. Please check for syntax errors.');
       return cssInput;
@@ -85,10 +85,10 @@ const CssBeautifier = () => {
       .replace(/(\/\*[\s\S]*?\*\/)/g, '<span class="text-gray-500 dark:text-gray-400">$1</span>') // comments
       .replace(/(?<!-)([\w-]+)\s*:/g, '<span class="text-blue-600 dark:text-blue-400">$1</span>:') // properties
       .replace(/(:\s*)([^;}\n]+)/g, (match, p1, p2) => { // values
-        let valueClass = 'text-green-700 dark:text-green-400';
-        if (/^#[\da-fA-F]{3,6}/.test(p2) || /rgb|hsl/.test(p2)) { // color
+        let valueClass = 'text-green-700 dark:text-green-400'; // Default value color
+        if (/^#[\da-fA-F]{3,8}/.test(p2) || /rgb|hsl/.test(p2)) { // color
             valueClass = 'text-purple-600 dark:text-purple-400';
-        } else if (/-?\d/.test(p2)) { // number
+        } else if (/-?\d/.test(p2.trim().split(' ')[0])) { // number
             valueClass = 'text-orange-600 dark:text-orange-400';
         }
         return `${p1}<span class="${valueClass}">${p2}</span>`;
