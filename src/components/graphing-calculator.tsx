@@ -1,7 +1,7 @@
 
 "use client";
 
-import { useState, useMemo, useCallback } from 'react';
+import { useState, useMemo, useCallback, useEffect } from 'react';
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
@@ -46,18 +46,30 @@ type Equation = {
   color: string;
 };
 
+type Domain = [number, number];
+
 export default function GraphingCalculator() {
     const { toast } = useToast();
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('graphingCalculator');
     const { user } = useUser();
     
     const [equations, setEquations] = useState<Equation[]>([{ id: 1, value: 'x^2', color: lineColors[0] }]);
-    const [plottedEquations, setPlottedEquations] = useState<Equation[]>(equations);
+    const [plottedEquations, setPlottedEquations] = useState<Equation[]>([]);
     const [error, setError] = useState<string | null>(null);
+    const [yDomain, setYDomain] = useState<Domain>([-10, 10]);
+
+    useEffect(() => {
+        if(plottedEquations.length === 0){
+             setPlottedEquations([{ id: 1, value: 'x^2', color: lineColors[0] }]);
+        }
+    }, [])
 
     const data = useMemo(() => {
         if (plottedEquations.length === 0) return [];
         const points = [];
+        let minY = Infinity;
+        let maxY = -Infinity;
+
         for (let i = -10; i <= 10; i += 0.25) {
             const point: { [key: string]: number } = { x: i };
             let hasValidY = false;
@@ -65,6 +77,8 @@ export default function GraphingCalculator() {
                 const y = evaluateExpression(eq.value, i);
                 if (!isNaN(y) && isFinite(y)) {
                     point[`y${eq.id}`] = y;
+                    minY = Math.min(minY, y);
+                    maxY = Math.max(maxY, y);
                     hasValidY = true;
                 }
             });
@@ -72,6 +86,14 @@ export default function GraphingCalculator() {
                 points.push(point);
             }
         }
+        
+        if (isFinite(minY) && isFinite(maxY)) {
+            const padding = Math.abs(maxY - minY) * 0.1 || 1;
+            setYDomain([Math.floor(minY - padding), Math.ceil(maxY + padding)]);
+        } else {
+            setYDomain([-10, 10]);
+        }
+        
         return points;
     }, [plottedEquations]);
 
@@ -86,6 +108,13 @@ export default function GraphingCalculator() {
         setError(null);
         let isValid = true;
         equations.forEach(eq => {
+            // A simple check to see if the equation is empty
+            if(!eq.value.trim()){
+                setError(`Equation cannot be empty.`);
+                toast({ variant: 'destructive', title: 'Empty Equation', description: 'Please enter a function to plot.'});
+                isValid = false;
+                return;
+            }
             const testY = evaluateExpression(eq.value, 1);
             if (isNaN(testY)) {
                 setError(`Invalid function in equation: "${eq.value}". Please check your expression.`);
@@ -190,6 +219,7 @@ export default function GraphingCalculator() {
                                 label={{ value: 'x', position: 'insideBottomRight', offset: -10 }}
                             />
                             <YAxis 
+                                domain={yDomain}
                                 tickCount={11}
                                 label={{ value: 'y', position: 'insideTopLeft', offset: -5 }}
                             />
