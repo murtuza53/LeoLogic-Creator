@@ -23,14 +23,20 @@ export const ComingSoon = ({ experimentName }: { experimentName: string }) => (
 
 
 export const ProjectileMotion = () => {
-    const [initialVelocity, setInitialVelocity] = useState(25);
+    const [initialVelocity, setInitialVelocity] = useState(35);
     const [angle, setAngle] = useState(45);
+    const [simulationTime, setSimulationTime] = useState(0);
+    const [isSimulating, setIsSimulating] = useState(false);
+    const [pathData, setPathData] = useState<{x: number, y: number}[]>([]);
+    
+    const animationFrameId = useRef<number | null>(null);
+    const lastTimeRef = useRef<number | null>(null);
     const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('projectileMotion');
     
     useEffect(() => {
-      if (isUserLoading) return;
-      if (!checkLimit()) return;
-      incrementUsage();
+        if (isUserLoading) return;
+        if (!checkLimit()) return;
+        incrementUsage();
     // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [isUserLoading]);
 
@@ -38,30 +44,79 @@ export const ProjectileMotion = () => {
     const maxRange = useMemo(() => (initialVelocity * initialVelocity * Math.sin(2 * angle * Math.PI / 180)) / GRAVITY, [initialVelocity, angle]);
     const maxHeight = useMemo(() => Math.pow(initialVelocity * Math.sin(angle * Math.PI / 180), 2) / (2 * GRAVITY), [initialVelocity, angle]);
 
-    const fullPath = useMemo(() => {
-        const points = [];
-        const steps = 100;
-        for (let i = 0; i <= steps; i++) {
-             const t = (timeOfFlight / steps) * i;
-             const x = initialVelocity * Math.cos(angle * Math.PI / 180) * t;
-             const y = initialVelocity * Math.sin(angle * Math.PI / 180) * t - 0.5 * GRAVITY * t * t;
-             points.push({x, y});
+    const ballPosition = useMemo(() => {
+        const t = Math.min(simulationTime, timeOfFlight);
+        const x = initialVelocity * Math.cos(angle * Math.PI / 180) * t;
+        const y = initialVelocity * Math.sin(angle * Math.PI / 180) * t - 0.5 * GRAVITY * t * t;
+        return { x, y };
+    }, [initialVelocity, angle, simulationTime, timeOfFlight]);
+    
+    const animate = useCallback((timestamp: number) => {
+        if (lastTimeRef.current !== null) {
+            const deltaTime = (timestamp - lastTimeRef.current) / 1000;
+            setSimulationTime(prevTime => {
+                const newTime = prevTime + deltaTime * 2; // Speed up simulation
+                if (newTime >= timeOfFlight) {
+                    setIsSimulating(false);
+                    return timeOfFlight;
+                }
+                return newTime;
+            });
         }
-        return points;
-    }, [initialVelocity, angle, timeOfFlight]);
+        lastTimeRef.current = timestamp;
+        if (isSimulating) {
+           animationFrameId.current = requestAnimationFrame(animate);
+        }
+    }, [timeOfFlight, isSimulating]);
 
-    const domainX = [0, Math.max(10, Math.ceil(maxRange / 10) * 10 + 10)];
-    const domainY = [0, Math.max(10, Math.ceil(maxHeight / 5) * 5 + 5)];
+    useEffect(() => {
+        if (isSimulating) {
+            lastTimeRef.current = performance.now();
+            animationFrameId.current = requestAnimationFrame(animate);
+        } else {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        }
+        return () => {
+            if (animationFrameId.current) {
+                cancelAnimationFrame(animationFrameId.current);
+            }
+        };
+    }, [isSimulating, animate]);
+    
+    useEffect(() => {
+        if(isSimulating) {
+            setPathData(prev => [...prev, ballPosition]);
+        }
+    }, [ballPosition, isSimulating]);
 
+    const startSimulation = () => {
+        if (isSimulating) return;
+        setSimulationTime(0);
+        setPathData([]);
+        setIsSimulating(true);
+    };
+
+    const resetSimulation = () => {
+        setIsSimulating(false);
+        setSimulationTime(0);
+        setPathData([]);
+    };
+    
+    const canvasWidth = 800;
+    const canvasHeight = 400;
+    const scale = Math.min(canvasWidth / (maxRange * 1.1), canvasHeight / (maxHeight * 1.2));
+    const groundY = canvasHeight - 30;
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
-        <Card className="p-4 flex flex-col items-center justify-center text-center">
+        <Card className="p-3 flex flex-col items-center justify-center text-center">
             <div className="flex items-center gap-2">
-                {React.createElement(icon, {className: "h-6 w-6 text-muted-foreground"})}
-                <CardTitle className="text-lg">{label}</CardTitle>
+                {React.createElement(icon, {className: "h-5 w-5 text-muted-foreground"})}
+                <CardTitle className="text-base">{label}</CardTitle>
             </div>
-            <p className="text-3xl font-bold text-primary mt-2">{value}</p>
-            <p className="text-sm text-muted-foreground">{unit}</p>
+            <p className="text-2xl font-bold text-primary mt-1">{value}</p>
+            <p className="text-xs text-muted-foreground">{unit}</p>
         </Card>
     );
 
@@ -69,68 +124,70 @@ export const ProjectileMotion = () => {
         <div className="mt-8 space-y-6">
              <Card>
                 <CardHeader>
-                    <CardTitle>Controls</CardTitle>
+                    <CardTitle>Cannon Controls</CardTitle>
                 </CardHeader>
                 <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
                     <div className="space-y-2">
                         <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
-                        <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} />
+                        <Slider disabled={isSimulating} id="velocity" min={10} max={60} step={1} value={[initialVelocity]} onValueChange={(v) => { resetSimulation(); setInitialVelocity(v[0]); }} />
                     </div>
                     <div className="space-y-2">
                         <Label htmlFor="angle">Launch Angle ({angle.toFixed(1)}°)</Label>
-                        <Slider id="angle" min={0} max={90} step={0.5} value={[angle]} onValueChange={(v) => setAngle(v[0])} />
+                        <Slider disabled={isSimulating} id="angle" min={15} max={75} step={1} value={[angle]} onValueChange={(v) => { resetSimulation(); setAngle(v[0]); }} />
                     </div>
-                     <div className="space-y-2">
-                        <Label htmlFor="gravity">Gravity</Label>
-                        <Input id="gravity" value={`${GRAVITY} m/s²`} disabled />
+                    <div className="flex gap-2">
+                         <Button onClick={startSimulation} disabled={isSimulating} className="w-full" size="lg">Fire!</Button>
+                         <Button onClick={resetSimulation} variant="outline" size="lg"><RotateCcw /></Button>
                     </div>
                 </CardContent>
             </Card>
 
-             <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
                 <StatCard icon={MoveRight} label="Max Distance" value={maxRange.toFixed(2)} unit="meters" />
                 <StatCard icon={MoveUp} label="Peak Height" value={maxHeight.toFixed(2)} unit="meters" />
+                <StatCard icon={Timer} label="Time of Flight" value={timeOfFlight.toFixed(2)} unit="seconds" />
+                <StatCard icon={Timer} label="Time" value={simulationTime.toFixed(2)} unit="seconds" />
             </div>
 
-            <Card className="h-[60vh]">
-                <CardContent className="p-2 sm:p-6 h-full">
-                     <ResponsiveContainer width="100%" height="100%">
-                        <LineChart 
-                            data={fullPath}
-                            margin={{ top: 5, right: 20, left: 20, bottom: 25 }}
-                        >
-                            <CartesianGrid strokeDasharray="3 3" />
-                            <XAxis 
-                                type="number" 
-                                dataKey="x" 
-                                name="Distance" 
-                                unit="m" 
-                                domain={domainX} 
-                                label={{ value: 'Distance (m)', position: 'insideBottom', offset: -15 }}
-                                allowDataOverflow={true}
+            <Card className="p-2 sm:p-4">
+                <div className="relative aspect-[2/1] w-full bg-blue-50 dark:bg-blue-900/20 rounded-md overflow-hidden border">
+                    <svg width="100%" height="100%" viewBox={`0 0 ${canvasWidth} ${canvasHeight}`}>
+                        {/* Background landscape */}
+                        <path d={`M -5,${groundY} C ${canvasWidth*0.3},${groundY-20} ${canvasWidth*0.6},${groundY+10} ${canvasWidth+5},${groundY-5} L ${canvasWidth+5},${canvasHeight+5} L -5,${canvasHeight+5} Z`} fill="hsl(var(--success))" opacity="0.2"/>
+
+                        {/* Ground */}
+                        <line x1="0" y1={groundY} x2={canvasWidth} y2={groundY} stroke="hsl(var(--success-foreground))" strokeWidth="2" />
+                        
+                        {/* Cannon */}
+                        <g transform={`translate(20, ${groundY - 5})`}>
+                            <g transform={`rotate(${-angle})`}>
+                                <rect x="-5" y="-7.5" width="40" height="15" fill="hsl(var(--foreground))" rx="5"/>
+                            </g>
+                            <circle cx="0" cy="0" r="15" fill="hsl(var(--foreground))" />
+                            <circle cx="-10" cy="5" r="8" fill="hsl(var(--muted-foreground))" />
+                             <circle cx="10" cy="5" r="8" fill="hsl(var(--muted-foreground))" />
+                        </g>
+                        
+                        {/* Trajectory Path */}
+                        {pathData.length > 1 && (
+                            <path 
+                                d={`M ${20 + pathData[0].x * scale} ${groundY - pathData[0].y * scale} ` + pathData.map(p => `L ${20 + p.x * scale} ${groundY - p.y * scale}`).join(' ')}
+                                fill="none"
+                                stroke="hsl(var(--primary))"
+                                strokeWidth="2"
+                                strokeDasharray="3 3"
                             />
-                            <YAxis 
-                                type="number" 
-                                dataKey="y" 
-                                name="Height" 
-                                unit="m" 
-                                domain={domainY}
-                                label={{ value: 'Height (m)', angle: -90, position: 'insideLeft', offset: 10 }}
-                                allowDataOverflow={true}
-                            />
-                            <Tooltip formatter={(value: number) => value.toFixed(2)} />
-                            <ReferenceLine y={0} stroke="hsl(var(--destructive))" strokeWidth={1.5} />
-                            <Line 
-                                type="monotone" 
-                                dataKey="y" 
-                                stroke="hsl(var(--primary))" 
-                                strokeWidth={3} 
-                                dot={false}
-                                name="Trajectory"
-                            />
-                        </LineChart>
-                    </ResponsiveContainer>
-                </CardContent>
+                        )}
+
+                        {/* Cannonball */}
+                        <circle 
+                            cx={20 + ballPosition.x * scale} 
+                            cy={groundY - ballPosition.y * scale} 
+                            r="5" 
+                            fill="hsl(var(--destructive))" 
+                        />
+                    </svg>
+                </div>
             </Card>
         </div>
     );
@@ -148,7 +205,6 @@ export const PendulumDynamics = () => {
     
     useEffect(() => {
         setIsMounted(true);
-        // Set state from refs after mount to ensure consistency
         setLength(initialValues.current.length);
         setMass(initialValues.current.mass);
         setInitialAngle(initialValues.current.initialAngle);
@@ -192,7 +248,6 @@ export const PendulumDynamics = () => {
         } else {
             if (animationFrameId.current) {
                 cancelAnimationFrame(animationFrameId.current);
-                animationFrameId.current = null;
             }
             lastTimeRef.current = null;
         }
@@ -203,17 +258,14 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const { viewBox, arcPath, bobX, bobY, bobRadius, cordWidth } = useMemo(() => {
-        if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0 };
+    const { viewBox, arcPath, bobX, bobY, bobRadius, cordWidth, scaleFactor } = useMemo(() => {
+        if (!isMounted) return { viewBox: "0 0 100 100", arcPath: "", bobX: 0, bobY: 0, bobRadius: 0, cordWidth: 0, scaleFactor: 1 };
     
-        const canvasSize = { width: 100, height: 60 };
-        const maxLen = 3.0; // Corresponds to the slider's max value
+        const canvasHeight = 100;
+        const maxPossibleLength = 3.0;
+        const dynamicScaleFactor = canvasHeight / maxPossibleLength * 0.9 / length;
     
-        // Scale factor determines how many 'drawing units' a meter is.
-        // We want the longest pendulum to fit, so we base the scale on maxLen.
-        const scaleFactor = canvasSize.height / maxLen * 0.9; // Use 90% of height for the longest pendulum
-    
-        const scaledLength = length * scaleFactor;
+        const scaledLength = length * dynamicScaleFactor;
     
         const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
         const currentBobX = scaledLength * Math.sin(currentAngleRad);
@@ -229,12 +281,13 @@ export const PendulumDynamics = () => {
         const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
         const newArcPath = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
     
-        const vbWidth = 100;
-        const vbHeight = 65; // A fixed aspect ratio for the viewbox
-        const vb = `${-vbWidth / 2} 0 ${vbWidth} ${vbHeight}`;
+        const viewboxWidth = Math.max(2.2 * length * Math.sin(initialAngle * Math.PI / 180), 1) * dynamicScaleFactor * 1.1;
+        const viewboxHeight = (length * (1 - Math.cos(initialAngle * Math.PI / 180)) + 0.1 * length) * dynamicScaleFactor * 1.1;
+        
+        const vb = `${-viewboxWidth/2} 0 ${viewboxWidth} ${viewboxHeight + 0.5 * Math.cbrt(mass) * dynamicScaleFactor}`;
 
-        const dynamicBobRadius = 1.5 * Math.cbrt(mass);
-        const dynamicCordWidth = 0.25;
+        const dynamicBobRadius = 0.05 * dynamicScaleFactor * Math.cbrt(mass);
+        const dynamicCordWidth = 0.005 * dynamicScaleFactor;
     
         return {
             viewBox: vb,
@@ -242,9 +295,10 @@ export const PendulumDynamics = () => {
             bobX: currentBobX,
             bobY: currentBobY,
             bobRadius: dynamicBobRadius,
-            cordWidth: dynamicCordWidth
+            cordWidth: dynamicCordWidth,
+            scaleFactor: dynamicScaleFactor,
         };
-    }, [isMounted, length, initialAngle, mass, angularFrequency, time]);
+    }, [isMounted, length, mass, initialAngle, angularFrequency, time]);
 
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
@@ -317,9 +371,9 @@ export const PendulumDynamics = () => {
                             </radialGradient>
                         </defs>
                         <g>
-                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.5 0.5" strokeWidth={0.2} fill="none" />
+                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth={0.01 * scaleFactor} fill="none" />
                             <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={cordWidth} />
-                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.25} />
+                            <circle cx={bobX} cy={bobY} r={bobRadius} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.005 * scaleFactor} />
                         </g>
                     </svg>
                 </CardContent>
