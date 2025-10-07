@@ -47,7 +47,7 @@ export default function GraphingCalculator() {
     const data = useMemo(() => {
         if (!expression) return [];
         const points = [];
-        for (let i = -10; i <= 10; i += 0.5) {
+        for (let i = -10; i <= 10; i += 0.25) {
             const y = evaluateExpression(expression, i);
             if (!isNaN(y) && isFinite(y)) {
                 points.push({ x: i, y });
@@ -112,7 +112,7 @@ export default function GraphingCalculator() {
                                 dataKey="x" 
                                 type="number" 
                                 domain={[-10, 10]} 
-                                ticks={[-10, -5, 0, 5, 10]}
+                                ticks={[-10, -8, -6, -4, -2, 0, 2, 4, 6, 8, 10]}
                                 label={{ value: 'x', position: 'insideBottomRight', offset: 0 }}
                             />
                             <YAxis 
@@ -125,8 +125,8 @@ export default function GraphingCalculator() {
                                 labelFormatter={(label: number) => `x: ${label}`}
                             />
                             <Legend />
-                            <ReferenceLine y={0} stroke="hsl(var(--foreground))" strokeWidth={1.5} />
-                            <ReferenceLine x={0} stroke="hsl(var(--foreground))" strokeWidth={1.5} />
+                            <ReferenceLine y={0} stroke="hsl(var(--destructive))" strokeWidth={1.5} />
+                            <ReferenceLine x={0} stroke="hsl(var(--destructive))" strokeWidth={1.5} />
                              <Line 
                                 type="monotone" 
                                 dataKey="y" 
@@ -143,7 +143,7 @@ export default function GraphingCalculator() {
                 <Lightbulb className="h-4 w-4" />
                 <AlertTitle>Supported Functions & Operators</AlertTitle>
                 <AlertDescription>
-                    You can use: `+`, `-`, `*`, `/`, `^` (for power), `sin()`, `cos()`, `tan()`, `sqrt()`, `log()` (base 10), `ln()` (natural log), `pi`, and `e`.
+                    You can use: `+`, `-`, `*`, `/`, `^` (for power), `sin()`, `cos()`, `tan()`, `sqrt()`, `log()` (base 10), `ln()` (natural log), `pi`, and `e`. Implicit multiplication like `2x` is also supported.
                 </AlertDescription>
             </Alert>
         </div>
