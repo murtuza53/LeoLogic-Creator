@@ -30,7 +30,8 @@ export type Feature =
   | 'javascriptBeautifier'
   | 'excelToJson'
   | 'jsonToExcel'
-  | 'encryptDecrypt';
+  | 'encryptDecrypt'
+  | 'csvToJson';
 
 export type ContactMessage = {
   name: string;
@@ -43,3 +44,5 @@ export type UserProfile = {
   name: string;
   email: string;
 };
+
+    

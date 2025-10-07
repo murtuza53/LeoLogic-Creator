@@ -168,6 +168,16 @@ const tools = [
         icon: FileSpreadsheet,
     },
     { 
+        title: 'CSV to JSON', 
+        description: 'Convert CSV files to structured JSON data.', 
+        href: '/csv-to-json', 
+        category: 'Productivity',
+        feature: 'csvToJson' as Feature,
+        bgColor: 'bg-green-100',
+        textColor: 'text-green-600',
+        icon: FileUp,
+    },
+    { 
         title: 'Image to WebP', 
         description: 'Convert images to the efficient WebP format.', 
         href: '/image-to-webp', 
@@ -597,3 +607,5 @@ export default function Home() {
     </div>
   );
 }
+
+    
