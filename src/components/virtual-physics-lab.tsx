@@ -2,14 +2,13 @@
 'use client';
 
 import * as React from 'react';
-import { useState, useEffect, useMemo, useCallback } from 'react';
+import { useState, useMemo } from 'react';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Label } from '@/components/ui/label';
 import { Slider } from '@/components/ui/slider';
-import { Button } from '@/components/ui/button';
-import { Play, Pause, RefreshCw, MoveUp, MoveRight } from 'lucide-react';
-import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, ReferenceLine, Dot } from 'recharts';
+import { MoveUp, MoveRight } from 'lucide-react';
+import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { Input } from '@/components/ui/input';
 
 const GRAVITY = 9.81; // m/s^2
@@ -25,9 +24,6 @@ const ComingSoon = ({ experimentName }: { experimentName: string }) => (
 const ProjectileMotion = () => {
     const [initialVelocity, setInitialVelocity] = useState(25);
     const [angle, setAngle] = useState(45);
-    const [isRunning, setIsRunning] = useState(false);
-    const [time, setTime] = useState(0);
-    const [path, setPath] = useState<{x: number, y: number}[]>([]);
     
     const timeOfFlight = useMemo(() => (2 * initialVelocity * Math.sin(angle * Math.PI / 180)) / GRAVITY, [initialVelocity, angle]);
     const maxRange = useMemo(() => (initialVelocity * initialVelocity * Math.sin(2 * angle * Math.PI / 180)) / GRAVITY, [initialVelocity, angle]);
@@ -49,58 +45,9 @@ const ProjectileMotion = () => {
         return points;
     }, [initialVelocity, angle, timeOfFlight]);
 
-    const domainX = [0, Math.ceil(maxRange * 1.1)];
-    const domainY = [0, Math.ceil(maxHeight * 1.1)];
+    const domainX = [0, Math.ceil(maxRange * 1.1) || 10];
+    const domainY = [0, Math.ceil(maxHeight * 1.1) || 10];
 
-    useEffect(() => {
-        let animationFrameId: number;
-        let startTime: number | null = null;
-
-        const animate = (currentTime: number) => {
-            if (!startTime) startTime = currentTime;
-            const elapsedTime = (currentTime - startTime) / 1000;
-            setTime(elapsedTime);
-
-            if (elapsedTime > timeOfFlight) {
-                setIsRunning(false);
-                setPath(fullPath); // Show the full path at the end
-                return;
-            }
-
-            const currentPath = fullPath.filter(p => (p.x / (initialVelocity * Math.cos(angle * Math.PI / 180))) <= elapsedTime);
-            setPath(currentPath);
-
-            animationFrameId = requestAnimationFrame(animate);
-        };
-        
-        if (isRunning) {
-            animationFrameId = requestAnimationFrame(animate);
-        } else {
-             if (time > 0 && time < timeOfFlight) { // Paused state
-                const currentPath = fullPath.filter(p => (p.x / (initialVelocity * Math.cos(angle * Math.PI / 180))) <= time);
-                setPath(currentPath);
-            }
-        }
-
-        return () => cancelAnimationFrame(animationFrameId);
-    }, [isRunning, initialVelocity, angle, timeOfFlight, fullPath, time]);
-
-    const handleLaunch = () => {
-        resetSimulation();
-        setIsRunning(true);
-    };
-
-    const handlePause = () => {
-        setIsRunning(!isRunning);
-    };
-
-    const resetSimulation = () => {
-        setIsRunning(false);
-        setTime(0);
-        setPath([]);
-    };
-
-    const projectilePosition = path.length > 0 ? path[path.length - 1] : null;
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -120,29 +67,18 @@ const ProjectileMotion = () => {
                     <CardHeader>
                         <CardTitle>Controls</CardTitle>
                     </CardHeader>
-                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 items-end">
+                    <CardContent className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6 items-end">
                         <div className="space-y-2">
                             <Label htmlFor="velocity">Initial Velocity ({initialVelocity.toFixed(1)} m/s)</Label>
-                            <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} disabled={isRunning} />
+                            <Slider id="velocity" min={1} max={50} step={0.5} value={[initialVelocity]} onValueChange={(v) => setInitialVelocity(v[0])} />
                         </div>
                         <div className="space-y-2">
                             <Label htmlFor="angle">Launch Angle ({angle.toFixed(1)}°)</Label>
-                            <Slider id="angle" min={0} max={90} step={0.5} value={[angle]} onValueChange={(v) => setAngle(v[0])} disabled={isRunning} />
+                            <Slider id="angle" min={0} max={90} step={0.5} value={[angle]} onValueChange={(v) => setAngle(v[0])} />
                         </div>
                          <div className="space-y-2">
                             <Label htmlFor="gravity">Gravity</Label>
                             <Input id="gravity" value={`${GRAVITY} m/s²`} disabled />
-                        </div>
-                         <div className="flex items-end gap-2">
-                            <Button onClick={handleLaunch} disabled={isRunning} className="bg-green-600 hover:bg-green-700 w-full">
-                                <Play className="mr-2" /> Launch
-                            </Button>
-                            <Button onClick={handlePause} variant="outline" className="w-full">
-                                {isRunning ? <><Pause className="mr-2" /> Pause</> : <><Play className="mr-2" /> Resume</>}
-                            </Button>
-                            <Button onClick={resetSimulation} variant="destructive" className="w-full">
-                                <RefreshCw className="mr-2" /> Reset
-                            </Button>
                         </div>
                     </CardContent>
                 </Card>
@@ -180,34 +116,14 @@ const ProjectileMotion = () => {
                                     allowDataOverflow={true}
                                 />
                                 <Tooltip formatter={(value: number) => value.toFixed(2)} />
-                                 <ReferenceLine y={0} stroke="#666" strokeWidth={1} />
                                 <Line 
-                                    data={fullPath}
                                     type="monotone" 
                                     dataKey="y" 
                                     stroke="hsl(var(--primary))" 
-                                    strokeWidth={2} 
+                                    strokeWidth={3} 
                                     dot={false}
                                     name="Trajectory"
                                 />
-                                <Line 
-                                    data={path}
-                                    type="monotone"
-                                    dataKey="y"
-                                    stroke="hsl(var(--accent))"
-                                    strokeWidth={3}
-                                    dot={false}
-                                    name="Current Path"
-                                />
-                                {projectilePosition && (
-                                    <Dot
-                                        r={8}
-                                        cx={projectilePosition.x}
-                                        cy={projectilePosition.y}
-                                        fill="hsl(var(--accent))"
-                                        className="animate-pulse"
-                                    />
-                                )}
                             </LineChart>
                         </ResponsiveContainer>
                     </CardContent>
