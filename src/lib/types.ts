@@ -22,7 +22,8 @@ export type Feature =
   | 'unitConverter' 
   | 'resizeImage' 
   | 'imageToIcon'
-  | 'pdfToWord';
+  | 'pdfToWord'
+  | 'colorCodeGenerator';
 
 export type ContactMessage = {
   name: string;

@@ -19,3 +19,4 @@ import '@/ai/flows/fitness-mentor-flow.ts';
 import '@/ai/flows/resize-image.ts';
 import '@/ai/flows/convert-image-to-ico.ts';
 import '@/ai/flows/convert-pdf-to-word.ts';
+import '@/ai/flows/extract-colors-from-image.ts';

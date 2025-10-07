@@ -246,6 +246,16 @@ const tools = [
         textColor: 'text-red-600',
         icon: Flame,
     },
+    { 
+        title: 'Color Code Generator', 
+        description: 'Extract palettes, pick colors, and convert color codes.', 
+        href: '/color-code-generator', 
+        category: 'Productivity',
+        feature: 'colorCodeGenerator' as Feature,
+        bgColor: 'bg-fuchsia-100',
+        textColor: 'text-fuchsia-600',
+        icon: Palette,
+    },
 ];
 
 const features = [
