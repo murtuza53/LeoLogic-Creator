@@ -170,9 +170,6 @@ export const PendulumDynamics = () => {
     const maxSpeed = useMemo(() => Math.sqrt(2 * GRAVITY * length * (1 - Math.cos(initialAngle * Math.PI / 180))), [length, initialAngle]);
     const maxDisplacement = useMemo(() => length * Math.sin(initialAngle * Math.PI / 180), [length, initialAngle]);
     
-    // Scale factor to fit pendulum in view
-    const scaleFactor = 100 / (length * 1.5);
-
     const animate = useCallback((timestamp: number) => {
         if (lastTimeRef.current !== null) {
             const deltaTime = (timestamp - lastTimeRef.current) / 1000;
@@ -206,9 +203,43 @@ export const PendulumDynamics = () => {
         };
     }, [isRunning, animate]);
 
-    const currentAngleRad = isMounted ? (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time) : 0;
-    const bobX = isMounted ? scaleFactor * length * Math.sin(currentAngleRad) : 0;
-    const bobY = isMounted ? scaleFactor * length * Math.cos(currentAngleRad) : 0;
+    const { viewBox, viewBoxWidth, scaleFactor, arcPath, bobX, bobY } = useMemo(() => {
+        if (!isMounted) return { viewBox: "0 0 100 100", viewBoxWidth: 100, scaleFactor: 1, arcPath: "", bobX: 0, bobY: 0 };
+        
+        const maxSwingWidth = Math.abs(2 * length * Math.sin(initialAngle * Math.PI / 180));
+        const viewHeight = length * 1.1; // Add 10% padding at the bottom
+        const viewWidth = Math.max(maxSwingWidth * 1.1, viewHeight * 0.8);
+
+        // This scale factor makes the pendulum's drawing units fit within a ~100 unit coordinate system
+        const newScaleFactor = Math.min(100 / viewWidth, 100 / viewHeight);
+
+        const currentAngleRad = (initialAngle * Math.PI / 180) * Math.cos(angularFrequency * time);
+        const currentBobX = newScaleFactor * length * Math.sin(currentAngleRad);
+        const currentBobY = newScaleFactor * length * Math.cos(currentAngleRad);
+        
+        const startAngle = -initialAngle * Math.PI / 180;
+        const endAngle = initialAngle * Math.PI / 180;
+        const scaledLength = length * newScaleFactor;
+        const startX = scaledLength * Math.sin(startAngle);
+        const startY = scaledLength * Math.cos(startAngle);
+        const endX = scaledLength * Math.sin(endAngle);
+        const endY = scaledLength * Math.cos(endAngle);
+        const largeArcFlag = endAngle - startAngle <= Math.PI ? "0" : "1";
+        const newArcPath = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 ${largeArcFlag} 1 ${endX} ${endY}`;
+        
+        const vb = `${-viewWidth / 2} 0 ${viewWidth} ${viewHeight}`;
+
+        return {
+            viewBox: vb,
+            viewBoxWidth: viewWidth,
+            scaleFactor: newScaleFactor,
+            arcPath: newArcPath,
+            bobX: currentBobX,
+            bobY: currentBobY,
+        };
+
+    }, [isMounted, length, initialAngle, angularFrequency, time]);
+
 
     const StatCard = ({ icon, label, value, unit }: { icon: React.ElementType, label: string, value: string, unit: string }) => (
         <Card className="p-4 flex flex-col items-center justify-center text-center">
@@ -236,26 +267,6 @@ export const PendulumDynamics = () => {
         setPositionHistory([]);
     }
     
-    const { viewBox, viewBoxWidth, arcPath } = useMemo(() => {
-        if (!isMounted) return { viewBox: "0 0 100 100", viewBoxWidth: 100, arcPath: "" };
-        const maxSwingWidth = Math.abs(2 * length * scaleFactor * Math.sin(initialAngle * Math.PI / 180));
-        const height = length * scaleFactor * 1.2;
-        const width = Math.max(maxSwingWidth * 1.2, height * 0.5); // Ensure a minimum width
-
-        const vb = `0 0 ${width} ${height}`;
-
-        const startAngle = -initialAngle * Math.PI / 180;
-        const endAngle = initialAngle * Math.PI / 180;
-        const scaledLength = length * scaleFactor;
-        const startX = scaledLength * Math.sin(startAngle);
-        const startY = scaledLength * Math.cos(startAngle);
-        const endX = scaledLength * Math.sin(endAngle);
-        const endY = scaledLength * Math.cos(endAngle);
-        const path = `M ${startX} ${startY} A ${scaledLength} ${scaledLength} 0 0 1 ${endX} ${endY}`;
-
-        return { viewBox: vb, viewBoxWidth: width, arcPath: path };
-    }, [isMounted, length, initialAngle, scaleFactor]);
-
     return (
         <div className="mt-8 space-y-6">
             <Card>
@@ -299,14 +310,10 @@ export const PendulumDynamics = () => {
                                 <stop offset="100%" stopColor="hsl(var(--primary))" />
                             </radialGradient>
                         </defs>
-                        <g transform={`translate(${viewBoxWidth / 2}, 0)`}>
-                            {/* Visual Anchor */}
-                            <line x1="-10" y1="0" x2="10" y2="0" stroke="hsl(var(--foreground))" strokeWidth={0.5} />
-                            <circle cx="0" cy="0" r="1.5" fill="hsl(var(--foreground))" />
-
-                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="2 2" strokeWidth={0.5} fill="none" />
-                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={0.25} />
-                             <circle cx={bobX} cy={bobY} r={1.5 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth="0.25" />
+                        <g>
+                            <path d={arcPath} stroke="hsl(var(--muted))" strokeDasharray="0.1 0.1" strokeWidth={0.01 / scaleFactor * 100} fill="none" />
+                            <line x1="0" y1="0" x2={bobX} y2={bobY} stroke="hsl(var(--muted-foreground))" strokeWidth={0.005 / scaleFactor * 100} />
+                             <circle cx={bobX} cy={bobY} r={0.05 * Math.cbrt(mass)} fill="url(#bobGradient)" stroke="hsl(var(--foreground))" strokeWidth={0.005 / scaleFactor * 100} />
                         </g>
                     </svg>
                 </CardContent>
@@ -355,3 +362,5 @@ export const OpticsLab = () => {
     }, [isUserLoading]);
     return <ComingSoon experimentName="Optics (Lenses & Mirrors)" />;
 }
+
+    
