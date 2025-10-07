@@ -586,7 +586,7 @@ export default function Home() {
                            <ul className='space-y-3'>
                                 <li className='flex items-center gap-3'>
                                     <CheckCircle className='h-5 w-5 text-green-300'/>
-                                    <span>Everything in Free</span>
+                                    <span>All Tools are Free</span>
                                 </li>
                                <li className='flex items-center gap-3'>
                                     <CheckCircle className='h-5 w-5 text-green-300'/>
