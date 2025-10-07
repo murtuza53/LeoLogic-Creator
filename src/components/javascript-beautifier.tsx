@@ -29,11 +29,15 @@ const JavascriptBeautifier = () => {
       let inComment: 'single' | 'multi' | false = false;
       let inRegex = false;
 
-      for (let i = 0; i < jsInput.length; i++) {
-        const char = jsInput[i];
-        const prevChar = i > 0 ? jsInput[i - 1] : '';
-        const nextChar = i < jsInput.length - 1 ? jsInput[i + 1] : '';
-        const currentLine = result.substring(result.lastIndexOf('\n') + 1);
+      // Basic cleanup
+      const cleanedInput = jsInput
+        .replace(/\s*([;{}(),])\s*/g, '$1')
+        .replace(/\s*([=><!+\-*/&|?:]+)\s*/g, ' $1 ');
+
+      for (let i = 0; i < cleanedInput.length; i++) {
+        const char = cleanedInput[i];
+        const prevChar = i > 0 ? cleanedInput[i - 1] : '';
+        const nextChar = i < cleanedInput.length - 1 ? cleanedInput[i + 1] : '';
 
         if (inString) {
           result += char;
@@ -45,26 +49,23 @@ const JavascriptBeautifier = () => {
 
         if (inComment) {
           result += char;
-          if (
-            (inComment === 'single' && char === '\n') ||
-            (inComment === 'multi' && char === '/' && prevChar === '*')
-          ) {
+          if ((inComment === 'single' && char === '\n') || (inComment === 'multi' && char === '/' && prevChar === '*')) {
             inComment = false;
             if (char === '\n') {
-                 result += '\t'.repeat(indentLevel);
+              result += '\t'.repeat(indentLevel);
             }
           }
           continue;
         }
-        
-        if (inRegex) {
-            result += char;
-            if (char === '/' && prevChar !== '\\') {
-                inRegex = false;
-            }
-            continue;
-        }
 
+        if (inRegex) {
+          result += char;
+          if (char === '/' && prevChar !== '\\') {
+            inRegex = false;
+          }
+          continue;
+        }
+        
         if (char === '/' && nextChar === '/') {
           inComment = 'single';
           result += char;
@@ -76,7 +77,7 @@ const JavascriptBeautifier = () => {
           result += char;
           continue;
         }
-
+        
         if (char === "'" || char === '"' || char === '`') {
           inString = true;
           stringChar = char;
@@ -84,61 +85,45 @@ const JavascriptBeautifier = () => {
           continue;
         }
         
-        const expressionEndChars = ' \n\t(){}[];=,';
-        if (char === '/' && expressionEndChars.includes(prevChar)) {
+        // Very basic regex detection
+        const regexPreceders = ['=', '(', ',', ':', '[', '!', '&', '|', '?', '{', 'return', ' '];
+        if (char === '/' && regexPreceders.includes(prevChar) && nextChar !== '/' && nextChar !== '*') {
             inRegex = true;
             result += char;
             continue;
         }
 
         if (char === '{' || char === '[') {
-          result += char + '\n' + '\t'.repeat(++indentLevel);
+          indentLevel++;
+          result += char + '\n' + '\t'.repeat(indentLevel);
         } else if (char === '}' || char === ']') {
-          result = result.trimEnd() + '\n' + '\t'.repeat(--indentLevel) + char;
+          indentLevel = Math.max(0, indentLevel - 1);
+          result = result.trimEnd() + '\n' + '\t'.repeat(indentLevel) + char;
         } else if (char === ';') {
           result += char + '\n' + '\t'.repeat(indentLevel);
+        } else if (char === ',' ) {
+          result += char + ' ';
         } else if (char === '\n') {
-           if (result.trim().length > 0 && !result.endsWith('\n')) {
-              result += '\n' + '\t'.repeat(indentLevel);
-           }
+          if (result.trim().length > 0 && !result.endsWith('\n')) {
+            result += '\n' + '\t'.repeat(indentLevel);
+          }
         } else {
-            if (currentLine.trim() === '' && char.trim() !== '') {
-                result += '\t'.repeat(indentLevel);
-            }
-            result += char;
+          result += char;
         }
       }
-
+      
       setError(null);
+      // Final cleanup
       return result
-        .replace(/\n\s*\n/g, '\n') // remove multiple blank lines
-        .replace(/(\t*)\}\n\s*(else|catch|finally)/g, '$1} $2') // put else on same line as }
+        .replace(/(\n\s*){2,}/g, '\n\n') // Collapse multi-blank lines
+        .replace(/\n\s*}/g, '\n}') // clean up trailing spaces before }
+        .replace(/\{\s*\n/g, '{\n')
         .trim();
     } catch (e) {
       setError('Could not format JavaScript. Please check for syntax errors.');
       return jsInput;
     }
   }, [jsInput]);
-
-  const syntaxHighlight = (jsString: string | null) => {
-    if (!jsString) return null;
-    if (error) return <span className="text-destructive">{jsString}</span>;
-
-    let safeString = jsString
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-
-    return safeString
-      .replace(/(\/\*[\s\S]*?\*\/|\/\/.*)/g, '<span class="text-gray-500 dark:text-gray-400">$1</span>') // comments
-      .replace(/('.*?'|".*?"|`.*?`)/gs, '<span class="text-green-600 dark:text-green-400">$1</span>') // strings
-      .replace(/\b(const|let|var|function|return|if|else|for|while|switch|case|break|new|this|import|from|export|default|async|await|try|catch|finally)\b/g, '<span class="text-purple-600 dark:text-purple-400 font-medium">$1</span>') // keywords
-      .replace(/\b(true|false|null|undefined)\b/g, '<span class="text-blue-500 dark:text-blue-400">$1</span>') // booleans and null
-      .replace(/\b([A-Z][a-zA-Z0-9_]*)\b/g, '<span class="text-teal-600 dark:text-teal-400">$1</span>') // Class names
-      .replace(/(-?\d+(\.\d+)?)/g, '<span class="text-orange-600 dark:text-orange-400">$1</span>') // numbers
-      .replace(/([a-zA-Z0-9_]+)(?=\()/g, '<span class="text-yellow-600 dark:text-yellow-500">$1</span>') // function calls
-      .replace(/(\(|\)|\{|\}|\[|\])/g, '<span class="text-foreground/80">$1</span>'); // brackets
-  };
 
   const handleCopy = () => {
     if (!formattedJs || error) {
@@ -190,7 +175,9 @@ const JavascriptBeautifier = () => {
             <ScrollArea className="flex-1">
               <pre className="p-4 text-sm font-mono whitespace-pre-wrap break-all">
                 {formattedJs ? (
-                  <code dangerouslySetInnerHTML={{ __html: syntaxHighlight(formattedJs) || '' }} />
+                  <code>{formattedJs}</code>
+                ) : error ? (
+                   <span className="text-destructive">{error}</span>
                 ) : (
                   <span className="text-muted-foreground">Your formatted JavaScript will appear here.</span>
                 )}
