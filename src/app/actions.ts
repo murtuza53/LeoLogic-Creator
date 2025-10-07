@@ -10,6 +10,7 @@ import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
+import { analyzeText } from '@/ai/flows/analyze-text';
 import { saveContactMessage, createUserProfile } from '@/lib/firebase';
 import type { ContactMessage } from '@/lib/types';
 import { PDFDocument } from 'pdf-lib';
@@ -213,6 +214,24 @@ export async function createUserProfileAction(userId: string, data: { name: stri
     return { success: true };
   } catch (error) {
     console.error('Error creating user profile:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function analyzeTextAction(text: string) {
+  try {
+    const result = await analyzeText({ text });
+    if (!result) {
+      throw new Error('AI failed to analyze the text.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error analyzing text:', error);
     return {
       error:
         error instanceof Error

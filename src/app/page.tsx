@@ -38,6 +38,16 @@ const tools = [
         icon: Sigma,
     },
     { 
+        title: 'Advanced Word Counter', 
+        description: 'Analyze text with detailed stats and AI-powered insights.', 
+        href: '/advanced-word-counter', 
+        category: 'AI / ML',
+        feature: 'advancedWordCounter' as Feature,
+        bgColor: 'bg-teal-100',
+        textColor: 'text-teal-600',
+        icon: FileTextIcon,
+    },
+    { 
         title: 'JSON Beautifier', 
         description: 'Format and color-code JSON data for readability.', 
         href: '/json-beautifier', 

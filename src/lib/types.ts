@@ -33,7 +33,8 @@ export type Feature =
   | 'jsonToExcel'
   | 'encryptDecrypt'
   | 'csvToJson'
-  | 'jsonToCsv';
+  | 'jsonToCsv'
+  | 'advancedWordCounter';
 
 export type ContactMessage = {
   name: string;
