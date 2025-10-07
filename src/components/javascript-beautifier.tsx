@@ -22,16 +22,38 @@ const JavascriptBeautifier = () => {
     }
     try {
       let indentLevel = 0;
-      const indentChar = '  '; // Using 2 spaces for indentation
+      const indentChar = '  '; // 2 spaces
       let result = '';
       let inString = false;
       let stringChar = '';
       let inComment = false;
+      let lineComment = false;
       let inRegex = false;
+      
+      const trimmedInput = jsInput.replace(/\r\n/g, '\n');
 
-      for (let i = 0; i < jsInput.length; i++) {
-        const char = jsInput[i];
-        const prevChar = i > 0 ? jsInput[i - 1] : null;
+      for (let i = 0; i < trimmedInput.length; i++) {
+        const char = trimmedInput[i];
+        const prevChar = i > 0 ? trimmedInput[i-1] : null;
+
+        if (lineComment) {
+          result += char;
+          if (char === '\n') {
+            lineComment = false;
+            result += indentChar.repeat(indentLevel);
+          }
+          continue;
+        }
+
+        if (inComment) {
+          result += char;
+          if (char === '*' && trimmedInput[i+1] === '/') {
+            inComment = false;
+            result += '/';
+            i++;
+          }
+          continue;
+        }
 
         if (inString) {
           result += char;
@@ -40,62 +62,51 @@ const JavascriptBeautifier = () => {
           }
           continue;
         }
-
-        if (inComment) {
-          result += char;
-          if (jsInput.substring(i - 1, i + 1) === '*/') {
-            inComment = false;
-          }
+        
+        if (char === '/' && trimmedInput[i+1] === '*') {
+          inComment = true;
+          result += '/*';
+          i++;
           continue;
         }
         
-        if (jsInput.substring(i, i + 2) === '/*') {
-            result += '\n' + indentChar.repeat(indentLevel) + '/*';
-            inComment = true;
-            i++;
-            continue;
-        }
-
-        if (jsInput.substring(i, i + 2) === '//') {
-            result += '\n' + indentChar.repeat(indentLevel) + '//';
-            const nextLineIndex = jsInput.indexOf('\n', i);
-            if (nextLineIndex !== -1) {
-                result += jsInput.substring(i + 2, nextLineIndex);
-                i = nextLineIndex -1;
-            } else {
-                result += jsInput.substring(i + 2);
-                break;
-            }
-            continue;
-        }
-
-        if (char === "'" || char === '"' || char === '`') {
-          inString = true;
-          stringChar = char;
-          result += char;
+        if (char === '/' && trimmedInput[i+1] === '/') {
+          lineComment = true;
+          result += '//';
+          i++;
           continue;
         }
 
         if (char === '{' || char === '[') {
           result += char + '\n' + indentChar.repeat(++indentLevel);
         } else if (char === '}' || char === ']') {
-          result += '\n' + indentChar.repeat(--indentLevel) + char;
+           if (result.trim().length > 0) result += '\n';
+          result += indentChar.repeat(--indentLevel) + char;
         } else if (char === ';') {
           result += char + '\n' + indentChar.repeat(indentLevel);
         } else if (char === '\n') {
           if (result.trim().length > 0 && !result.endsWith('\n')) {
              result += '\n' + indentChar.repeat(indentLevel);
           }
-        } else {
-            if (result.endsWith('\n')) {
-                 result += indentChar.repeat(indentLevel);
-            }
-            result += char;
+        } else if (char === ' ' && (result.endsWith(' ') || result.endsWith('\n'))) {
+            // skip extra space
+        } else if (char === ':' && !inString) {
+          result += ': ';
+        }
+        else {
+          if (result.endsWith('\n')) {
+             result += indentChar.repeat(indentLevel);
+          }
+          result += char;
         }
       }
       
       setError(null);
-      return result.trim().replace(/[\n\s]+;/g, ';');
+      // Final cleanup
+      return result
+        .replace(/(\n\s*){3,}/g, '\n\n') // Collapse multiple empty lines
+        .replace(/;\s*\n/g, ';\n') // Ensure newline after semicolon
+        .trim();
     } catch (e) {
       setError('Could not format JavaScript. Please check for syntax errors.');
       return jsInput;
@@ -106,20 +117,17 @@ const JavascriptBeautifier = () => {
     if (!jsString) return null;
     if (error) return <span className="text-destructive">{jsString}</span>;
     
-    // 1. Escape HTML
-    let escapedJs = jsString
-      .replace(/&/g, '&amp;')
-      .replace(/</g, '&lt;')
-      .replace(/>/g, '&gt;');
-      
-    // 2. Apply styles
-    return escapedJs
-        .replace(/(\/\*[\s\S]*?\*\/|\/\/[^\n]*)/g, '<span class="text-gray-500 dark:text-gray-400">$1</span>') // Comments
-        .replace(/\b(const|let|var|function|return|if|else|for|while|switch|case|break|continue|new|import|from|export|default|async|await|try|catch|finally)\b/g, '<span class="text-purple-600 dark:text-purple-400">$1</span>') // Keywords
-        .replace(/\b(true|false|null|undefined)\b/g, '<span class="text-indigo-600 dark:text-indigo-400">$1</span>') // Booleans & null
-        .replace(/('.*?'|".*?"|`.*?`)/g, '<span class="text-green-700 dark:text-green-400">$1</span>') // Strings
-        .replace(/([\w\d_]+)\s*(?=\()/g, '<span class="text-blue-600 dark:text-blue-400">$1</span>') // Function names
-        .replace(/(\b\d+(\.\d+)?\b)/g, '<span class="text-orange-600 dark:text-orange-400">$1</span>'); // Numbers
+    const html = jsString
+        .replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;')
+        .replace(/(\/\*[\s\S]*?\*\/|\/\/[^\n]*)/g, '<span class="text-gray-500 dark:text-gray-400">$1</span>')
+        .replace(/\b(const|let|var|function|return|if|else|for|while|switch|case|break|continue|new|import|from|export|default|async|await|try|catch|finally|class|extends|super|this|of|in|instanceof|typeof|delete|void)\b/g, '<span class="text-purple-600 dark:text-purple-400">$1</span>')
+        .replace(/\b(true|false|null|undefined)\b/g, '<span class="text-indigo-600 dark:text-indigo-400">$1</span>')
+        .replace(/(['"`])(.*?)\1/gs, (match, quote, content) => `<span class="text-green-700 dark:text-green-400">${quote}${content}${quote}</span>`)
+        .replace(/([\w\d_]+)\s*(?=\()/g, '<span class="text-blue-600 dark:text-blue-400">$1</span>')
+        .replace(/(\b\d+(\.\d+)?\b)/g, '<span class="text-orange-600 dark:text-orange-400">$1</span>')
+        .replace(/([{}[\].;:,=+\-*/%&|!~?<>])/g, '<span class="text-foreground/70">$1</span>');
+
+    return <code dangerouslySetInnerHTML={{ __html: html }} />;
   };
 
   const handleCopy = () => {
@@ -171,13 +179,10 @@ const JavascriptBeautifier = () => {
         <Card className="h-[60vh] flex flex-col">
             <ScrollArea className="flex-1">
               <pre className="p-4 text-sm font-mono whitespace-pre-wrap break-all">
-                {formattedJs ? (
-                  <code dangerouslySetInnerHTML={{ __html: syntaxHighlight(formattedJs) || '' }} />
-                ) : error ? (
-                   <span className="text-destructive">{error}</span>
-                ) : (
+                {formattedJs ? syntaxHighlight(formattedJs) :
+                  error ? <span className="text-destructive">{error}</span> :
                   <span className="text-muted-foreground">Your formatted JavaScript will appear here.</span>
-                )}
+                }
               </pre>
             </ScrollArea>
              {error && (
