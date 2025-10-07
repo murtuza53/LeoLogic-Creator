@@ -230,16 +230,19 @@ export const PendulumDynamics = () => {
         const startY = length * Math.cos(startAngle);
         const endX = length * Math.sin(endAngle);
         const endY = length * Math.cos(endAngle);
-        // Sweep flag should be 0 for arcs less than 180 degrees
         return `M ${startX} ${startY} A ${length} ${length} 0 0 1 ${endX} ${endY}`;
     }, [initialAngle, length]);
 
     const viewBox = useMemo(() => {
         const padding = 0.2;
-        const width = (length + padding) * 2;
-        const height = length + padding;
-        return `-${width / 2} 0 ${width} ${height}`;
-    }, [length]);
+        const swingWidth = 2 * length * Math.sin(initialAngle * Math.PI / 180);
+        const swingHeight = length * (1 - Math.cos(initialAngle * Math.PI / 180));
+        
+        const width = Math.max(swingWidth, 0.5) + padding * 2;
+        const height = length + padding * 2;
+        
+        return `-${width / 2} -${padding} ${width} ${height}`;
+    }, [length, initialAngle]);
 
 
     return (
@@ -266,7 +269,7 @@ export const PendulumDynamics = () => {
                 <StatCard icon={Timer} label="Period" value={period.toFixed(2)} unit="seconds" />
                 <StatCard icon={MoveRight} label="Max Speed" value={maxSpeed.toFixed(2)} unit="m/s" />
             </div>
-
+            
             <div className="flex justify-center gap-2">
                 <Button onClick={() => setIsRunning(!isRunning)} variant="outline" size="lg">
                     {isRunning ? <><Pause className="mr-2"/> Pause</> : <><Play className="mr-2"/> Start</>}
