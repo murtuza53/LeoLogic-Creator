@@ -41,42 +41,12 @@ export default function RootLayout({
         <FirebaseClientProvider>
           {/* Left Floating Ad */}
           <div className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
-          <Script id="adsterra-left-banner" strategy="afterInteractive">
-              {`
-                atOptions = {
-                  'key' : '07c48e6862603f79a58b3921b35b86dc',
-                  'format' : 'iframe',
-                  'height' : 300,
-                  'width' : 160,
-                  'params' : {}
-                };
-              `}
-            </Script>
-            <Script
-              src="//www.highperformanceformat.com/07c48e6862603f79a58b3921b35b86dc/invoke.js"
-              strategy="afterInteractive"
-            />
           </div>
 
           {children}
 
           {/* Right Floating Ad */}
           <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
-           <Script id="adsterra-right-banner" strategy="afterInteractive">
-              {`
-                atOptions = {
-                  'key' : '07c48e6862603f79a58b3921b35b86dc',
-                  'format' : 'iframe',
-                  'height' : 300,
-                  'width' : 160,
-                  'params' : {}
-                };
-              `}
-            </Script>
-            <Script
-              src="//www.highperformanceformat.com/07c48e6862603f79a58b3921b35b86dc/invoke.js"
-              strategy="afterInteractive"
-            />
           </div>
 
           <SpeedInsights />

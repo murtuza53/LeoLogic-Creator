@@ -39,6 +39,7 @@ export default function BenefitPayQrPage() {
               Generate a custom QR code for a Benefit Pay transaction using an IBAN.
             </p>
           </div>
+          <AdBanner />
           <BenefitPayQr />
         </div>
       </main>

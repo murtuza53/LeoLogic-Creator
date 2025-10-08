@@ -39,6 +39,7 @@ export default function PendulumDynamicsPage() {
               Explore the physics of a simple pendulum in motion.
             </p>
           </div>
+          <AdBanner />
           <PendulumDynamics />
         </div>
       </main>

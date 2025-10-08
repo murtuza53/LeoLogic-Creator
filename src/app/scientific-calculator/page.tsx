@@ -39,6 +39,7 @@ export default function ScientificCalculatorPage() {
               Perform simple and advanced calculations.
             </p>
           </div>
+          <AdBanner />
           <ScientificCalculator />
         </div>
       </main>

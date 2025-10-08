@@ -39,6 +39,7 @@ export default function WeightLossCalculatorPage() {
               Estimate your daily calorie needs for different weight loss goals.
             </p>
           </div>
+          <AdBanner />
           <WeightLossCalculator />
         </div>
       </main>

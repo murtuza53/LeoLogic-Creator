@@ -492,6 +492,7 @@ export default function Home() {
                   Streamline your workflow with a suite of powerful, easy-to-use online utilities.
                 </p>
               </div>
+              <AdBanner />
               <div className="mx-auto w-full max-w-2xl">
                 <div className="relative">
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />

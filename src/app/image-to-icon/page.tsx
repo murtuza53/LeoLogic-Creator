@@ -39,6 +39,7 @@ export default function ImageToIconPage() {
               Upload an image to convert it into a multi-layer ICO file.
             </p>
           </div>
+          <AdBanner />
           <ImageToIconConverter />
         </div>
       </main>

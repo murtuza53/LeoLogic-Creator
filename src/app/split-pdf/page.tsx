@@ -39,6 +39,7 @@ export default function SplitPdfPage() {
               Upload a PDF to split each page into a separate file, then download them as a ZIP.
             </p>
           </div>
+          <AdBanner />
           <SplitPdf />
         </div>
       </main>

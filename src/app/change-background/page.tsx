@@ -39,6 +39,7 @@ export default function ChangeBackgroundPage() {
               Upload an image and select a new background color from the palette.
             </p>
           </div>
+          <AdBanner />
           <ChangeBackground />
         </div>
       </main>

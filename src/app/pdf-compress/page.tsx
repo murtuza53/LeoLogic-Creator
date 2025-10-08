@@ -39,6 +39,7 @@ export default function PdfCompressPage() {
               Reduce the file size of your PDF documents while maintaining quality.
             </p>
           </div>
+          <AdBanner />
           <PdfCompressor />
         </div>
       </main>

@@ -39,6 +39,7 @@ export default function ResizeImagePage() {
               Upload an image and specify the dimensions to resize it.
             </p>
           </div>
+          <AdBanner />
           <ResizeImage />
         </div>
       </main>

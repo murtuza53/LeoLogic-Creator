@@ -39,6 +39,7 @@ export default function JavascriptBeautifierPage() {
               Paste your JS code to format and color-code it for better readability.
             </p>
           </div>
+          <AdBanner />
           <JavascriptBeautifier />
         </div>
       </main>

@@ -39,6 +39,7 @@ export default function OcrPage() {
               Upload or paste an image to extract text and reconstruct its original formatting with AI.
             </p>
           </div>
+          <AdBanner />
           <OcrProcessor />
         </div>
       </main>
