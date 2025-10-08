@@ -1,5 +1,6 @@
 
 import ResizeImage from '@/components/resize-image';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export default function ResizeImagePage() {
           <ResizeImage />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

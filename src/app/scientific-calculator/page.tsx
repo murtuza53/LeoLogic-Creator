@@ -5,6 +5,7 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 import Footer from '@/components/footer';
+import AdBanner from '@/components/ad-banner';
 
 export default function ScientificCalculatorPage() {
   return (
@@ -41,6 +42,7 @@ export default function ScientificCalculatorPage() {
           <ScientificCalculator />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

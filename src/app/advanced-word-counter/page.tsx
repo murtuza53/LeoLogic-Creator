@@ -1,5 +1,6 @@
 
 import AdvancedWordCounter from '@/components/advanced-word-counter';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export default function AdvancedWordCounterPage() {
           <AdvancedWordCounter />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

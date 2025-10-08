@@ -1,5 +1,6 @@
 
 import UnitConverter from '@/components/unit-converter';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export default function UnitConverterPage() {
           <UnitConverter />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

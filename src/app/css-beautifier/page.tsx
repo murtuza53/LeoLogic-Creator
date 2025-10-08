@@ -1,5 +1,6 @@
 
 import CssBeautifier from '@/components/css-beautifier';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export default function CssBeautifierPage() {
           <CssBeautifier />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

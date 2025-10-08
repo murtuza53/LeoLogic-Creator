@@ -1,5 +1,6 @@
 
 import ImageToWebpConverter from '@/components/image-to-webp-converter';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -41,6 +42,7 @@ export default function ImageToWebpPage() {
           <ImageToWebpConverter />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

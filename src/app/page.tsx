@@ -10,6 +10,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
 import Image from 'next/image';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { useAuth, useUser, signOutUser } from '@/firebase';
 import { type Feature } from '@/lib/types';
@@ -651,11 +652,9 @@ export default function Home() {
                 </div>
             </div>
         </section>
-
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );
 }
-
-    

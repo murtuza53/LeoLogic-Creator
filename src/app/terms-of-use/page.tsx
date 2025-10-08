@@ -1,5 +1,6 @@
 
 
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -66,6 +67,7 @@ export default function TermsOfUsePage() {
             <p>If you have any questions about these Terms, please <Link href="/contact">contact us</Link>.</p>
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );

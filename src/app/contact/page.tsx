@@ -1,6 +1,7 @@
 
 
 import ContactForm from '@/components/contact-form';
+import AdBanner from '@/components/ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -42,9 +43,8 @@ export default function ContactPage() {
           <ContactForm />
         </div>
       </main>
+      <AdBanner />
       <Footer />
     </div>
   );
 }
-
-    
