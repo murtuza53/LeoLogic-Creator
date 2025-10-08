@@ -39,6 +39,7 @@ export default function IconMakerPage() {
               Describe your icon concept and let our AI generate three unique designs for you.
             </p>
           </div>
+          <AdBanner />
           <IconMaker />
         </div>
       </main>

@@ -39,6 +39,7 @@ export default function ImageToWebpPage() {
               Convert images to WebP, remove the background, or apply a new background color.
             </p>
           </div>
+          <AdBanner />
           <ImageToWebpConverter />
         </div>
       </main>

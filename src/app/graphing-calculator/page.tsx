@@ -39,6 +39,7 @@ export default function GraphingCalculatorPage() {
               Visualize functions, plot data, evaluate equations, and explore transformations.
             </p>
           </div>
+          <AdBanner />
           <GraphingCalculator />
         </div>
       </main>

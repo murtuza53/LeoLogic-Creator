@@ -516,6 +516,7 @@ export default function Home() {
                     </Button>
                 ))}
               </div>
+              <AdBanner />
             </div>
           </div>
         </section>

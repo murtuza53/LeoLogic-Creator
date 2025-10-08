@@ -39,6 +39,7 @@ export default function FitnessMentorPage() {
               Your personal guide for health and fitness questions.
             </p>
           </div>
+          <AdBanner />
           <FitnessMentor />
         </div>
       </main>

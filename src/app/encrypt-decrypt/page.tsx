@@ -39,6 +39,7 @@ export default function EncryptDecryptPage() {
               Securely encrypt and decrypt text using AES-GCM with a PIN you provide.
             </p>
           </div>
+          <AdBanner />
           <EncryptDecrypt />
         </div>
       </main>

@@ -39,6 +39,7 @@ export default function HtmlBeautifierPage() {
               Paste your HTML code to format and color-code it for better readability.
             </p>
           </div>
+          <AdBanner />
           <HtmlBeautifier />
         </div>
       </main>

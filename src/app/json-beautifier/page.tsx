@@ -39,6 +39,7 @@ export default function JsonBeautifierPage() {
               Paste your JSON data to format and color-code it for better readability.
             </p>
           </div>
+          <AdBanner />
           <JsonBeautifier />
         </div>
       </main>

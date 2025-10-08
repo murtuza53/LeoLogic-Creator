@@ -39,6 +39,7 @@ export default function TableExtractorPage() {
               Upload an image containing a table, and the AI will extract the data into a downloadable, styled Excel file.
             </p>
           </div>
+          <AdBanner />
           <TableExtractor />
         </div>
       </main>

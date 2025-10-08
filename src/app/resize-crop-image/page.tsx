@@ -39,6 +39,7 @@ export default function ResizeCropImagePage() {
               Upload images to remove the background, resize, and crop them to a perfect square.
             </p>
           </div>
+          <AdBanner />
           <ResizeCropImage />
         </div>
       </main>

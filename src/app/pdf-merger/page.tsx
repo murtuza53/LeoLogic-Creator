@@ -39,6 +39,7 @@ export default function PdfMergerPage() {
               Upload two or more PDF files to combine them into a single document.
             </p>
           </div>
+          <AdBanner />
           <PdfMerger />
         </div>
       </main>

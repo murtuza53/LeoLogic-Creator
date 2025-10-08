@@ -39,6 +39,7 @@ export default function BmiCalculatorPage() {
               Calculate your Body Mass Index and see where you fall on the scale.
             </p>
           </div>
+          <AdBanner />
           <BmiCalculator />
         </div>
       </main>
