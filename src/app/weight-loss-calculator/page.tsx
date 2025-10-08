@@ -1,6 +1,7 @@
 
 import WeightLossCalculator from '@/components/weight-loss-calculator';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function WeightLossCalculatorPage() {
               Estimate your daily calorie needs for different weight loss goals.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <WeightLossCalculator />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

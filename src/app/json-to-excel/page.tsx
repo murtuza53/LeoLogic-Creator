@@ -1,6 +1,7 @@
 
 import JsonToExcelConverter from '@/components/json-to-excel';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function JsonToExcelPage() {
               Upload a JSON file (.json) to convert it into a structured Excel spreadsheet.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <JsonToExcelConverter />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

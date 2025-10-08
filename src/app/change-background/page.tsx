@@ -1,6 +1,7 @@
 
 import ChangeBackground from '@/components/change-background';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function ChangeBackgroundPage() {
               Upload an image and select a new background color from the palette.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <ChangeBackground />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

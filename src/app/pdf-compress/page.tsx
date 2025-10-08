@@ -1,6 +1,7 @@
 
 import PdfCompressor from '@/components/pdf-compressor';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function PdfCompressPage() {
               Reduce the file size of your PDF documents while maintaining quality.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <PdfCompressor />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

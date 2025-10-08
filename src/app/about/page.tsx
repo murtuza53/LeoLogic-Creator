@@ -1,5 +1,6 @@
 
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -31,7 +32,7 @@ export default function AboutPage() {
       <main className="flex-1 p-4 md:p-8 lg:p-10">
         <div className="mx-auto max-w-4xl prose dark:prose-invert">
             <h1>About Us</h1>
-            
+            <TopAdBanner />
             <p>
               Leo Creator is a project by <strong>Souq e Kamil Trading & Solutions WLL</strong>, an innovative IT company dedicated to delivering cutting-edge technology and creative solutions. We believe in empowering businesses and individuals by making advanced tools accessible and easy to use.
             </p>
@@ -61,7 +62,7 @@ export default function AboutPage() {
             </p>
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

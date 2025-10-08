@@ -1,6 +1,7 @@
 
 
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,7 @@ export default function TermsOfUsePage() {
       <main className="flex-1 p-4 md:p-8 lg:p-10">
         <div className="mx-auto max-w-4xl prose dark:prose-invert">
             <h1>Terms of Use</h1>
-
+            <TopAdBanner />
             <p><strong>Last Updated:</strong> {new Date().toLocaleDateString()}</p>
 
             <p>Please read these Terms of Use ("Terms", "Terms of Use") carefully before using the Leo Creator website (the "Service") operated by Leo Creator ("us", "we", or "our").</p>
@@ -67,7 +68,7 @@ export default function TermsOfUsePage() {
             <p>If you have any questions about these Terms, please <Link href="/contact">contact us</Link>.</p>
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

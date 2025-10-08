@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 import Footer from '@/components/footer';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 
 export default function MathSolverPage() {
   return (
@@ -39,11 +40,11 @@ export default function MathSolverPage() {
               Enter any math problem, from basic equations to complex word problems, and get a step-by-step solution from our advanced AI.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <MathSolver />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

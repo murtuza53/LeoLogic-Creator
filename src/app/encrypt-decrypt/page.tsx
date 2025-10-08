@@ -1,6 +1,7 @@
 
 import EncryptDecrypt from '@/components/encrypt-decrypt';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function EncryptDecryptPage() {
               Securely encrypt and decrypt text using AES-GCM with a PIN you provide.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <EncryptDecrypt />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

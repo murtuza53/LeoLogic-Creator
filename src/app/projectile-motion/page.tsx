@@ -1,5 +1,6 @@
 
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function ProjectileMotionPage() {
               Simulate projectile trajectories with adjustable parameters.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <ProjectileMotion />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

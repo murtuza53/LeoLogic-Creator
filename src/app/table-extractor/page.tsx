@@ -1,6 +1,7 @@
 
 import TableExtractor from '@/components/table-extractor';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function TableExtractorPage() {
               Upload an image containing a table, and the AI will extract the data into a downloadable, styled Excel file.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <TableExtractor />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

@@ -1,6 +1,7 @@
 
 import AdvancedWordCounter from '@/components/advanced-word-counter';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function AdvancedWordCounterPage() {
               Get detailed insights into your text with real-time stats and AI-powered analysis.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <AdvancedWordCounter />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

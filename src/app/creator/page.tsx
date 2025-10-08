@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 import Footer from '@/components/footer';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 
 export default function CreatorPage() {
   return (
@@ -40,11 +41,11 @@ export default function CreatorPage() {
               descriptions and detailed specifications using AI.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <ProductGenerator />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

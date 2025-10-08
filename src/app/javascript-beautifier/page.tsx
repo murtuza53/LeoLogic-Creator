@@ -1,6 +1,7 @@
 
 import JavascriptBeautifier from '@/components/javascript-beautifier';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function JavascriptBeautifierPage() {
               Paste your JS code to format and color-code it for better readability.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <JavascriptBeautifier />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

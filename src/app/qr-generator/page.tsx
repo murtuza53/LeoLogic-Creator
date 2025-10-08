@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 import Footer from '@/components/footer';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 
 export default function QrGeneratorPage() {
   return (
@@ -39,11 +40,11 @@ export default function QrGeneratorPage() {
               Create and customize QR codes for any text or URL.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <QrGenerator />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

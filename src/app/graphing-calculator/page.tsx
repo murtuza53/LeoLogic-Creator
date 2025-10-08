@@ -1,6 +1,7 @@
 
 import GraphingCalculator from '@/components/graphing-calculator';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function GraphingCalculatorPage() {
               Visualize functions, plot data, evaluate equations, and explore transformations.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <GraphingCalculator />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

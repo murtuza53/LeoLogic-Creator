@@ -1,6 +1,7 @@
 
 import ImageToIconConverter from '@/components/image-to-icon-converter';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function ImageToIconPage() {
               Upload an image to convert it into a multi-layer ICO file.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <ImageToIconConverter />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

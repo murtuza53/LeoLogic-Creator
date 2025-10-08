@@ -1,6 +1,7 @@
 
 import CsvToJsonConverter from '@/components/csv-to-json';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -39,11 +40,11 @@ export default function CsvToJsonPage() {
               Upload a CSV file to convert it into a structured JSON format.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <CsvToJsonConverter />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 import Footer from '@/components/footer';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 
 export default function OcrPage() {
   return (
@@ -39,11 +40,11 @@ export default function OcrPage() {
               Upload or paste an image to extract text and reconstruct its original formatting with AI.
             </p>
           </div>
-          <AdBanner />
+          <TopAdBanner />
           <OcrProcessor />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

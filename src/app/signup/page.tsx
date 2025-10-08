@@ -5,7 +5,8 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 import Footer from '@/components/footer';
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 
 export default function SignupPage() {
   return (
@@ -39,10 +40,11 @@ export default function SignupPage() {
               Join Leo Creator to get started.
             </p>
           </div>
+          <TopAdBanner />
           <SignupForm />
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );

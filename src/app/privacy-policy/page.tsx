@@ -1,6 +1,7 @@
 
 
-import AdBanner from '@/components/ad-banner';
+import TopAdBanner from '@/components/top-ad-banner';
+import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -32,7 +33,7 @@ export default function PrivacyPolicyPage() {
       <main className="flex-1 p-4 md:p-8 lg:p-10">
         <div className="mx-auto max-w-4xl prose dark:prose-invert">
             <h1>Privacy Policy for Leo Creator</h1>
-
+            <TopAdBanner />
             <p><strong>Last Updated:</strong> {new Date().toLocaleDateString()}</p>
 
             <p>Welcome to Leo Creator! This Privacy Policy explains how we collect, use, and disclose information about you when you use our website and services.</p>
@@ -76,7 +77,7 @@ export default function PrivacyPolicyPage() {
             <p>If you have any questions about this Privacy Policy, please contact us through our <Link href="/contact">contact page</Link>.</p>
         </div>
       </main>
-      <AdBanner />
+      <BottomAdBanner />
       <Footer />
     </div>
   );
