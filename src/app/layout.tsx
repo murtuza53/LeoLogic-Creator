@@ -41,12 +41,44 @@ export default function RootLayout({
         <FirebaseClientProvider>
           {/* Left Floating Ad */}
           <div className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
+            <Script
+              id="adsterra-left-banner"
+              strategy="afterInteractive"
+            >{`
+              atOptions = {
+                'key' : '94ae52161e71e5c557f12c90150ad810',
+                'format' : 'iframe',
+                'height' : 300,
+                'width' : 160,
+                'params' : {}
+              };
+            `}</Script>
+            <Script
+              src="//pl27805151.revenuecpmgate.com/94ae52161e71e5c557f12c90150ad810/invoke.js"
+              strategy="afterInteractive"
+            />
           </div>
 
           {children}
 
           {/* Right Floating Ad */}
           <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
+             <Script
+              id="adsterra-right-banner"
+              strategy="afterInteractive"
+            >{`
+              atOptions = {
+                'key' : '23b55c65512b912c53099505c3099a50',
+                'format' : 'iframe',
+                'height' : 300,
+                'width' : 160,
+                'params' : {}
+              };
+            `}</Script>
+            <Script
+              src="//pl27805161.revenuecpmgate.com/23b55c65512b912c53099505c3099a50/invoke.js"
+              strategy="afterInteractive"
+            />
           </div>
 
           <SpeedInsights />
