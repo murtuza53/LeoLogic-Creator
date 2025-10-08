@@ -38,8 +38,6 @@ export type Feature =
   | 'graphingCalculator'
   | 'projectileMotion'
   | 'pendulumDynamics'
-  | 'circuitBuilding'
-  | 'opticsLab'
   | 'virtualPhysicsLab';
 
 export type ContactMessage = {
