@@ -38,7 +38,20 @@ export default function RootLayout({
       </head>
       <body className="font-body antialiased">
         <FirebaseClientProvider>
+          {/* Left Floating Ad */}
+          <div className="fixed left-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
+            <Script async data-cfasync="false" src="//pl27805151.revenuecpmgate.com/94ae52161e71e5c557f12c90150ad810/invoke.js" />
+            <div id="container-94ae52161e71e5c557f12c90150ad810"></div>
+          </div>
+          
           {children}
+
+          {/* Right Floating Ad */}
+           <div className="fixed right-4 top-1/2 -translate-y-1/2 z-50 hidden lg:block">
+            <Script async data-cfasync="false" src="//pl27805151.revenuecpmgate.com/94ae52161e71e5c557f12c90150ad810/invoke.js" />
+            <div id="container-94ae52161e71e5c557f12c90150ad810-2"></div>
+          </div>
+
           <SpeedInsights />
           <Toaster />
         </FirebaseClientProvider>
