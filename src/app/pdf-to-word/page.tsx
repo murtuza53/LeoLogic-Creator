@@ -39,7 +39,6 @@ export default function PdfToWordPage() {
               Upload a PDF file to convert it into an editable Word document (.docx).
             </p>
           </div>
-          <AdBanner />
           <PdfToWord />
         </div>
       </main>

@@ -39,7 +39,6 @@ export default function MathSolverPage() {
               Enter any math problem, from basic equations to complex word problems, and get a step-by-step solution from our advanced AI.
             </p>
           </div>
-          <AdBanner />
           <MathSolver />
         </div>
       </main>

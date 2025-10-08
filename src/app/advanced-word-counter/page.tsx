@@ -39,7 +39,6 @@ export default function AdvancedWordCounterPage() {
               Get detailed insights into your text with real-time stats and AI-powered analysis.
             </p>
           </div>
-          <AdBanner />
           <AdvancedWordCounter />
         </div>
       </main>

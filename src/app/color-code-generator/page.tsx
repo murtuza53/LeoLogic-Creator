@@ -39,7 +39,6 @@ export default function ColorCodeGeneratorPage() {
               Extract color palettes from images, use a color picker, or convert between HEX, RGB, and HSL.
             </p>
           </div>
-          <AdBanner />
           <ColorCodeGenerator />
         </div>
       </main>

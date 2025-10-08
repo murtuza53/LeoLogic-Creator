@@ -39,7 +39,6 @@ export default function CsvToJsonPage() {
               Upload a CSV file to convert it into a structured JSON format.
             </p>
           </div>
-          <AdBanner />
           <CsvToJsonConverter />
         </div>
       </main>

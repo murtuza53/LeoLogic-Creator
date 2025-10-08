@@ -39,7 +39,6 @@ export default function UnitConverterPage() {
               Quickly convert between different units of measurement.
             </p>
           </div>
-          <AdBanner />
           <UnitConverter />
         </div>
       </main>

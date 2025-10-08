@@ -39,7 +39,6 @@ export default function ProjectileMotionPage() {
               Simulate projectile trajectories with adjustable parameters.
             </p>
           </div>
-          <AdBanner />
           <ProjectileMotion />
         </div>
       </main>

@@ -39,7 +39,6 @@ export default function QrGeneratorPage() {
               Create and customize QR codes for any text or URL.
             </p>
           </div>
-          <AdBanner />
           <QrGenerator />
         </div>
       </main>

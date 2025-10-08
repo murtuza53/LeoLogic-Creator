@@ -39,7 +39,6 @@ export default function RemoveBackgroundPage() {
               Upload an image to automatically remove the background and download the result.
             </p>
           </div>
-          <AdBanner />
           <RemoveBackground />
         </div>
       </main>

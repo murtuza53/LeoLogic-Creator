@@ -39,7 +39,6 @@ export default function BmrCalculatorPage() {
               Calculate your Basal Metabolic Rate and daily calorie needs.
             </p>
           </div>
-          <AdBanner />
           <BmrCalculator />
         </div>
       </main>

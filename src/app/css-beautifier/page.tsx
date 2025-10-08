@@ -39,7 +39,6 @@ export default function CssBeautifierPage() {
               Paste your CSS code to format and color-code it for better readability.
             </p>
           </div>
-          <AdBanner />
           <CssBeautifier />
         </div>
       </main>

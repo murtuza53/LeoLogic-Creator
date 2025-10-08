@@ -39,7 +39,6 @@ export default function JsonToExcelPage() {
               Upload a JSON file (.json) to convert it into a structured Excel spreadsheet.
             </p>
           </div>
-          <AdBanner />
           <JsonToExcelConverter />
         </div>
       </main>

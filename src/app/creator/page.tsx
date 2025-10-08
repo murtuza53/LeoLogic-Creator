@@ -40,7 +40,6 @@ export default function CreatorPage() {
               descriptions and detailed specifications using AI.
             </p>
           </div>
-          <AdBanner />
           <ProductGenerator />
         </div>
       </main>
