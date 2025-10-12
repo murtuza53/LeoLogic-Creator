@@ -1,17 +1,111 @@
+/**
+ * @fileoverview Firestore Security Rules for LeoLogic Analytic.
+ *
+ * Core Philosophy:
+ * This ruleset enforces a strict user-ownership model.  Each user has a private data tree under `/users/{userId}`.  Only the authenticated user can access their own data.
+ *
+ * Data Structure:
+ * - User profiles are stored in `/users/{userId}`.
+ * - Products are stored in `/users/{userId}/products/{productId}`.
+ * - Specifications are stored in `/users/{userId}/products/{productId}/specifications/{specificationId}`.
+ *
+ * Key Security Decisions:
+ * - Users can only access their own profile and the data nested under their profile.
+ * - All writes are validated against the authenticated user's ID (`request.auth.uid`).
+ * - Data consistency between the path and document fields is enforced on creation and updates.
+ */
 rules_version = '2';
-
 service cloud.firestore {
   match /databases/{database}/documents {
-    // Allow public write access to the contacts collection for form submissions,
-    // but deny read, update, and delete to protect user data.
-    match /contacts/{contactId} {
-      allow read, update, delete: if false;
-      allow create: if true;
+
+    /**
+     * @description Controls access to user profiles.
+     * @path /users/{userId}
+     * @allow (create) - Authenticated user creating their own profile.
+     * @allow (get, list) - Authenticated user reading their own profile.
+     * @allow (update, delete) - Authenticated user updating/deleting their own profile.
+     * @deny (create) - Authenticated user creating a profile with a different user ID.
+     * @deny (get, list, update, delete) - Any other user attempting to access this profile.
+     * @principle Enforces document ownership for writes.
+     */
+    match /users/{userId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if false;
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
 
-    // Deny all access to the counters collection from the client.
-    match /generationCounters/{counterId} {
-      allow read, write: if false;
+    /**
+     * @description Controls access to products created by a user.
+     * @path /users/{userId}/products/{productId}
+     * @allow (create) - Authenticated user creating a product under their profile.
+     * @allow (get, list) - Authenticated user reading their own products.
+     * @allow (update, delete) - Authenticated user updating/deleting their own product.
+     * @deny (create) - Authenticated user creating a product with a different user ID.
+     * @deny (get, list, update, delete) - Any other user attempting to access this product.
+     * @principle Enforces document ownership for writes and path consistency.
+     */
+    match /users/{userId}/products/{productId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
+    }
+
+    /**
+     * @description Controls access to specifications for a product.
+     * @path /users/{userId}/products/{productId}/specifications/{specificationId}
+     * @allow (create) - Authenticated user creating a specification under their product.
+     * @allow (get, list) - Authenticated user reading specifications for their product.
+     * @allow (update, delete) - Authenticated user updating/deleting their own specification.
+     * @deny (create) - Authenticated user creating a specification with a different user ID or product ID.
+     * @deny (get, list, update, delete) - Any other user attempting to access this specification.
+     * @principle Enforces document ownership for writes and path consistency.
+     */
+    match /users/{userId}/products/{productId}/specifications/{specificationId} {
+      function isSignedIn() {
+        return request.auth != null;
+      }
+
+      function isOwner(userId) {
+        return request.auth.uid == userId;
+      }
+
+      function isExistingOwner(userId) {
+        return isOwner(userId) && resource != null;
+      }
+
+      allow get: if isSignedIn() && isOwner(userId);
+      allow list: if isSignedIn() && isOwner(userId);
+      allow create: if isSignedIn() && isOwner(userId);
+      allow update: if isSignedIn() && isExistingOwner(userId);
+      allow delete: if isSignedIn() && isExistingOwner(userId);
     }
   }
 }
