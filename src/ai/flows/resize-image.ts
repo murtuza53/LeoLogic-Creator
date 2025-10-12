@@ -66,7 +66,7 @@ const resizeImageFlow = ai.defineFlow(
     }
 
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
+      model: 'googleai/gemini-2.5-flash-image',
       prompt: [
         { media: { url: imageDataUri } },
         { text: promptText },

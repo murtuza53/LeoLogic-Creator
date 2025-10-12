@@ -42,7 +42,7 @@ const convertImageToWebpFlow = ai.defineFlow(
     let promptText = 'Convert the provided image to WebP format.';
 
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
+      model: 'googleai/gemini-2.5-flash-image',
       prompt: [
         { media: { url: imageDataUri } },
         { text: promptText },

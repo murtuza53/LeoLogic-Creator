@@ -44,7 +44,7 @@ const convertImageToIcoFlow = ai.defineFlow(
   async ({ imageDataUri }) => {
     // 1. Get a single high-quality square image from the AI
     const { media } = await ai.generate({
-      model: 'googleai/gemini-2.5-flash-image-preview',
+      model: 'googleai/gemini-2.5-flash-image',
       prompt: [
         { media: { url: imageDataUri } },
         { text: 'Isolate the main subject of the image. Make the image a 256x256 pixel square, preserving the subject\'s aspect ratio by adding transparent padding if necessary. The final image must have a transparent background and be in PNG format.' },
