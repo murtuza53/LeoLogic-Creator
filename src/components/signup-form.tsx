@@ -9,13 +9,14 @@ import { useState } from 'react';
 import { LoaderCircle } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import { updateProfile, createUserWithEmailAndPassword } from 'firebase/auth';
+import { doc, setDoc, serverTimestamp } from 'firebase/firestore';
+
 
 import { Button } from '@/components/ui/button';
 import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '@/components/ui/form';
 import { Input } from '@/components/ui/input';
 import { Card, CardContent } from '@/components/ui/card';
-import { useAuth } from '@/firebase';
-import { createUserProfile } from '@/lib/firebase';
+import { useAuth, useFirestore } from '@/firebase';
 
 const formSchema = z.object({
   name: z.string().min(2, 'Name must be at least 2 characters.'),
@@ -27,6 +28,7 @@ export default function SignupForm() {
   const { toast } = useToast();
   const [isLoading, setIsLoading] = useState(false);
   const auth = useAuth();
+  const firestore = useFirestore();
   const router = useRouter();
 
   const form = useForm<z.infer<typeof formSchema>>({
@@ -45,7 +47,14 @@ export default function SignupForm() {
         const userCredential = await createUserWithEmailAndPassword(auth, values.email, values.password);
         const user = userCredential.user;
         await updateProfile(user, { displayName: values.name });
-        await createUserProfile(user.uid, { name: values.name, email: values.email });
+        
+        // Create user profile in Firestore
+        const userRef = doc(firestore, 'users', user.uid);
+        await setDoc(userRef, {
+            name: values.name,
+            email: values.email,
+            createdAt: serverTimestamp(),
+        });
         
         toast({ title: "Account Created!", description: "You have been successfully signed up." });
         router.push('/');

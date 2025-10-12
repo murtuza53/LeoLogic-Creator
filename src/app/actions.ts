@@ -10,7 +10,7 @@ import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { saveContactMessage, createUserProfile } from '@/lib/firebase';
+import { saveContactMessage } from '@/lib/firebase';
 import type { ContactMessage } from '@/lib/types';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
@@ -198,21 +198,6 @@ export async function saveContactMessageAction(message: ContactMessage) {
     return { success: true };
   } catch (error) {
     console.error('Error saving contact message:', error);
-    return {
-      error:
-        error instanceof Error
-          ? error.message
-          : 'An unknown error occurred.',
-    };
-  }
-}
-
-export async function createUserProfileAction(userId: string, data: { name: string, email: string }) {
-  try {
-    await createUserProfile(userId, data);
-    return { success: true };
-  } catch (error) {
-    console.error('Error creating user profile:', error);
     return {
       error:
         error instanceof Error

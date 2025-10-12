@@ -3,7 +3,7 @@
 'use server';
 import { initializeApp, getApps, getApp, App } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
-import type { ContactMessage, UserProfile } from '@/lib/types';
+import type { ContactMessage } from '@/lib/types';
 
 // Note: This file is now using the Firebase Admin SDK as it's a server-side file.
 // Client-side Firebase logic is handled in src/firebase/index.ts
@@ -20,15 +20,6 @@ if (!getApps().length) {
 const db = getFirestore(app);
 
 const CONTACTS_COLLECTION = 'contacts';
-const USERS_COLLECTION = 'users';
-
-export async function createUserProfile(userId: string, data: UserProfile): Promise<void> {
-  const userRef = db.collection(USERS_COLLECTION).doc(userId);
-  await userRef.set({
-    ...data,
-    createdAt: FieldValue.serverTimestamp(),
-  });
-}
 
 export async function saveContactMessage(message: ContactMessage): Promise<void> {
     await db.collection(CONTACTS_COLLECTION).add({
