@@ -17,7 +17,7 @@ if (!getApps().length) {
   app = getApp();
 }
 
-const db = getFirestore(app);
+export const db = getFirestore(app);
 
 const CONTACTS_COLLECTION = 'contacts';
 

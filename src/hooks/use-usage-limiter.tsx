@@ -7,6 +7,7 @@ import { useToast } from '@/hooks/use-toast';
 import { type Feature } from '@/lib/types';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
+import { incrementToolUsageCounter } from '@/app/actions';
 
 const USAGE_LIMIT = 5;
 const STORAGE_KEY = 'anonymousUsage';
@@ -80,7 +81,11 @@ export function useUsageLimiter(feature: Feature) {
   }, [user, isUserLoading, usage, feature, toast]);
 
   const incrementUsage = useCallback(() => {
-    if (user) return; // Don't track for signed-in users
+    // Always increment the global counter
+    incrementToolUsageCounter(feature);
+
+    // Only track local storage for anonymous users
+    if (user) return;
 
     try {
         const currentUsage = getUsage(); // Get the most recent usage

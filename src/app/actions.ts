@@ -10,10 +10,11 @@ import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { saveContactMessage } from '@/lib/firebase';
-import type { ContactMessage } from '@/lib/types';
+import { saveContactMessage, db } from '@/lib/firebase';
+import type { ContactMessage, Feature } from '@/lib/types';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
+import { FieldValue } from 'firebase-admin/firestore';
 
 
 export async function generateProductDetails(
@@ -204,5 +205,38 @@ export async function saveContactMessageAction(message: ContactMessage) {
           ? error.message
           : 'An unknown error occurred.',
     };
+  }
+}
+
+export async function createUserProfile(uid: string, name: string, email: string) {
+  try {
+    const userRef = db.collection('users').doc(uid);
+    await userRef.set({
+      name,
+      email,
+      createdAt: FieldValue.serverTimestamp(),
+    });
+    return { success: true };
+  } catch (error) {
+    console.error('Error creating user profile:', error);
+    return {
+      error:
+        error instanceof Error
+          ? error.message
+          : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function incrementToolUsageCounter(feature: Feature) {
+  try {
+    const toolRef = db.collection('toolUsage').doc(feature);
+    await toolRef.set({ count: FieldValue.increment(1) }, { merge: true });
+    return { success: true };
+  } catch (error) {
+    console.error(`Error incrementing usage counter for ${feature}:`, error);
+    // This is a background task, so we don't want to show an error to the user.
+    // We just log it.
+    return { error: 'Failed to update usage count.' };
   }
 }
