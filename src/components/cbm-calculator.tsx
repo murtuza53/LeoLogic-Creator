@@ -38,8 +38,8 @@ const CBM_FACTORS = {
 };
 
 const VOLUMETRIC_FACTORS = {
-  sea: 1000,
-  air: 6000,
+  sea: 1000, // 1 CBM = 1000 kg for sea
+  air: 6000,  // (L*W*H in cm) / 6000 for air
 };
 
 const CONTAINER_CAPACITIES = {
@@ -100,9 +100,8 @@ const AdvanceCalculator = () => {
       return null;
     }
 
-    const singleVolumeCBM =
-      length * width * height * CBM_FACTORS[unit];
-    const totalVolumeCBM = singleVolumeCBM * quantity;
+    const singleItemVolumeCBM = length * width * height * CBM_FACTORS[unit];
+    const totalVolumeCBM = singleItemVolumeCBM * quantity;
     const totalVolumeCFT = totalVolumeCBM * 35.3147;
 
     const totalWeightKg =
@@ -117,11 +116,10 @@ const AdvanceCalculator = () => {
     // Correct Volumetric Weight Calculation
     // Sea: Total CBM * 1000
     const volWeightSea = totalVolumeCBM * VOLUMETRIC_FACTORS.sea;
-    
-    // Air: (L*W*H in cm) / 6000
-    // To get cm3 from cbm, we must divide by the cm factor
-    const totalVolumeCM3 = totalVolumeCBM / CBM_FACTORS.cm;
-    const volWeightAir = totalVolumeCM3 / VOLUMETRIC_FACTORS.air;
+
+    // Air: Total Volume in cm³ / 6000
+    // Total Volume in cm³ = totalVolumeCBM * 1,000,000
+    const volWeightAir = (totalVolumeCBM * 1000000) / VOLUMETRIC_FACTORS.air;
     
     return {
       totalVolumeCBM: totalVolumeCBM.toFixed(4),
@@ -132,10 +130,10 @@ const AdvanceCalculator = () => {
       volumetricWeightSeaLb: (volWeightSea * 2.20462).toFixed(2),
       volumetricWeightAirKg: volWeightAir.toFixed(2),
       volumetricWeightAirLb: (volWeightAir * 2.20462).toFixed(2),
-      container20ft: singleVolumeCBM > 0 ? Math.floor(CONTAINER_CAPACITIES['20ft'] / singleVolumeCBM) : 0,
-      container40ft: singleVolumeCBM > 0 ? Math.floor(CONTAINER_CAPACITIES['40ft'] / singleVolumeCBM) : 0,
-      container40ftHC: singleVolumeCBM > 0 ? Math.floor(
-        CONTAINER_CAPACITIES['40ft-hc'] / singleVolumeCBM
+      container20ft: singleItemVolumeCBM > 0 ? Math.floor(CONTAINER_CAPACITIES['20ft'] / singleItemVolumeCBM) : 0,
+      container40ft: singleItemVolumeCBM > 0 ? Math.floor(CONTAINER_CAPACITIES['40ft'] / singleItemVolumeCBM) : 0,
+      container40ftHC: singleItemVolumeCBM > 0 ? Math.floor(
+        CONTAINER_CAPACITIES['40ft-hc'] / singleItemVolumeCBM
       ) : 0,
     };
   }, [watchedValues]);
