@@ -3,7 +3,6 @@ import { NextResponse } from 'next/server';
 import { removeBackground } from '@/ai/flows/remove-background';
 import { changeBackground } from '@/ai/flows/change-background';
 import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
-import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
 import { convertImageToIco } from '@/ai/flows/convert-image-to-ico';
 
 export const config = {
@@ -35,12 +34,6 @@ export async function POST(req: Request) {
         const conversionPromises = images.map(image => convertImageToWebp({ imageDataUri: image.dataUri }));
         const webpResults = await Promise.all(conversionPromises);
         return NextResponse.json({ convertedImages: webpResults.map(r => r.webpDataUri) });
-
-      case 'resize-crop':
-        if (!images || !Array.isArray(images) || !targetSize) throw new Error('images array and targetSize are required.');
-        const resizePromises = images.map(image => resizeAndCropImage({ imageDataUri: image.dataUri, targetSize }));
-        const resizeResults = await Promise.all(resizePromises);
-        return NextResponse.json({ processedImages: resizeResults.map(r => r.imageDataUri) });
       
       case 'convert-to-ico':
         if (!imageDataUri) throw new Error('imageDataUri is required.');

@@ -66,12 +66,52 @@ export default function ResizeCropImage() {
     setFiles(prevFiles => prevFiles.filter((_, i) => i !== index));
   };
   
-  const getBase64 = (file: File): Promise<string> => {
+  const processImage = (file: File): Promise<string> => {
     return new Promise((resolve, reject) => {
+      const imageElement = new window.Image();
       const reader = new FileReader();
+
+      reader.onload = (e) => {
+        imageElement.src = e.target?.result as string;
+      };
+
+      imageElement.onload = () => {
+        const canvas = document.createElement('canvas');
+        const ctx = canvas.getContext('2d');
+        if (!ctx) return reject(new Error("Could not get canvas context"));
+
+        canvas.width = targetSize;
+        canvas.height = targetSize;
+
+        // Draw image centered and cropped
+        const sourceWidth = imageElement.naturalWidth;
+        const sourceHeight = imageElement.naturalHeight;
+        const sourceAspectRatio = sourceWidth / sourceHeight;
+        const targetAspectRatio = 1; // Square
+
+        let drawWidth, drawHeight, x, y;
+
+        if (sourceAspectRatio > targetAspectRatio) {
+          // Wider than target, crop sides
+          drawHeight = sourceHeight;
+          drawWidth = sourceHeight * targetAspectRatio;
+          x = (sourceWidth - drawWidth) / 2;
+          y = 0;
+        } else {
+          // Taller than target, crop top/bottom
+          drawWidth = sourceWidth;
+          drawHeight = sourceWidth / targetAspectRatio;
+          x = 0;
+          y = (sourceHeight - drawHeight) / 2;
+        }
+
+        ctx.drawImage(imageElement, x, y, drawWidth, drawHeight, 0, 0, targetSize, targetSize);
+        resolve(canvas.toDataURL('image/png')); // Use PNG to preserve transparency
+      };
+
+      imageElement.onerror = () => reject(new Error("Could not load image"));
+      reader.onerror = () => reject(new Error("Could not read file"));
       reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
     });
   };
 
@@ -91,35 +131,18 @@ export default function ResizeCropImage() {
     setProcessedImages([]);
 
     try {
-      const imagePayloads = await Promise.all(files.map(imageFile => getBase64(imageFile.file)));
-
-      const response = await fetch('/api/image-tools', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tool: 'resize-crop',
-          images: imagePayloads.map(dataUri => ({ dataUri })),
-          targetSize,
-        })
-      });
-
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'An unknown error occurred.');
-      }
-
-      const result = await response.json();
-
-      if (result.processedImages) {
-        const namedProcessedImages = result.processedImages.map((dataUri: string, index: number) => ({
+      const processingPromises = files.map(imageFile => processImage(imageFile.file));
+      const results = await Promise.all(processingPromises);
+      
+      const namedProcessedImages = results.map((dataUri, index) => ({
           originalName: files[index].file.name,
           dataUri,
-        }));
-        setProcessedImages(namedProcessedImages);
-        toast({ title: "Processing Successful", description: "Your images have been processed." });
-        
-        router.refresh();
-      }
+      }));
+
+      setProcessedImages(namedProcessedImages);
+      toast({ title: "Processing Successful", description: "Your images have been processed." });
+      router.refresh();
+
     } catch (error) {
       console.error(error);
       toast({
@@ -136,7 +159,7 @@ export default function ResizeCropImage() {
     const link = document.createElement('a');
     link.href = dataUri;
     const name = originalName.substring(0, originalName.lastIndexOf('.')) || originalName;
-    link.download = `${name}_${targetSize}x${targetSize}.webp`;
+    link.download = `${name}_${targetSize}x${targetSize}.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
@@ -245,7 +268,7 @@ export default function ResizeCropImage() {
                               <p className="text-sm font-medium truncate">{image.originalName}</p>
                              <Button onClick={() => downloadImage(image.dataUri, image.originalName)} className="w-full">
                                 <Download className="mr-2 h-4 w-4" />
-                                Download WebP
+                                Download PNG
                              </Button>
                            </CardContent>
                         </Card>

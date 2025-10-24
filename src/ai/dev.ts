@@ -12,7 +12,6 @@ import '@/ai/flows/extract-table-from-image.ts';
 import '@/ai/flows/convert-image-to-webp.ts';
 import '@/ai/flows/remove-background.ts';
 import '@/ai/flows/change-background.ts';
-import '@/ai/flows/resize-crop-image.ts';
 import '@/ai/flows/generate-icon.ts';
 import '@/ai/flows/compress-pdf.ts';
 import '@/ai/flows/fitness-mentor-flow.ts';
