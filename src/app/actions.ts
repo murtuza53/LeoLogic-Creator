@@ -10,11 +10,21 @@ import { extractTextFromImage } from '@/ai/flows/extract-text-from-image';
 import { extractTableFromImage } from '@/ai/flows/extract-table-from-image';
 import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
-import { saveContactMessage, db } from '@/lib/firebase';
+import { saveContactMessage } from '@/lib/firebase';
 import type { ContactMessage, Feature } from '@/lib/types';
 import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
-import { FieldValue } from 'firebase-admin/firestore';
+import { initializeApp, getApps, getApp, App } from 'firebase-admin/app';
+import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+
+// Initialize Firebase Admin SDK
+let app: App;
+if (!getApps().length) {
+  app = initializeApp();
+} else {
+  app = getApp();
+}
+const db = getFirestore(app);
 
 
 export async function generateProductDetails(
