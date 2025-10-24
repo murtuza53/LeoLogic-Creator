@@ -189,16 +189,6 @@ const tools = [
         textColor: 'text-orange-600',
         icon: Type,
     },
-    {
-        title: 'PDF to Excel',
-        description: 'Extract tables from PDFs to styled Excel files.',
-        href: '/pdf-to-excel',
-        category: 'PDF',
-        feature: 'pdfToExcel' as Feature,
-        bgColor: 'bg-emerald-100',
-        textColor: 'text-emerald-600',
-        icon: FileSpreadsheet,
-    },
     { 
         title: 'Excel to JSON', 
         description: 'Convert Excel files to structured JSON data.', 

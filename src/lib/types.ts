@@ -38,8 +38,7 @@ export type Feature =
   | 'graphingCalculator'
   | 'projectileMotion'
   | 'pendulumDynamics'
-  | 'virtualPhysicsLab'
-  | 'pdfToExcel';
+  | 'virtualPhysicsLab';
 
 export type ContactMessage = {
   name: string;
