@@ -8,6 +8,11 @@ import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
 
+export const unstable_allowDynamic = [
+  '**/node_modules/pdf-lib/lib/core/PDFContext.js',
+];
+
+
 export default function PdfToExcelPage() {
   return (
     <div className="flex min-h-screen w-full flex-col">
@@ -49,5 +54,6 @@ export default function PdfToExcelPage() {
     </div>
   );
 }
+    
 
     
