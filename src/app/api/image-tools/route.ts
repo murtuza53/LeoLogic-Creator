@@ -4,7 +4,6 @@ import { removeBackground } from '@/ai/flows/remove-background';
 import { changeBackground } from '@/ai/flows/change-background';
 import { convertImageToWebp } from '@/ai/flows/convert-image-to-webp';
 import { resizeAndCropImage } from '@/ai/flows/resize-crop-image';
-import { resizeImage } from '@/ai/flows/resize-image';
 import { convertImageToIco } from '@/ai/flows/convert-image-to-ico';
 
 export const config = {
@@ -48,10 +47,6 @@ export async function POST(req: Request) {
         const icoResult = await convertImageToIco({ imageDataUri });
         return NextResponse.json(icoResult);
       
-      case 'resize-image':
-        if (!imageDataUri || !width || !height) throw new Error('imageDataUri, width, and height are required.');
-        const resizeImageResult = await resizeImage({ imageDataUri, width, height, maintainAspectRatio });
-        return NextResponse.json(resizeImageResult);
 
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });

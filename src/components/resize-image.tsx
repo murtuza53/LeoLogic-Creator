@@ -7,7 +7,6 @@ import { useToast } from '@/hooks/use-toast';
 import { Card, CardContent, CardHeader, CardTitle } from './ui/card';
 import { Button } from './ui/button';
 import { LoaderCircle, UploadCloud, Download, WandSparkles, Trash2, Lock, Unlock } from 'lucide-react';
-import { useRouter } from 'next/navigation';
 import { Input } from './ui/input';
 import { Switch } from './ui/switch';
 import { Label } from './ui/label';
@@ -24,7 +23,6 @@ export default function ResizeImage() {
   const [maintainAspectRatio, setMaintainAspectRatio] = useState(true);
   const fileInputRef = useRef<HTMLInputElement>(null);
   const { toast } = useToast();
-  const router = useRouter();
   const { checkLimit, incrementUsage, isUserLoading } = useUsageLimiter('resizeImage');
 
   const resetState = () => {
@@ -65,15 +63,6 @@ export default function ResizeImage() {
 
     setProcessedImage(null);
   };
-  
-  const getBase64 = (file: File): Promise<string> => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result as string);
-      reader.onerror = (error) => reject(error);
-    });
-  };
 
   const handleProcess = async () => {
     if (!originalImage) {
@@ -100,29 +89,47 @@ export default function ResizeImage() {
     }
 
     try {
-      const base64Image = await getBase64(originalImage.file);
+        const imageElement = new window.Image();
+        imageElement.src = originalImage.previewUrl;
+        
+        imageElement.onload = () => {
+            const canvas = document.createElement('canvas');
+            const ctx = canvas.getContext('2d');
 
-      const response = await fetch('/api/image-tools', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          tool: 'resize-image',
-          imageDataUri: base64Image,
-          width: targetWidth,
-          height: targetHeight,
-          maintainAspectRatio,
-        }),
-      });
+            if (!ctx) {
+                throw new Error("Could not get canvas context");
+            }
+            
+            let finalWidth = targetWidth;
+            let finalHeight = targetHeight;
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        throw new Error(errorData.error || 'An unknown error occurred.');
-      }
+            if (maintainAspectRatio) {
+                const originalRatio = imageElement.naturalWidth / imageElement.naturalHeight;
+                const targetRatio = targetWidth / targetHeight;
 
-      const result = await response.json();
-      setProcessedImage(result.imageDataUri);
-      toast({ title: "Image Resized", description: "Your image has been processed." });
-      router.refresh();
+                if (originalRatio > targetRatio) {
+                    finalHeight = targetWidth / originalRatio;
+                } else {
+                    finalWidth = targetHeight * originalRatio;
+                }
+            }
+
+            canvas.width = finalWidth;
+            canvas.height = finalHeight;
+            
+            ctx.drawImage(imageElement, 0, 0, finalWidth, finalHeight);
+
+            // Use PNG to preserve transparency. WebP could also be an option but PNG is more universally safe for this.
+            const resultDataUrl = canvas.toDataURL('image/png');
+            setProcessedImage(resultDataUrl);
+            toast({ title: "Image Resized", description: "Your image has been processed." });
+            setIsLoading(false);
+        }
+
+        imageElement.onerror = () => {
+            throw new Error("Could not load image for processing.");
+        }
+
     } catch (error) {
       console.error(error);
       toast({
@@ -130,7 +137,6 @@ export default function ResizeImage() {
         title: "Processing Failed",
         description: error instanceof Error ? error.message : "An unknown error occurred during processing.",
       });
-    } finally {
       setIsLoading(false);
     }
   };
@@ -140,7 +146,8 @@ export default function ResizeImage() {
     const link = document.createElement('a');
     link.href = processedImage;
     const name = originalImage.file.name.substring(0, originalImage.file.name.lastIndexOf('.')) || originalImage.file.name;
-    link.download = `${name}_resized.webp`;
+    // Download as PNG since we are using canvas.toDataURL('image/png')
+    link.download = `${name}_resized.png`;
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
