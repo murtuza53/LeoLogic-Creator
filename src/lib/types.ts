@@ -38,7 +38,8 @@ export type Feature =
   | 'graphingCalculator'
   | 'projectileMotion'
   | 'pendulumDynamics'
-  | 'virtualPhysicsLab';
+  | 'virtualPhysicsLab'
+  | 'pdfToExcel';
 
 export type ContactMessage = {
   name: string;
@@ -57,5 +58,8 @@ export type UserProfile = {
     
 
     
+
+    
+
 
     

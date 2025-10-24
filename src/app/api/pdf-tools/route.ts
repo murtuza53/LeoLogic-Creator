@@ -2,6 +2,7 @@
 import { NextResponse } from 'next/server';
 import { compressPdf } from '@/ai/flows/compress-pdf';
 import { convertPdfToWord } from '@/ai/flows/convert-pdf-to-word';
+import { convertPdfToExcel } from '@/ai/flows/convert-pdf-to-excel';
 import { PDFDocument } from 'pdf-lib';
 
 export const config = {
@@ -36,7 +37,7 @@ async function mergePdfs(pdfDataUris: string[]) {
 export async function POST(req: Request) {
   try {
     const body = await req.json();
-    const { tool, pdfDataUri, compressionLevel, pdfDataUris } = body;
+    const { tool, pdfDataUri, compressionLevel, pdfDataUris, sheetOption } = body;
 
     switch (tool) {
       case 'compress-pdf':
@@ -60,6 +61,13 @@ export async function POST(req: Request) {
         const convertResult = await convertPdfToWord({ pdfDataUri });
         return NextResponse.json(convertResult);
 
+      case 'pdf-to-excel':
+        if (!pdfDataUri || !sheetOption) {
+            throw new Error('pdfDataUri and sheetOption are required.');
+        }
+        const excelResult = await convertPdfToExcel({ pdfDataUri, sheetOption });
+        return NextResponse.json(excelResult);
+
       default:
         return NextResponse.json({ error: 'Invalid tool specified.' }, { status: 400 });
     }
@@ -69,3 +77,5 @@ export async function POST(req: Request) {
     return NextResponse.json({ error: errorMessage }, { status: 500 });
   }
 }
+
+    
