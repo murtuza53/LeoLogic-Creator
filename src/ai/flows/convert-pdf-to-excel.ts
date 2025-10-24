@@ -88,19 +88,14 @@ const convertPdfToExcelFlow = ai.defineFlow(
     }
 
     for (let i = 0; i < pdfDoc.getPageCount(); i++) {
-        const page = pdfDoc.getPage(i);
-        
-        // This is a simplified approach to render a page to an image.
-        // A real implementation would need a library like pdf-js to render the page to a canvas, then get a data URI.
-        // For this AI flow, we'll ask the model to process the PDF page directly.
-        // As a proxy, we'll create a temporary PDF with just one page to send to the model.
-        
+        // Create a temporary PDF with just one page to send to the model.
         const tempPdf = await PDFDocument.create();
         const [copiedPage] = await tempPdf.copyPages(pdfDoc, [i]);
         tempPdf.addPage(copiedPage);
         const tempPdfBytes = await tempPdf.save();
         const pageImageUri = `data:application/pdf;base64,${Buffer.from(tempPdfBytes).toString('base64')}`;
 
+        // The model can process the PDF page directly from the data URI.
         const { output: pageData } = await extractStyledTableFromPagePrompt({ pageImage: pageImageUri });
 
         if (!pageData || !pageData.hasData || pageData.rows.length === 0) {
@@ -117,7 +112,7 @@ const convertPdfToExcelFlow = ai.defineFlow(
                  currentWorksheet.addRow([]); // Add a blank row as a separator
                  const headerRow = currentWorksheet.addRow([`Data from Page ${i+1}`]);
                  headerRow.font = { bold: true, size: 14 };
-                 currentWorksheet.mergeCells(headerRow.number, 1, headerRow.number, 5);
+                 currentWorksheet.mergeCells(headerRow.number, 1, 5); // Merge 5 cells for the header
                  currentWorksheet.addRow([]); // Add another blank row
             }
         }
@@ -134,12 +129,16 @@ const convertPdfToExcelFlow = ai.defineFlow(
 
                     if (cell.style.bold) font.bold = true;
                     if (cell.style.italic) font.italic = true;
-                    if (cell.style.textColor) font.color = { argb: cell.style.textColor.replace('#', '') };
+                    if (cell.style.textColor) {
+                        const argbColor = cell.style.textColor.startsWith('#') ? `FF${cell.style.textColor.substring(1)}` : cell.style.textColor;
+                        font.color = { argb: argbColor };
+                    }
 
                     if (cell.style.backgroundColor) {
                         fill.type = 'pattern';
                         fill.pattern = 'solid';
-                        fill.fgColor = { argb: cell.style.backgroundColor.replace('#', '') };
+                        const argbColor = cell.style.backgroundColor.startsWith('#') ? `FF${cell.style.backgroundColor.substring(1)}` : cell.style.backgroundColor;
+                        fill.fgColor = { argb: argbColor };
                     }
                     
                     if (Object.keys(font).length > 0) style.font = font;
@@ -147,6 +146,14 @@ const convertPdfToExcelFlow = ai.defineFlow(
                     worksheetCell.style = style;
                 }
             });
+        });
+        
+        // Auto-fit columns
+        currentWorksheet.columns.forEach(column => {
+            if (column.values) {
+                const maxLength = column.values.reduce((max, val) => Math.max(max, val ? val.toString().length : 0), 0);
+                column.width = maxLength < 10 ? 10 : maxLength + 2;
+            }
         });
     }
     
@@ -157,5 +164,3 @@ const convertPdfToExcelFlow = ai.defineFlow(
     return { excelDataUri };
   }
 );
-
-    
