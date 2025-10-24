@@ -119,6 +119,7 @@ const AdvanceCalculator = () => {
     const volWeightSea = totalVolumeCBM * VOLUMETRIC_FACTORS.sea;
     
     // Air: (L*W*H in cm) / 6000
+    // To get cm3 from cbm, we must divide by the cm factor
     const totalVolumeCM3 = totalVolumeCBM / CBM_FACTORS.cm;
     const volWeightAir = totalVolumeCM3 / VOLUMETRIC_FACTORS.air;
     
@@ -131,11 +132,11 @@ const AdvanceCalculator = () => {
       volumetricWeightSeaLb: (volWeightSea * 2.20462).toFixed(2),
       volumetricWeightAirKg: volWeightAir.toFixed(2),
       volumetricWeightAirLb: (volWeightAir * 2.20462).toFixed(2),
-      container20ft: Math.floor(CONTAINER_CAPACITIES['20ft'] / totalVolumeCBM),
-      container40ft: Math.floor(CONTAINER_CAPACITIES['40ft'] / totalVolumeCBM),
-      container40ftHC: Math.floor(
-        CONTAINER_CAPACITIES['40ft-hc'] / totalVolumeCBM
-      ),
+      container20ft: singleVolumeCBM > 0 ? Math.floor(CONTAINER_CAPACITIES['20ft'] / singleVolumeCBM) : 0,
+      container40ft: singleVolumeCBM > 0 ? Math.floor(CONTAINER_CAPACITIES['40ft'] / singleVolumeCBM) : 0,
+      container40ftHC: singleVolumeCBM > 0 ? Math.floor(
+        CONTAINER_CAPACITIES['40ft-hc'] / singleVolumeCBM
+      ) : 0,
     };
   }, [watchedValues]);
 
