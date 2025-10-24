@@ -114,8 +114,13 @@ const AdvanceCalculator = () => {
         ? weight * quantity
         : (weight || 0) * 2.20462 * quantity;
 
-    const volWeightSea = (totalVolumeCBM / 1) * VOLUMETRIC_FACTORS.sea;
-    const volWeightAir = (totalVolumeCBM * 1000000) / VOLUMETRIC_FACTORS.air;
+    // Correct Volumetric Weight Calculation
+    // Sea: Total CBM * 1000
+    const volWeightSea = totalVolumeCBM * VOLUMETRIC_FACTORS.sea;
+    
+    // Air: (L*W*H in cm) / 6000
+    const totalVolumeCM3 = totalVolumeCBM / CBM_FACTORS.cm;
+    const volWeightAir = totalVolumeCM3 / VOLUMETRIC_FACTORS.air;
     
     return {
       totalVolumeCBM: totalVolumeCBM.toFixed(4),
