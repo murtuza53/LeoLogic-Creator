@@ -1,3 +1,4 @@
+
 "use client";
 
 import { useState, useRef } from 'react';
@@ -17,6 +18,8 @@ const ACCEPTED_IMAGE_TYPES = ["image/jpeg", "image/jpg", "image/png", "image/web
 type ImageFile = {
   file: File;
   previewUrl: string;
+  width: number;
+  height: number;
 };
 
 type ProcessedImage = {
@@ -49,13 +52,19 @@ export default function ResizeCropImage() {
         toast({ variant: "destructive", title: "Invalid file type", description: `File "${file.name}" is not a supported image type.` });
         continue;
       }
-      newFiles.push({
-        file,
-        previewUrl: URL.createObjectURL(file),
-      });
+      
+      const previewUrl = URL.createObjectURL(file);
+      const img = new window.Image();
+      img.onload = () => {
+        setFiles(prevFiles => [...prevFiles, {
+            file,
+            previewUrl,
+            width: img.width,
+            height: img.height,
+        }]);
+      };
+      img.src = previewUrl;
     }
-
-    setFiles(prevFiles => [...prevFiles, ...newFiles]);
   };
 
   const removeFile = (index: number) => {
@@ -180,7 +189,7 @@ export default function ResizeCropImage() {
                 </span>
                 <p className="pl-1">or drag and drop</p>
               </div>
-              <p className="text-sm leading-5 text-muted-foreground/80">Up to ${MAX_FILES} images (PNG, JPG, WEBP)</p>
+              <p className="text-sm leading-5 text-muted-foreground/80">Up to {MAX_FILES} images (PNG, JPG, WEBP)</p>
               <input 
                   id="file-upload" 
                   type="file" 
@@ -207,7 +216,10 @@ export default function ResizeCropImage() {
                             <div className="relative aspect-video w-full rounded-md overflow-hidden border">
                                 <Image src={imageFile.previewUrl} alt={`Preview of ${imageFile.file.name}`} layout="fill" className="object-contain" />
                             </div>
-                            <p className="text-sm font-medium truncate">{imageFile.file.name}</p>
+                            <div>
+                                <p className="text-sm font-medium truncate">{imageFile.file.name}</p>
+                                <p className="text-xs text-muted-foreground">{imageFile.width} x {imageFile.height} px</p>
+                            </div>
                            </CardContent>
                            <Button variant="destructive" size="sm" className="absolute top-2 right-2 h-7 w-7" onClick={() => removeFile(index)}>
                                 <Trash2 className="h-4 w-4" />
@@ -280,3 +292,5 @@ export default function ResizeCropImage() {
     </>
   );
 }
+
+    
