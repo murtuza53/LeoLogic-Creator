@@ -2,7 +2,7 @@
 "use client";
 
 import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind } from 'lucide-react';
+import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind, Package } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -138,6 +138,16 @@ const tools = [
         bgColor: 'bg-blue-100',
         textColor: 'text-blue-600',
         icon: Share2,
+    },
+    { 
+        title: 'CBM Calculator', 
+        description: 'Calculate shipment volume and container requirements.', 
+        href: '/cbm-calculator', 
+        category: 'Productivity',
+        feature: 'cbmCalculator' as Feature,
+        bgColor: 'bg-amber-100',
+        textColor: 'text-amber-600',
+        icon: Package,
     },
      { 
         title: 'Weight Loss Calculator', 
@@ -660,5 +670,3 @@ export default function Home() {
     </div>
   );
 }
-
-    
