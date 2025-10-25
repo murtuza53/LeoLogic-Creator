@@ -38,7 +38,7 @@ const CBM_FACTORS = {
 };
 
 const VOLUMETRIC_FACTORS = {
-  sea: 1000, // 1 CBM = 1000 kg for sea
+  sea: 5000,  // (L*W*H in cm) / 5000 for sea
   air: 6000,  // (L*W*H in cm) / 6000 for air
 };
 
@@ -99,6 +99,18 @@ const AdvanceCalculator = () => {
     if (!length || !width || !height) {
       return null;
     }
+    
+    // Normalize all dimensions to cm for volumetric calculations
+    const toCm = (val: number, fromUnit: FormValues['unit']) => {
+        if (fromUnit === 'm') return val * 100;
+        if (fromUnit === 'in') return val * 2.54;
+        if (fromUnit === 'ft') return val * 30.48;
+        return val;
+    };
+    
+    const lengthCm = toCm(length, unit);
+    const widthCm = toCm(width, unit);
+    const heightCm = toCm(height, unit);
 
     const singleItemVolumeCBM = length * width * height * CBM_FACTORS[unit];
     const totalVolumeCBM = singleItemVolumeCBM * quantity;
@@ -113,15 +125,10 @@ const AdvanceCalculator = () => {
         ? weight * quantity
         : (weight || 0) * 2.20462 * quantity;
 
-    // Correct Volumetric Weight Calculation
-    // Sea: Total CBM * 1000
-    const volWeightSea = totalVolumeCBM * VOLUMETRIC_FACTORS.sea;
-
-    // Air: Total Volume in cm³ / 6000
-    // Total Volume in cm³ = totalVolumeCBM * 1,000,000
-    const totalVolumeCM3 = (length * width * height * quantity) * (CBM_FACTORS[unit] / CBM_FACTORS['cm']);
+    const totalVolumeCM3 = lengthCm * widthCm * heightCm * quantity;
     const volWeightAir = totalVolumeCM3 / VOLUMETRIC_FACTORS.air;
-    
+    const volWeightSea = totalVolumeCM3 / VOLUMETRIC_FACTORS.sea;
+
     return {
       totalVolumeCBM: totalVolumeCBM.toFixed(4),
       totalVolumeCFT: totalVolumeCFT.toFixed(4),
