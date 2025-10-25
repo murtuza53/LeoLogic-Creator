@@ -119,7 +119,8 @@ const AdvanceCalculator = () => {
 
     // Air: Total Volume in cm³ / 6000
     // Total Volume in cm³ = totalVolumeCBM * 1,000,000
-    const volWeightAir = (totalVolumeCBM * 1000000) / VOLUMETRIC_FACTORS.air;
+    const totalVolumeCM3 = (length * width * height * quantity) * (CBM_FACTORS[unit] / CBM_FACTORS['cm']);
+    const volWeightAir = totalVolumeCM3 / VOLUMETRIC_FACTORS.air;
     
     return {
       totalVolumeCBM: totalVolumeCBM.toFixed(4),
@@ -309,9 +310,11 @@ const BasicCalculator = () => {
 
         const singleVolumeCBM = length * width * height * CBM_FACTORS[unit];
         const totalVolumeCBM = singleVolumeCBM * quantity;
+        const totalVolumeCFT = totalVolumeCBM * 35.3147;
 
         return {
-            totalVolumeCBM: totalVolumeCBM.toFixed(4)
+            totalVolumeCBM: totalVolumeCBM.toFixed(4),
+            totalVolumeCFT: totalVolumeCFT.toFixed(4),
         }
 
       }, [watchedValues]);
@@ -356,11 +359,18 @@ const BasicCalculator = () => {
                 </div>
             </div>
             {calculations && (
-                 <ResultRow
-                    label="Total Volume (Cubic Meter)"
-                    value={calculations.totalVolumeCBM}
-                    unit={<span className="font-semibold">m<sup>3</sup></span>}
-                />
+                 <div className="space-y-4">
+                    <ResultRow
+                        label="Total Volume (Cubic Meter)"
+                        value={calculations.totalVolumeCBM}
+                        unit={<span className="font-semibold">m<sup>3</sup></span>}
+                    />
+                    <ResultRow
+                        label="Total Volume (Cubic Feet)"
+                        value={calculations.totalVolumeCFT}
+                        unit={<span className="font-semibold">ft<sup>3</sup></span>}
+                    />
+                </div>
             )}
              <Button
                 type="button"
