@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import GraphingCalculator from '@/components/graphing-calculator';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Online Graphing Calculator',
+  description: 'A powerful and free online graphing calculator to visualize functions, plot data points, and evaluate equations. Supports multiple functions, trigonometric expressions, and more.',
+  openGraph: {
+    title: 'Online Graphing Calculator | Leo Creator',
+    description: 'Visualize functions, plot data, evaluate equations, and explore transformations.',
+  },
+  twitter: {
+    title: 'Online Graphing Calculator | Leo Creator',
+    description: 'Visualize functions, plot data, evaluate equations, and explore transformations.',
+  },
+};
 
 export default function GraphingCalculatorPage() {
   return (

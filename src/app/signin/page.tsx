@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import SigninForm from '@/components/signin-form';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,19 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'Sign In',
+  description: 'Sign in to your Leo Creator account to access unlimited usage and advanced features.',
+  openGraph: {
+    title: 'Sign In | Leo Creator',
+    description: 'Sign in to your Leo Creator account.',
+  },
+  twitter: {
+    title: 'Sign In | Leo Creator',
+    description: 'Sign in to your Leo Creator account.',
+  },
+};
 
 export default function SigninPage() {
   return (

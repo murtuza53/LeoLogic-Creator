@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ImageToIconConverter from '@/components/image-to-icon-converter';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Image to ICO Converter',
+  description: 'Convert any image (PNG, JPG, WEBP) into a multi-resolution .ico file, perfect for website favicons. Free, fast, and high-quality.',
+  openGraph: {
+    title: 'Image to ICO Converter | Leo Creator',
+    description: 'Upload an image to convert it into a multi-layer ICO file.',
+  },
+  twitter: {
+    title: 'Image to ICO Converter | Leo Creator',
+    description: 'Upload an image to convert it into a multi-layer ICO file.',
+  },
+};
 
 export default function ImageToIconPage() {
   return (

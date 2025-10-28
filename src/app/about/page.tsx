@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
@@ -6,6 +7,20 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'About Us',
+  description: 'Learn about Souq e Kamil Trading & Solutions WLL, the innovative IT company behind Leo Creator, and our mission to make advanced technology accessible to everyone.',
+  openGraph: {
+    title: 'About Us | Leo Creator',
+    description: 'Learn about the company behind Leo Creator.',
+  },
+  twitter: {
+    title: 'About Us | Leo Creator',
+    description: 'Learn about the company behind Leo Creator.',
+  },
+};
+
 
 export default function AboutPage() {
   return (

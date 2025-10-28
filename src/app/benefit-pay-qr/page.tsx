@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import BenefitPayQr from '@/components/benefit-pay-qr';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Benefit Pay QR Code Generator',
+  description: 'Easily generate a custom QR code for Benefit Pay transactions using an IBAN. Customize the color, size, and style of your QR code for free.',
+  openGraph: {
+    title: 'Benefit Pay QR Code Generator | Leo Creator',
+    description: 'Quickly create custom QR codes for Benefit Pay transactions.',
+  },
+  twitter: {
+    title: 'Benefit Pay QR Code Generator | Leo Creator',
+    description: 'Quickly create custom QR codes for Benefit Pay transactions.',
+  },
+};
 
 export default function BenefitPayQrPage() {
   return (

@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import SignupForm from '@/components/signup-form';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,19 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'Sign Up',
+  description: 'Create a free account on Leo Creator to unlock unlimited tool usage, advanced features, and priority support.',
+  openGraph: {
+    title: 'Sign Up | Leo Creator',
+    description: 'Join Leo Creator to get started.',
+  },
+  twitter: {
+    title: 'Sign Up | Leo Creator',
+    description: 'Join Leo Creator to get started.',
+  },
+};
 
 export default function SignupPage() {
   return (

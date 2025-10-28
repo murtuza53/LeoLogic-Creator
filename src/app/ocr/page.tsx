@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import OcrProcessor from '@/components/ocr-processor';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,19 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'Free Online OCR (Optical Character Recognition)',
+  description: 'Extract text and reconstruct formatting from any image. Our AI-powered OCR tool accurately converts images to text, styled HTML, PDF, or Word documents.',
+  openGraph: {
+    title: 'Free Online OCR (Optical Character Recognition) | Leo Creator',
+    description: 'Upload or paste an image to extract text and reconstruct its original formatting with AI.',
+  },
+  twitter: {
+    title: 'Free Online OCR (Optical Character Recognition) | Leo Creator',
+    description: 'Upload or paste an image to extract text and reconstruct its original formatting with AI.',
+  },
+};
 
 export default function OcrPage() {
   return (

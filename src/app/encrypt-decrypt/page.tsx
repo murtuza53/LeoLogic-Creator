@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import EncryptDecrypt from '@/components/encrypt-decrypt';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Encrypt & Decrypt Text Online',
+  description: 'Secure your messages and data with our free AES-GCM encryption tool. Encrypt and decrypt any text securely in your browser using a PIN.',
+  openGraph: {
+    title: 'Encrypt & Decrypt Text Online | Leo Creator',
+    description: 'Securely encrypt and decrypt text using AES-GCM with a PIN.',
+  },
+  twitter: {
+    title: 'Encrypt & Decrypt Text Online | Leo Creator',
+    description: 'Securely encrypt and decrypt text using AES-GCM with a PIN.',
+  },
+};
 
 export default function EncryptDecryptPage() {
   return (

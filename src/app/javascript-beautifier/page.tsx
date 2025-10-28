@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import JavascriptBeautifier from '@/components/javascript-beautifier';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'JavaScript Beautifier & Formatter',
+  description: 'Instantly format and beautify your JavaScript code. Makes your JS code clean, readable, and properly indented for debugging and sharing.',
+  openGraph: {
+    title: 'JavaScript Beautifier & Formatter | Leo Creator',
+    description: 'Paste your JS code to format and color-code it for better readability.',
+  },
+  twitter: {
+    title: 'JavaScript Beautifier & Formatter | Leo Creator',
+    description: 'Paste your JS code to format and color-code it for better readability.',
+  },
+};
 
 export default function JavascriptBeautifierPage() {
   return (

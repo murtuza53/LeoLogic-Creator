@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import BmiCalculator from '@/components/bmi-calculator';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'BMI Calculator',
+  description: 'Calculate your Body Mass Index (BMI) instantly. Enter your height and weight to see where you fall on the scale and get a healthy weight range.',
+  openGraph: {
+    title: 'BMI Calculator | Leo Creator',
+    description: 'Calculate your Body Mass Index (BMI) and see where you fall on the scale.',
+  },
+  twitter: {
+    title: 'BMI Calculator | Leo Creator',
+    description: 'Calculate your Body Mass Index (BMI) and see where you fall on the scale.',
+  },
+};
 
 export default function BmiCalculatorPage() {
   return (

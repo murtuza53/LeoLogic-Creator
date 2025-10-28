@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ResizeCropImage from '@/components/resize-crop-image';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Resize & Crop Image to Square',
+  description: 'Easily resize and crop your images into a perfect square. Ideal for profile pictures, product images, and social media posts. Free and browser-based.',
+  openGraph: {
+    title: 'Resize & Crop Image to Square | Leo Creator',
+    description: 'Upload images to resize and crop them to a perfect square.',
+  },
+  twitter: {
+    title: 'Resize & Crop Image to Square | Leo Creator',
+    description: 'Upload images to resize and crop them to a perfect square.',
+  },
+};
 
 export default function ResizeCropImagePage() {
   return (

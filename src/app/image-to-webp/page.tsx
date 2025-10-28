@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ImageToWebpConverter from '@/components/image-to-webp-converter';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Image to WebP Converter',
+  description: 'Convert your images (JPG, PNG) to the modern, efficient WebP format to improve website performance. Free and easy to use.',
+  openGraph: {
+    title: 'Image to WebP Converter | Leo Creator',
+    description: 'Convert images to WebP, remove the background, or apply a new background color.',
+  },
+  twitter: {
+    title: 'Image to WebP Converter | Leo Creator',
+    description: 'Convert images to WebP, remove the background, or apply a new background color.',
+  },
+};
 
 export default function ImageToWebpPage() {
   return (

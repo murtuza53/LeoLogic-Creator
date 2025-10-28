@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import CssBeautifier from '@/components/css-beautifier';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'CSS Beautifier & Formatter',
+  description: 'Clean up and format your messy CSS code instantly. Our CSS beautifier makes your stylesheets readable with proper indentation and syntax highlighting.',
+  openGraph: {
+    title: 'CSS Beautifier & Formatter | Leo Creator',
+    description: 'Paste your CSS code to format and color-code it for better readability.',
+  },
+  twitter: {
+    title: 'CSS Beautifier & Formatter | Leo Creator',
+    description: 'Paste your CSS code to format and color-code it for better readability.',
+  },
+};
 
 export default function CssBeautifierPage() {
   return (

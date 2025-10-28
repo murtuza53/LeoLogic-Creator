@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import TableExtractor from '@/components/table-extractor';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Image to Excel Converter',
+  description: 'Extract tables from images and convert them into a fully styled and editable Excel file (.xlsx). Our AI preserves fonts, colors, and formatting.',
+  openGraph: {
+    title: 'Image to Excel Converter | Leo Creator',
+    description: 'Upload an image containing a table, and the AI will extract the data into a downloadable, styled Excel file.',
+  },
+  twitter: {
+    title: 'Image to Excel Converter | Leo Creator',
+    description: 'Upload an image containing a table, and the AI will extract the data into a downloadable, styled Excel file.',
+  },
+};
 
 export default function TableExtractorPage() {
   return (

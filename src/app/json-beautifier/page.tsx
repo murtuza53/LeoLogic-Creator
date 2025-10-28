@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import JsonBeautifier from '@/components/json-beautifier';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'JSON Beautifier & Formatter',
+  description: 'Format, validate, and beautify your JSON data online. Our tool makes your JSON clean, readable, and easy to debug with syntax highlighting.',
+  openGraph: {
+    title: 'JSON Beautifier & Formatter | Leo Creator',
+    description: 'Paste your JSON data to format and color-code it for better readability.',
+  },
+  twitter: {
+    title: 'JSON Beautifier & Formatter | Leo Creator',
+    description: 'Paste your JSON data to format and color-code it for better readability.',
+  },
+};
 
 export default function JsonBeautifierPage() {
   return (

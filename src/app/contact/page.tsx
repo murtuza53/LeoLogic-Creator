@@ -1,5 +1,5 @@
 
-
+import type { Metadata } from 'next';
 import ContactForm from '@/components/contact-form';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -8,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Contact Us',
+  description: 'Have a question, feedback, or a feature request? We\'d love to hear from you. Get in touch with the Leo Creator team through our contact form.',
+  openGraph: {
+    title: 'Contact Us | Leo Creator',
+    description: 'Get in touch with the Leo Creator team.',
+  },
+  twitter: {
+    title: 'Contact Us | Leo Creator',
+    description: 'Get in touch with the Leo Creator team.',
+  },
+};
 
 export default function ContactPage() {
   return (

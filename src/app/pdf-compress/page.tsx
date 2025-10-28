@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import PdfCompressor from '@/components/pdf-compressor';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Compress PDF Files Online',
+  description: 'Reduce the file size of your PDF documents for free while maintaining quality. Choose from multiple compression levels to optimize your files for sharing and storage.',
+  openGraph: {
+    title: 'Compress PDF Files Online | Leo Creator',
+    description: 'Reduce the file size of your PDF documents while maintaining quality.',
+  },
+  twitter: {
+    title: 'Compress PDF Files Online | Leo Creator',
+    description: 'Reduce the file size of your PDF documents while maintaining quality.',
+  },
+};
 
 export default function PdfCompressPage() {
   return (

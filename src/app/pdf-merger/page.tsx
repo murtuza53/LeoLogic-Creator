@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import PdfMerger from '@/components/pdf-merger';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Merge PDF Files Online',
+  description: 'Combine multiple PDF documents into a single file for free. Upload your files, and our tool will merge them instantly.',
+  openGraph: {
+    title: 'Merge PDF Files Online | Leo Creator',
+    description: 'Upload two or more PDF files to combine them into a single document.',
+  },
+  twitter: {
+    title: 'Merge PDF Files Online | Leo Creator',
+    description: 'Upload two or more PDF files to combine them into a single document.',
+  },
+};
 
 export default function PdfMergerPage() {
   return (

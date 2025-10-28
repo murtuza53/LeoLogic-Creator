@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ChangeBackground from '@/components/change-background';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Change Image Background Tool',
+  description: 'Easily replace the background of any image with a solid color. Upload your image, pick a color from the palette, and download the result instantly.',
+  openGraph: {
+    title: 'Change Image Background Tool | Leo Creator',
+    description: 'Upload an image and select a new background color from the palette.',
+  },
+  twitter: {
+    title: 'Change Image Background Tool | Leo Creator',
+    description: 'Upload an image and select a new background color from the palette.',
+  },
+};
 
 export default function ChangeBackgroundPage() {
   return (

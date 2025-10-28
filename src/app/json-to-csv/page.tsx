@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import JsonToCsvConverter from '@/components/json-to-csv';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'JSON to CSV Converter',
+  description: 'Convert your JSON files into a structured CSV format. Upload your JSON array of objects to create a downloadable CSV file for use in Excel or other spreadsheet software.',
+  openGraph: {
+    title: 'JSON to CSV Converter | Leo Creator',
+    description: 'Upload a JSON file to convert it into a structured CSV format.',
+  },
+  twitter: {
+    title: 'JSON to CSV Converter | Leo Creator',
+    description: 'Upload a JSON file to convert it into a structured CSV format.',
+  },
+};
 
 export default function JsonToCsvPage() {
   return (

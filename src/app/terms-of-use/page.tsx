@@ -1,5 +1,5 @@
 
-
+import type { Metadata } from 'next';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
@@ -7,6 +7,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Terms of Use',
+  description: 'Read the Terms of Use for Leo Creator. By using our services, you agree to these terms and conditions.',
+  openGraph: {
+    title: 'Terms of Use | Leo Creator',
+    description: 'Read the Terms of Use for Leo Creator.',
+  },
+  twitter: {
+    title: 'Terms of Use | Leo Creator',
+    description: 'Read the Terms of Use for Leo Creator.',
+  },
+};
 
 export default function TermsOfUsePage() {
   return (

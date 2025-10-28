@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import WeightLossCalculator from '@/components/weight-loss-calculator';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Weight Loss Calculator',
+  description: 'Estimate your daily calorie targets for weight loss. Calculate the calories you need to maintain your weight or to achieve mild, standard, or extreme weight loss.',
+  openGraph: {
+    title: 'Weight Loss Calculator | Leo Creator',
+    description: 'Estimate your daily calorie needs for different weight loss goals.',
+  },
+  twitter: {
+    title: 'Weight Loss Calculator | Leo Creator',
+    description: 'Estimate your daily calorie needs for different weight loss goals.',
+  },
+};
 
 export default function WeightLossCalculatorPage() {
   return (

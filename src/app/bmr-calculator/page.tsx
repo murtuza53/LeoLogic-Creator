@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import BmrCalculator from '@/components/bmr-calculator';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'BMR Calculator',
+  description: 'Calculate your Basal Metabolic Rate (BMR) and daily calorie needs based on your height, weight, age, and activity level. Understand the calories your body needs to maintain, lose, or gain weight.',
+  openGraph: {
+    title: 'BMR Calculator | Leo Creator',
+    description: 'Calculate your Basal Metabolic Rate and daily calorie needs.',
+  },
+  twitter: {
+    title: 'BMR Calculator | Leo Creator',
+    description: 'Calculate your Basal Metabolic Rate and daily calorie needs.',
+  },
+};
 
 export default function BmrCalculatorPage() {
   return (

@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import CbmCalculator from '@/components/cbm-calculator';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'CBM Calculator for Shipping',
+  description: 'Calculate cubic meter (CBM), volumetric weight, and total shipment volume for sea and air freight. Plan your container requirements with our easy-to-use CBM calculator.',
+  openGraph: {
+    title: 'CBM Calculator for Shipping | Leo Creator',
+    description: 'Calculate the cubic meter (CBM) and volumetric weight of your shipment.',
+  },
+  twitter: {
+    title: 'CBM Calculator for Shipping | Leo Creator',
+    description: 'Calculate the cubic meter (CBM) and volumetric weight of your shipment.',
+  },
+};
 
 export default function CbmCalculatorPage() {
   return (

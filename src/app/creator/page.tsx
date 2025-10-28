@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import { Logo } from '@/components/icons';
 import ProductGenerator from '@/components/product-generator';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,20 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'AI Product Content Generator',
+  description: 'Instantly generate SEO-friendly product descriptions, detailed specifications, and professional product photos from just a name and an image using advanced AI.',
+  openGraph: {
+    title: 'AI Product Content Generator | Leo Creator',
+    description: 'Generate compelling descriptions and detailed specifications for any product instantly.',
+  },
+  twitter: {
+    title: 'AI Product Content Generator | Leo Creator',
+    description: 'Generate compelling descriptions and detailed specifications for any product instantly.',
+  },
+};
+
 
 export default function CreatorPage() {
   return (

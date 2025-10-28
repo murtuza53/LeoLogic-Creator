@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import MathSolver from '@/components/math-solver';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,19 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'AI Math Problem Solver',
+  description: 'Get instant, step-by-step solutions to any math problem, from basic algebra to complex calculus. Our advanced AI helps you understand the process, not just the answer.',
+  openGraph: {
+    title: 'AI Math Problem Solver | Leo Creator',
+    description: 'Get a step-by-step solution for any math problem, from basic equations to complex word problems.',
+  },
+  twitter: {
+    title: 'AI Math Problem Solver | Leo Creator',
+    description: 'Get a step-by-step solution for any math problem, from basic equations to complex word problems.',
+  },
+};
 
 export default function MathSolverPage() {
   return (

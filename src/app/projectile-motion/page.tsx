@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
@@ -7,6 +8,19 @@ import { Button } from '@/components/ui/button';
 import { ProjectileMotion } from '@/components/virtual-physics-lab';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Virtual Physics Lab: Projectile Motion Simulator',
+  description: 'Simulate projectile motion with adjustable parameters like initial velocity and launch angle. Visualize the trajectory and analyze max distance, peak height, and time of flight.',
+  openGraph: {
+    title: 'Virtual Physics Lab: Projectile Motion Simulator | Leo Creator',
+    description: 'Simulate projectile trajectories with adjustable parameters.',
+  },
+  twitter: {
+    title: 'Virtual Physics Lab: Projectile Motion Simulator | Leo Creator',
+    description: 'Simulate projectile trajectories with adjustable parameters.',
+  },
+};
 
 export default function ProjectileMotionPage() {
   return (

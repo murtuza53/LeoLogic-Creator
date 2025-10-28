@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
@@ -7,6 +8,19 @@ import { Button } from '@/components/ui/button';
 import { PendulumDynamics } from '@/components/virtual-physics-lab';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Virtual Physics Lab: Pendulum Dynamics',
+  description: 'Explore the physics of a simple pendulum. Adjust length, mass, and initial angle to simulate its motion and visualize the relationship between period, frequency, and energy.',
+  openGraph: {
+    title: 'Virtual Physics Lab: Pendulum Dynamics | Leo Creator',
+    description: 'Explore the physics of a simple pendulum in motion.',
+  },
+  twitter: {
+    title: 'Virtual Physics Lab: Pendulum Dynamics | Leo Creator',
+    description: 'Explore the physics of a simple pendulum in motion.',
+  },
+};
 
 export default function PendulumDynamicsPage() {
   return (

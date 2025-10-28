@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import RemoveBackground from '@/components/remove-background';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Free Image Background Remover',
+  description: 'Automatically remove the background from any image with a single click. Our AI-powered tool creates a transparent background for your photos instantly.',
+  openGraph: {
+    title: 'Free Image Background Remover | Leo Creator',
+    description: 'Upload an image to automatically remove the background and download the result.',
+  },
+  twitter: {
+    title: 'Free Image Background Remover | Leo Creator',
+    description: 'Upload an image to automatically remove the background and download the result.',
+  },
+};
 
 export default function RemoveBackgroundPage() {
   return (

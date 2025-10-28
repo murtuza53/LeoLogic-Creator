@@ -1,5 +1,5 @@
 
-
+import type { Metadata } from 'next';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
@@ -7,6 +7,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Privacy Policy',
+  description: 'Read the Privacy Policy for Leo Creator to understand how we collect, use, and protect your information when you use our free online tools.',
+  openGraph: {
+    title: 'Privacy Policy | Leo Creator',
+    description: 'Learn how we handle your data and respect your privacy.',
+  },
+  twitter: {
+    title: 'Privacy Policy | Leo Creator',
+    description: 'Learn how we handle your data and respect your privacy.',
+  },
+};
 
 export default function PrivacyPolicyPage() {
   return (

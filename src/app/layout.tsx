@@ -7,15 +7,46 @@ import { SpeedInsights } from '@vercel/speed-insights/next';
 import { FirebaseClientProvider } from '@/firebase';
 import Script from 'next/script';
 
+const siteUrl = process.env.NEXT_PUBLIC_SITE_URL || 'https://www.leocreator.com';
+
 export const metadata: Metadata = {
-  title: 'Leo Creator',
-  description: 'Generate product descriptions and specifications with AI.',
+  metadataBase: new URL(siteUrl),
+  title: {
+    default: 'Leo Creator | Free AI & Productivity Tools',
+    template: '%s | Leo Creator',
+  },
+  description: 'Boost your productivity with a suite of free, AI-powered online tools. Convert files, edit images, generate content, and solve complex problems instantly.',
   manifest: '/manifest.json',
   icons: {
     icon: {
       url: `/favicon.png`,
       type: 'image/png',
     }
+  },
+  openGraph: {
+    title: 'Leo Creator | Free AI & Productivity Tools',
+    description: 'Boost your productivity with a suite of free, AI-powered online tools. Convert files, edit images, generate content, and solve complex problems instantly.',
+    url: siteUrl,
+    siteName: 'Leo Creator',
+    images: [
+      {
+        url: '/og-image.png',
+        width: 1200,
+        height: 630,
+        alt: 'Leo Creator - Free Online Tools',
+      },
+    ],
+    locale: 'en_US',
+    type: 'website',
+  },
+  twitter: {
+    card: 'summary_large_image',
+    title: 'Leo Creator | Free AI & Productivity Tools',
+    description: 'Boost your productivity with a suite of free, AI-powered online tools. Convert files, edit images, generate content, and solve complex problems instantly.',
+    images: ['/og-image.png'],
+  },
+  verification: {
+    google: 'YOUR_GOOGLE_SITE_VERIFICATION_CODE', // Replace with your verification code
   },
 };
 

@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ColorCodeGenerator from '@/components/color-code-generator';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Color Code Generator & Converter',
+  description: 'A versatile color tool to extract palettes from images, use a color picker, or convert between HEX, RGB, and HSL color codes instantly.',
+  openGraph: {
+    title: 'Color Code Generator & Converter | Leo Creator',
+    description: 'Extract palettes, pick colors, and convert between HEX, RGB, and HSL.',
+  },
+  twitter: {
+    title: 'Color Code Generator & Converter | Leo Creator',
+    description: 'Extract palettes, pick colors, and convert between HEX, RGB, and HSL.',
+  },
+};
 
 export default function ColorCodeGeneratorPage() {
   return (

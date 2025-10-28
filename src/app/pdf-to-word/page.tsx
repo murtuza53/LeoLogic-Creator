@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import PdfToWord from '@/components/pdf-to-word';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'PDF to Word Converter',
+  description: 'Convert your PDF files into editable Word documents (.docx) for free. Our AI-powered tool preserves text formatting and layout for easy editing.',
+  openGraph: {
+    title: 'PDF to Word Converter | Leo Creator',
+    description: 'Upload a PDF file to convert it into an editable Word document (.docx).',
+  },
+  twitter: {
+    title: 'PDF to Word Converter | Leo Creator',
+    description: 'Upload a PDF file to convert it into an editable Word document (.docx).',
+  },
+};
 
 export default function PdfToWordPage() {
   return (

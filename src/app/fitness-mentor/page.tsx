@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import FitnessMentor from '@/components/fitness-mentor';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'AI Fitness Mentor',
+  description: 'Get expert advice on health, workouts, and nutrition from your personal AI fitness mentor. Ask any question and get safe, helpful, and motivating answers.',
+  openGraph: {
+    title: 'AI Fitness Mentor | Leo Creator',
+    description: 'Your personal guide for health and fitness questions.',
+  },
+  twitter: {
+    title: 'AI Fitness Mentor | Leo Creator',
+    description: 'Your personal guide for health and fitness questions.',
+  },
+};
 
 export default function FitnessMentorPage() {
   return (

@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ResizeImage from '@/components/resize-image';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Resize Image Online',
+  description: 'Easily resize your images to specific dimensions (width and height). Our tool processes images directly in your browser for fast, secure resizing while preserving quality.',
+  openGraph: {
+    title: 'Resize Image Online | Leo Creator',
+    description: 'Upload an image and specify the dimensions to resize it.',
+  },
+  twitter: {
+    title: 'Resize Image Online | Leo Creator',
+    description: 'Upload an image and specify the dimensions to resize it.',
+  },
+};
 
 export default function ResizeImagePage() {
   return (

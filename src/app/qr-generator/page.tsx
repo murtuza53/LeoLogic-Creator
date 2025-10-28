@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import QrGenerator from '@/components/qr-generator';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,19 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'Free QR Code Generator',
+  description: 'Create custom QR codes for any text or URL. Customize the colors, size, and style of your QR code and download it as a high-quality PNG file for free.',
+  openGraph: {
+    title: 'Free QR Code Generator | Leo Creator',
+    description: 'Create and customize QR codes for any text or URL.',
+  },
+  twitter: {
+    title: 'Free QR Code Generator | Leo Creator',
+    description: 'Create and customize QR codes for any text or URL.',
+  },
+};
 
 export default function QrGeneratorPage() {
   return (

@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import UnitConverter from '@/components/unit-converter';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Free Unit Converter',
+  description: 'Quickly convert between various units of measurement for length, mass, temperature, volume, area, and time. Simple, fast, and free to use.',
+  openGraph: {
+    title: 'Free Unit Converter | Leo Creator',
+    description: 'Quickly convert between different units of measurement.',
+  },
+  twitter: {
+    title: 'Free Unit Converter | Leo Creator',
+    description: 'Quickly convert between different units of measurement.',
+  },
+};
 
 export default function UnitConverterPage() {
   return (

@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import ScientificCalculator from '@/components/scientific-calculator';
 import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
@@ -7,6 +8,19 @@ import Link from 'next/link';
 import Footer from '@/components/footer';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
+
+export const metadata: Metadata = {
+  title: 'Free Online Scientific Calculator',
+  description: 'Perform advanced mathematical calculations with our free online scientific calculator. Supports trigonometric functions, logarithms, exponents, and more.',
+  openGraph: {
+    title: 'Free Online Scientific Calculator | Leo Creator',
+    description: 'Perform simple and advanced calculations.',
+  },
+  twitter: {
+    title: 'Free Online Scientific Calculator | Leo Creator',
+    description: 'Perform simple and advanced calculations.',
+  },
+};
 
 export default function ScientificCalculatorPage() {
   return (

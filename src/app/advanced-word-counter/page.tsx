@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import AdvancedWordCounter from '@/components/advanced-word-counter';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Advanced Word Counter & Text Analyzer',
+  description: 'Get detailed insights into your text. Count words, characters, sentences, and paragraphs in real-time. Use our AI-powered analysis to check reading level, speaking time, and keyword density.',
+  openGraph: {
+    title: 'Advanced Word Counter & Text Analyzer | Leo Creator',
+    description: 'Instantly get detailed statistics and AI-powered analysis for any text.',
+  },
+  twitter: {
+    title: 'Advanced Word Counter & Text Analyzer | Leo Creator',
+    description: 'Instantly get detailed statistics and AI-powered analysis for any text.',
+  },
+};
 
 export default function AdvancedWordCounterPage() {
   return (

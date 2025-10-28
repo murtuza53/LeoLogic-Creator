@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import IconMaker from '@/components/icon-maker';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'AI Icon Maker',
+  description: 'Generate unique, professional icons in seconds. Describe your icon concept and let our AI create three high-quality design variations for you.',
+  openGraph: {
+    title: 'AI Icon Maker | Leo Creator',
+    description: 'Describe your icon concept and let our AI generate three unique designs for you.',
+  },
+  twitter: {
+    title: 'AI Icon Maker | Leo Creator',
+    description: 'Describe your icon concept and let our AI generate three unique designs for you.',
+  },
+};
 
 export default function IconMakerPage() {
   return (

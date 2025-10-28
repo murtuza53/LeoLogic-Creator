@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import JsonToExcelConverter from '@/components/json-to-excel';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'JSON to Excel Converter',
+  description: 'Convert JSON arrays into a structured Excel (.xlsx) spreadsheet. Upload your JSON file to instantly generate a downloadable Excel file.',
+  openGraph: {
+    title: 'JSON to Excel Converter | Leo Creator',
+    description: 'Upload a JSON file (.json) to convert it into a structured Excel spreadsheet.',
+  },
+  twitter: {
+    title: 'JSON to Excel Converter | Leo Creator',
+    description: 'Upload a JSON file (.json) to convert it into a structured Excel spreadsheet.',
+  },
+};
 
 export default function JsonToExcelPage() {
   return (

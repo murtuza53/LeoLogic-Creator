@@ -1,4 +1,5 @@
 
+import type { Metadata } from 'next';
 import SplitPdf from '@/components/split-pdf';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
@@ -7,6 +8,19 @@ import { Logo } from '@/components/icons';
 import { Button } from '@/components/ui/button';
 import { Home } from 'lucide-react';
 import Link from 'next/link';
+
+export const metadata: Metadata = {
+  title: 'Split PDF into Separate Pages',
+  description: 'Easily split a large PDF into individual, single-page PDF files. Upload your document and download a ZIP file containing all the separate pages.',
+  openGraph: {
+    title: 'Split PDF into Separate Pages | Leo Creator',
+    description: 'Upload a PDF to split each page into a separate file, then download them as a ZIP.',
+  },
+  twitter: {
+    title: 'Split PDF into Separate Pages | Leo Creator',
+    description: 'Upload a PDF to split each page into a separate file, then download them as a ZIP.',
+  },
+};
 
 export default function SplitPdfPage() {
   return (
