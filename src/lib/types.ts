@@ -1,5 +1,3 @@
-
-
 export type Feature = 
   | 'smartProduct' 
   | 'aiMath' 
@@ -39,7 +37,8 @@ export type Feature =
   | 'projectileMotion'
   | 'pendulumDynamics'
   | 'virtualPhysicsLab'
-  | 'cbmCalculator';
+  | 'cbmCalculator'
+  | 'aiBlogWriter';
 
 export type ContactMessage = {
   name: string;
@@ -52,14 +51,3 @@ export type UserProfile = {
   name: string;
   email: string;
 };
-
-    
-
-    
-
-    
-
-    
-
-
-    

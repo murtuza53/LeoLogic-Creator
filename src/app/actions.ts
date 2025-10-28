@@ -1,4 +1,3 @@
-
 'use server';
 
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
@@ -12,10 +11,11 @@ import { generateIcon } from '@/ai/flows/generate-icon';
 import { fitnessMentor } from '@/ai/flows/fitness-mentor-flow';
 import { saveContactMessage } from '@/lib/firebase';
 import type { ContactMessage, Feature } from '@/lib/types';
-import { PDFDocument } from 'pdf-lib';
 import * as ExcelJS from 'exceljs';
 import { initializeApp, getApps, getApp, App } from 'firebase-admin/app';
 import { getFirestore, FieldValue } from 'firebase-admin/firestore';
+import { generateBlogPost } from '@/ai/flows/generate-blog-post';
+
 
 // Initialize Firebase Admin SDK
 let app: App;
@@ -199,6 +199,22 @@ export async function fitnessMentorAction(message: string) {
         error instanceof Error
           ? error.message
           : 'An unknown error occurred.',
+    };
+  }
+}
+
+export async function generateBlogPostAction(topic: string, outline?: string) {
+  try {
+    const result = await generateBlogPost({ topic, outline });
+    if (!result.content) {
+      throw new Error('AI failed to generate the blog post.');
+    }
+    return result;
+  } catch (error) {
+    console.error('Error generating blog post:', error);
+    return {
+      error:
+        error instanceof Error ? error.message : 'An unknown error occurred.',
     };
   }
 }

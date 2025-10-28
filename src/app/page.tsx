@@ -1,22 +1,19 @@
-
 "use client";
 
-import { useState, useMemo, useEffect } from 'react';
-import { ArrowRight, Calculator, Library, LogOut, QrCode, ScanText, FileJson, Image as ImageIcon, FileSpreadsheet, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, MessageCircle, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind, Package } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowRight, Calculator, FileJson, Image as ImageIcon, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind, Package, Newspaper } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
 import { Card, CardContent } from '@/components/ui/card';
-import { Skeleton } from '@/components/ui/skeleton';
 import { Input } from '@/components/ui/input';
-import Image from 'next/image';
 import TopAdBanner from '@/components/top-ad-banner';
 import BottomAdBanner from '@/components/bottom-ad-banner';
 import Footer from '@/components/footer';
 import { useAuth, useUser, signOutUser } from '@/firebase';
 import { type Feature } from '@/lib/types';
 import { useToast } from '@/hooks/use-toast';
-import { cn } from '@/lib/utils';
+import AuthButtons from '@/components/auth-buttons';
 
 const tools = [
     { 
@@ -28,6 +25,16 @@ const tools = [
         bgColor: 'bg-purple-100',
         textColor: 'text-purple-600',
         icon: BrainCircuit,
+    },
+    { 
+        title: 'AI Blog Writer', 
+        description: 'Generate blog posts from a topic or an outline.', 
+        href: '/ai-blog-writer', 
+        category: 'AI / ML',
+        feature: 'aiBlogWriter' as Feature,
+        bgColor: 'bg-blue-100',
+        textColor: 'text-blue-600',
+        icon: Newspaper,
     },
     { 
         title: 'AI Math Solver', 
@@ -127,7 +134,7 @@ const tools = [
         feature: 'qrGenerator' as Feature,
         bgColor: 'bg-pink-100',
         textColor: 'text-pink-600',
-        icon: QrCode,
+        icon: Share2,
     },
     { 
         title: 'Benefit Pay QR', 
@@ -298,7 +305,7 @@ const tools = [
         textColor: 'text-sky-600',
         icon: StretchHorizontal,
     },
-     { 
+    { 
         title: 'PDF to Word', 
         description: 'Convert PDF files to editable Word documents.', 
         href: '/pdf-to-word', 
@@ -342,7 +349,7 @@ const tools = [
         title: 'Image to Excel', 
         description: 'Extract tabular data from images and export to Excel.', 
         href: '/table-extractor', 
-        category: 'PDF',
+        category: 'AI / ML',
         feature: 'imageExcel' as Feature,
         bgColor: 'bg-teal-100',
         textColor: 'text-teal-600',
@@ -468,28 +475,7 @@ export default function Home() {
           <Logo className="h-8 w-8 text-primary" />
           <span className="font-bold text-xl">Leo Creator</span>
         </Link>
-        <div className='flex items-center gap-4'>
-           {isUserLoading ? (
-            <Skeleton className="h-8 w-24" />
-          ) : user ? (
-            <>
-              <span className="text-sm font-medium">Welcome, {user.displayName || user.email}</span>
-              <Button variant="ghost" onClick={() => signOutUser(auth)}>
-                <LogOut className="mr-2 h-4 w-4" />
-                Sign Out
-              </Button>
-            </>
-          ) : (
-            <>
-              <Button variant="ghost" asChild>
-                <Link href="/signin">Sign In</Link>
-              </Button>
-              <Button asChild>
-                <Link href="/signup">Sign Up</Link>
-              </Button>
-            </>
-          )}
-        </div>
+        <AuthButtons />
       </header>
       <main className="flex-1">
         <section className="w-full pt-6 pb-12">
@@ -508,7 +494,7 @@ export default function Home() {
                   <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground" />
                   <Input 
                     type="search"
-                    placeholder="Search from 30+ tools.."
+                    placeholder={`Search from ${tools.length}+ tools..`}
                     className="w-full rounded-full bg-muted py-6 pl-12 pr-4 text-base"
                     value={searchTerm}
                     onChange={(e) => setSearchTerm(e.target.value)}
@@ -615,7 +601,7 @@ export default function Home() {
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <CheckCircle className='h-5 w-5 text-green-500'/>
-                                    <span>30+ Free Tools Available</span>
+                                    <span>Access to {tools.length}+ Free Tools</span>
                                 </li>
                                 <li className='flex items-center gap-3'>
                                     <CheckCircle className='h-5 w-5 text-green-500'/>
