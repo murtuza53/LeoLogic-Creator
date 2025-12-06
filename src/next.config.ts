@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https',
+        protocol: 'https' as const,
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
@@ -32,6 +32,7 @@ const nextConfig: NextConfig = {
   },
   serverActions: {
     bodySizeLimit: '50mb',
+    allowedOrigins: ['localhost:9002', 'studio-4692583593-18d7f.web.app'],
   },
 };
 
