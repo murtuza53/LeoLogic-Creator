@@ -1,6 +1,6 @@
-import type {NextConfig} from 'next';
 
-const nextConfig: NextConfig = {
+/** @type {import('next').NextConfig} */
+const nextConfig = {
   /* config options here */
   typescript: {
     ignoreBuildErrors: true,
@@ -23,7 +23,7 @@ const nextConfig: NextConfig = {
         pathname: '/**',
       },
       {
-        protocol: 'https' as const,
+        protocol: 'https',
         hostname: 'picsum.photos',
         port: '',
         pathname: '/**',
@@ -32,7 +32,6 @@ const nextConfig: NextConfig = {
   },
   serverActions: {
     bodySizeLimit: '50mb',
-    allowedOrigins: ['localhost:9002', 'studio-4692583593-18d7f.web.app'],
   },
 };
 
