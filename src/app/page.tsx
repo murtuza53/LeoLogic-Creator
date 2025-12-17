@@ -58,16 +58,6 @@ const tools = [
         icon: FileTextIcon,
     },
     { 
-        title: 'HTML Converter', 
-        description: 'Convert Word, Excel, PDF, or a URL to HTML.', 
-        href: '/html-converter', 
-        category: 'Productivity',
-        feature: 'htmlConverter' as Feature,
-        bgColor: 'bg-orange-100',
-        textColor: 'text-orange-600',
-        icon: Globe,
-    },
-    { 
         title: 'Graphing Calculator', 
         description: 'Visualize functions, plot data, and explore equations.', 
         href: '/graphing-calculator', 

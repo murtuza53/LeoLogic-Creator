@@ -39,8 +39,7 @@ export type Feature =
   | 'pendulumDynamics'
   | 'virtualPhysicsLab'
   | 'cbmCalculator'
-  | 'aiBlogWriter'
-  | 'htmlConverter';
+  | 'aiBlogWriter';
 
 export type ContactMessage = {
   name: string;
