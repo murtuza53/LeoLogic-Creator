@@ -256,9 +256,9 @@ export async function createUserProfile(uid: string, name: string, email: string
 }
 
 export async function incrementToolUsageCounter(feature: Feature) {
-  if (!feature) {
-    console.warn('Attempted to increment tool usage counter with no feature specified.');
-    return { error: 'Feature not specified.' };
+  if (!feature || typeof feature !== 'string') {
+    console.warn('Attempted to increment tool usage counter with an invalid feature specified.');
+    return { error: 'Feature not specified or is invalid.' };
   }
   try {
     const toolRef = db.collection('toolUsage').doc(feature);
