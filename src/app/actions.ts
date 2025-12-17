@@ -1,3 +1,4 @@
+
 'use server';
 
 import { generateProductDescription } from '@/ai/flows/generate-product-description';
@@ -255,6 +256,10 @@ export async function createUserProfile(uid: string, name: string, email: string
 }
 
 export async function incrementToolUsageCounter(feature: Feature) {
+  if (!feature) {
+    console.warn('Attempted to increment tool usage counter with no feature specified.');
+    return { error: 'Feature not specified.' };
+  }
   try {
     const toolRef = db.collection('toolUsage').doc(feature);
     await toolRef.set({ count: FieldValue.increment(1) }, { merge: true });

@@ -2,7 +2,7 @@
 "use client";
 
 import { useState } from 'react';
-import { ArrowRight, Calculator, FileJson, Image as ImageIcon, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind, Package, Newspaper, FileSpreadsheet } from 'lucide-react';
+import { ArrowRight, Calculator, FileJson, Image as ImageIcon, Eraser, Palette, Crop, Search, Brush, FileArchive, HeartPulse, SplitSquareHorizontal, Flame, Scale, Blend, Component, FileUp, Scissors, Share2, Type, BrainCircuit, Bot, Merge, Sigma, UnfoldHorizontal, Minus, Weight, Users, Star, Zap, Clock, Wand2, SmilePlus, StretchHorizontal, FileImage, FileText as FileTextIcon, CheckCircle, FileCode, Braces, Table, Key, Atom, TestTube, Wind, Package, Newspaper, FileSpreadsheet, Globe } from 'lucide-react';
 import Link from 'next/link';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/icons';
@@ -56,6 +56,16 @@ const tools = [
         bgColor: 'bg-teal-100',
         textColor: 'text-teal-600',
         icon: FileTextIcon,
+    },
+    { 
+        title: 'HTML Converter', 
+        description: 'Convert Word, Excel, PDF, or a URL to HTML.', 
+        href: '/html-converter', 
+        category: 'Productivity',
+        feature: 'htmlConverter' as Feature,
+        bgColor: 'bg-orange-100',
+        textColor: 'text-orange-600',
+        icon: Globe,
     },
     { 
         title: 'Graphing Calculator', 
@@ -657,5 +667,3 @@ export default function Home() {
     </div>
   );
 }
-
-    

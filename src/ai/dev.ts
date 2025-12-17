@@ -1,3 +1,4 @@
+
 import { config } from 'dotenv';
 config();
 
@@ -18,3 +19,4 @@ import '@/ai/flows/convert-image-to-ico.ts';
 import '@/ai/flows/convert-pdf-to-word.ts';
 import '@/ai/flows/extract-colors-from-image.ts';
 import '@/ai/flows/generate-blog-post.ts';
+import '@/ai/flows/convert-to-html.ts';
